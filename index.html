@@ -266,8 +266,12 @@
     font-family: 'Cormorant Garamond', serif; color: var(--ks-cream); touch-action: auto;
   }
   .cart-drawer.hidden { display: none; }
-  .cart-drawer-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .cart-drawer-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; position: sticky; top: 0; background: var(--ks-panel); padding-bottom: 6px; z-index: 2; }
   .cart-drawer-head h3 { font-family: 'Cinzel', serif; font-size: 15px; color: var(--ks-gold-light); margin: 0; }
+  .cart-drawer-close-btn {
+    flex-shrink: 0; border: 1px solid var(--ks-gold-dim); background: rgba(201,162,75,0.1); color: var(--ks-gold-light);
+    font-family: 'Cinzel', serif; font-size: 10.5px; letter-spacing: 0.04em; border-radius: 20px; padding: 6px 12px; cursor: pointer;
+  }
   .cart-line { display: flex; align-items: center; gap: 8px; padding: 7px 0; border-bottom: 1px dashed var(--ks-line); }
   .cart-line .cl-name { flex: 1; font-size: 14px; }
   .cart-line .cl-qty { display: flex; align-items: center; gap: 6px; }
@@ -1815,7 +1819,10 @@
   </div>
 
   <div id="cart-drawer" class="cart-drawer hidden">
-    <div class="cart-drawer-head"><h3>Votre commande</h3></div>
+    <div class="cart-drawer-head">
+      <h3>Votre commande</h3>
+      <button id="cart-drawer-close-btn" class="cart-drawer-close-btn" type="button" aria-label="Continuer la commande">Continuer ↓</button>
+    </div>
     <div id="cart-items"></div>
     <div class="cart-total-row"><span>Total</span><span id="cart-total-2">0 FCFA</span></div>
     <button id="pay-cash-btn" class="cart-action">Payer en espèces</button>
@@ -1909,8 +1916,15 @@
     if (e.key === 'ArrowLeft') goPrev();
   });
 
+  // Éléments interactifs qui ne doivent JAMAIS déclencher un tour de page
+  // (bouton "+", panier, boutons de paiement, modales, etc.)
+  function isInteractiveTarget(el) {
+    return !!(el && el.closest && el.closest('.add-btn, .cart-bar, .cart-drawer, #custom-modal-overlay, #my-order-overlay, button, a, input, select, textarea'));
+  }
+
   var startX = null, startY = null, tracking = false;
   book.addEventListener('touchstart', function(e) {
+    if (isInteractiveTarget(e.target)) { tracking = false; startX = null; return; }
     startX = e.touches[0].clientX; startY = e.touches[0].clientY; tracking = true;
   }, { passive: true });
   book.addEventListener('touchend', function(e) {
@@ -1923,7 +1937,10 @@
   }, { passive: true });
 
   var mDownX = null;
-  book.addEventListener('mousedown', function(e) { mDownX = e.clientX; });
+  book.addEventListener('mousedown', function(e) {
+    if (isInteractiveTarget(e.target)) { mDownX = null; return; }
+    mDownX = e.clientX;
+  });
   book.addEventListener('mouseup', function(e) {
     if (mDownX === null) return;
     var dx = e.clientX - mDownX;
@@ -1933,6 +1950,7 @@
 
   pages.forEach(function(p) {
     p.addEventListener('click', function(e) {
+      if (isInteractiveTarget(e.target)) return;
       var rect = book.getBoundingClientRect();
       var x = e.clientX - rect.left;
       if (x > rect.width / 2) goNext(); else goPrev();
@@ -2081,6 +2099,13 @@
   }
 
   function toggleCart(){ document.getElementById('cart-drawer').classList.toggle('hidden'); }
+
+  // Bouton "Continuer ↓" : ferme le panier pour permettre de sélectionner d'autres plats,
+  // sans perdre ce qui a déjà été ajouté.
+  document.getElementById('cart-drawer-close-btn').addEventListener('click', (e) => {
+    e.stopPropagation();
+    document.getElementById('cart-drawer').classList.add('hidden');
+  });
 
   // ---------- Envoi de la commande à la caisse K Stay (Firestore) ----------
   let orderSent = false, orderInFlight = false;
