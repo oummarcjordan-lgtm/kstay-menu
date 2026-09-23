@@ -1865,6 +1865,8 @@
 <script>
 (function() {
   var N = 15;
+  var Z_BASE = 1000; // large offset : garantit que les pages "à venir" sont TOUJOURS
+                      // au-dessus des pages déjà tournées, quel que soit le nombre de pages.
   var book = document.getElementById('book');
   var pages = Array.prototype.slice.call(book.querySelectorAll('.page'));
   var current = 0;
@@ -1874,6 +1876,11 @@
   var pageNow = document.getElementById('pageNow');
   var hint = document.getElementById('hint');
   var animating = false;
+
+  // Réinitialise l'empilement des pages sur une base fiable (indépendante des
+  // valeurs de z-index écrites en dur dans le HTML), pour éviter qu'une page déjà
+  // tournée ne finisse par recouvrir la page active et intercepte les clics sur "+".
+  pages.forEach(function(p, i) { p.style.zIndex = Z_BASE - i; });
 
   function updateUI() {
     pageNow.textContent = current + 1;
@@ -1886,7 +1893,7 @@
     if (animating || current >= N - 1) return;
     animating = true;
     var p = pages[current];
-    p.style.zIndex = current + 1;
+    p.style.zIndex = current; // toujours < Z_BASE - (N-1), donc jamais au-dessus d'une page active
     p.classList.add('flipped');
     current++;
     updateUI();
@@ -1900,7 +1907,7 @@
     current--;
     var p = pages[current];
     p.classList.remove('flipped');
-    p.style.zIndex = N - current;
+    p.style.zIndex = Z_BASE - current;
     updateUI();
     setTimeout(function() { animating = false; }, 500);
     hideHint();
