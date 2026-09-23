@@ -2,1806 +2,1409 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
-<title>K STAY — Menu</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>O'Mba'p Lounge — Menu</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500;1,600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --ks-black: #0a0908;
-    --ks-panel: #141210;
-    --ks-panel-2: #0d0c0a;
-    --ks-gold: #c9a24b;
-    --ks-gold-light: #ecd18f;
-    --ks-gold-dim: #8f7640;
-    --ks-cream: #f2e9d3;
-    --ks-cream-dim: #cdbfa0;
-    --ks-line: rgba(201,162,75,0.30);
+  :root{
+    --bg: #0e1b1c;
+    --bg-raised: #142627;
+    --gold: #f2b705;
+    --ember: #e2572b;
+    --cream: #f4ede1;
+    --cream-dim: #cfc6b8;
+    --line: rgba(244,237,225,0.14);
   }
-
-  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
-  html, body {
-    margin: 0; padding: 0; height: 100%;
-    background: var(--ks-black);
-    overflow: hidden;
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--cream);
+    font-family:'Work Sans', sans-serif;
+    -webkit-font-smoothing:antialiased;
   }
+  h1,h2,h3{font-family:'Fraunces', serif; margin:0;}
 
-  body {
+  /* ---------- HERO ---------- */
+  .hero{
+    padding:48px 22px 28px;
+    text-align:center;
     background:
-      radial-gradient(ellipse at 50% 0%, rgba(201,162,75,0.10), transparent 55%),
-      radial-gradient(ellipse at 50% 100%, rgba(201,162,75,0.07), transparent 60%),
-      var(--ks-black);
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    height: 100vh; height: 100dvh;
-    position: relative;
-    touch-action: none;
-    font-family: 'Cormorant Garamond', serif;
-    color: var(--ks-cream);
+      radial-gradient(ellipse at top, rgba(242,183,5,0.10), transparent 60%),
+      var(--bg);
+    border-bottom:1px solid var(--line);
+  }
+  .hero .mark{
+    font-size:15px;
+    letter-spacing:0.3em;
+    color:var(--gold);
+  }
+  .hero h1{
+    font-size:44px;
+    font-weight:700;
+    color:var(--cream);
+    margin:6px 0 4px;
+  }
+  .hero h1 span{color:var(--gold);}
+  .hero .tag{
+    color:var(--cream-dim);
+    font-size:14px;
+    letter-spacing:0.08em;
+  }
+  .hero .loc{
+    margin-top:14px;
+    font-size:13px;
+    color:var(--cream-dim);
   }
 
-  body::before {
-    content: "";
-    position: absolute; inset: 0;
-    background-image: repeating-linear-gradient(0deg, rgba(255,255,255,0.012) 0px, rgba(255,255,255,0.012) 1px, transparent 1px, transparent 3px);
-    pointer-events: none;
+  /* ---------- STICKY NAV ---------- */
+  .catnav-wrap{
+    position:sticky;
+    top:0;
+    z-index:20;
+    background:rgba(14,27,28,0.96);
+    backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--line);
+  }
+  .catnav{
+    display:flex;
+    gap:8px;
+    overflow-x:auto;
+    padding:12px 16px;
+    scrollbar-width:none;
+  }
+  .catnav::-webkit-scrollbar{display:none;}
+  .catnav a{
+    flex:0 0 auto;
+    color:var(--cream-dim);
+    text-decoration:none;
+    font-size:13px;
+    padding:8px 14px;
+    border-radius:999px;
+    border:1px solid var(--line);
+    white-space:nowrap;
+  }
+  .catnav a:active, .catnav a.active{
+    color:var(--bg);
+    background:var(--gold);
+    border-color:var(--gold);
   }
 
-  .topbar {
-    position: fixed; top: 0; left: 0; right: 0;
-    display: flex; align-items: center; justify-content: center;
-    padding: 14px 16px 10px; z-index: 500; pointer-events: none;
-  }
-  .topbar .brand {
-    display: flex; align-items: center; gap: 8px;
-    letter-spacing: 0.14em; font-size: 11px; color: var(--ks-gold-light);
-    text-transform: uppercase; opacity: 0.8; font-family: 'Cormorant Garamond', serif; font-weight: 600;
-  }
-  .topbar .brand .dot { width: 3px; height: 3px; border-radius: 50%; background: var(--ks-gold); }
-
-  .stage {
-    position: relative; width: 100%; height: 100%;
-    display: flex; align-items: center; justify-content: center;
-    padding: 50px 8px 70px;
+  .tag-link{
+    color:var(--gold);
+    text-decoration:underline;
+    text-underline-offset:3px;
+    font-weight:600;
   }
 
-  .book {
-    position: relative;
-    width: min(92vw, 400px);
-    aspect-ratio: 100 / 150;
-    max-height: 100%;
-    perspective: 2600px;
-    perspective-origin: 15% 50%;
+  .avail-badge{
+    display:inline-block;
+    font-size:10px;
+    font-weight:600;
+    text-transform:uppercase;
+    letter-spacing:0.04em;
+    padding:2px 8px;
+    border-radius:999px;
+    margin-left:8px;
+    vertical-align:middle;
+  }
+  .avail-yes{background:rgba(76,175,80,0.18); color:#7ed389;}
+  .avail-no{background:rgba(226,87,43,0.18); color:#f0a184;}
+  .name-group{display:flex; align-items:center; flex-wrap:wrap; gap:2px;}
+
+  .table-badge{
+    display:inline-block;
+    margin-top:14px;
+    padding:6px 16px;
+    background:rgba(242,183,5,0.14);
+    border:1px solid var(--gold);
+    color:var(--gold);
+    border-radius:999px;
+    font-size:13px;
+    font-weight:600;
+    letter-spacing:0.03em;
+  }
+  .table-badge.hidden{display:none;}
+
+  /* Modal de confirmation doré (remplace les fenêtres système) */
+  .modal-overlay{
+    position:fixed; inset:0;
+    background:rgba(0,0,0,0.65);
+    z-index:100;
+    display:flex; align-items:center; justify-content:center;
+    padding:24px;
+  }
+  .modal-overlay.hidden{display:none;}
+  .modal-box{
+    background:
+      radial-gradient(ellipse at top, rgba(242,183,5,0.12), transparent 60%),
+      var(--bg-raised);
+    border:2px solid var(--gold);
+    border-radius:18px;
+    padding:28px 24px 24px;
+    max-width:360px;
+    width:100%;
+    text-align:center;
+    box-shadow:0 0 0 1px rgba(242,183,5,0.15), 0 0 40px rgba(242,183,5,0.18), 0 25px 60px rgba(0,0,0,0.5);
+  }
+  .modal-title{
+    font-family:'Fraunces', serif;
+    font-size:22px;
+    font-weight:600;
+    color:var(--gold);
+    margin-bottom:10px;
+  }
+  .modal-message{
+    font-size:14px;
+    color:var(--cream);
+    line-height:1.5;
+    margin-bottom:18px;
+  }
+  .modal-input{
+    width:100%;
+    padding:12px 14px;
+    border-radius:9px;
+    border:1px solid var(--gold);
+    background:rgba(244,237,225,0.06);
+    color:var(--cream);
+    font-size:16px;
+    text-align:center;
+    font-family:'Work Sans', sans-serif;
+    margin-bottom:20px;
+  }
+  .modal-input:focus{
+    outline:none;
+    box-shadow:0 0 0 3px rgba(242,183,5,0.28);
+  }
+  .modal-actions{display:flex; gap:10px;}
+  .modal-btn{
+    flex:1;
+    padding:12px;
+    border-radius:9px;
+    border:none;
+    font-size:14px;
+    font-weight:600;
+    cursor:pointer;
+    font-family:'Work Sans', sans-serif;
+  }
+  .modal-cancel{background:transparent; border:1px solid var(--line); color:var(--cream-dim);}
+  .modal-confirm{background:var(--gold); color:var(--bg);}
+
+  /* ---------- Bouton flottant "Voir ma commande" ---------- */
+  .my-order-float{
+    position:fixed;
+    right:18px; bottom:18px;
+    z-index:60;
+    background:var(--gold);
+    color:var(--bg);
+    border:none;
+    border-radius:30px;
+    padding:13px 20px;
+    font-family:'Work Sans', sans-serif;
+    font-weight:700;
+    font-size:14px;
+    box-shadow:0 6px 18px rgba(0,0,0,0.4);
+    cursor:pointer;
+  }
+  .my-order-float.hidden{display:none;}
+  .my-order-items{max-height:280px; overflow-y:auto; margin:10px 0;}
+  .my-order-item-row{
+    display:flex; justify-content:space-between; gap:10px;
+    padding:7px 0; border-bottom:1px dashed var(--line); font-size:14px;
+  }
+  .my-order-total-row{
+    display:flex; justify-content:space-between; font-weight:700;
+    padding:10px 0; border-top:1px solid var(--line); margin-top:4px;
+  }
+  .my-order-status{font-size:13px; color:var(--cream-dim); margin:6px 0 14px;}
+  .my-order-cancel-btn{background:transparent; border:1px solid var(--ember); color:var(--ember);}
+
+  /* ---------- SECTIONS ---------- */
+  main{max-width:760px; margin:0 auto; padding:8px 18px 100px;}
+  section{padding:38px 0; border-bottom:1px solid var(--line);}
+  section:last-child{border-bottom:none;}
+  .sec-head{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    gap:12px;
+    margin-bottom:18px;
+  }
+  .sec-head h2{font-size:26px; color:var(--cream); font-weight:600;}
+  .sec-head .price-banner{
+    font-size:13px;
+    color:var(--gold);
+    white-space:nowrap;
+    font-family:'Work Sans', sans-serif;
+    font-weight:600;
+  }
+  .sub-label{
+    font-size:12px;
+    color:var(--ember);
+    text-transform:uppercase;
+    letter-spacing:0.09em;
+    margin:22px 0 10px;
+  }
+  .sub-label:first-child{margin-top:0;}
+
+  .item{
+    padding:12px 0;
+    border-bottom:1px dashed var(--line);
+  }
+  .item:last-child{border-bottom:none;}
+  .item-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    gap:14px;
+  }
+  .item-row .name{
+    font-size:16px;
+    font-weight:500;
+    color:var(--cream);
+  }
+  .item-row .price{
+    font-size:15px;
+    font-weight:600;
+    color:var(--gold);
+    white-space:nowrap;
+  }
+  .item .desc{
+    margin-top:3px;
+    font-size:13px;
+    color:var(--cream-dim);
+    line-height:1.4;
   }
 
-  .page {
-    position: absolute; inset: 0;
-    transform-style: preserve-3d;
-    transform-origin: left center;
-    transition: transform 0.85s cubic-bezier(0.45, 0.05, 0.15, 1);
-    will-change: transform;
-    cursor: pointer;
+  /* Simple flat list (sauces) */
+  .flat-list{
+    display:flex; flex-wrap:wrap; gap:10px 22px;
+    list-style:none; padding:0; margin:0;
   }
-  .page.flipped { transform: rotateY(-178deg); }
-
-  .page-inner {
-    position: relative; width: 100%; height: 100%;
-    transform-style: preserve-3d;
-    border-radius: 4px; overflow: hidden;
-    box-shadow: 0 18px 40px rgba(0,0,0,0.55), 0 2px 8px rgba(0,0,0,0.4);
+  .flat-list li{
+    font-size:15px;
+    color:var(--cream);
+    position:relative;
+    padding-left:14px;
   }
-  .page-face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
-  .page-inner::after {
-    content: ""; position: absolute; inset: 0; pointer-events: none;
-    background: linear-gradient(to right, rgba(0,0,0,0.32) 0%, transparent 3%, transparent 97%, rgba(0,0,0,0.2) 100%);
+  .flat-list li::before{
+    content:"—";
+    position:absolute; left:0; color:var(--ember);
   }
 
-  .page-back {
-    transform: rotateY(180deg);
-    background: radial-gradient(circle at 50% 42%, rgba(201,162,75,0.14), transparent 60%), linear-gradient(160deg, #141210 0%, #0a0908 65%, #060605 100%);
-    border: 1px solid rgba(201,162,75,0.25);
-    display: flex; align-items: center; justify-content: center;
+  /* Formule table box */
+  .formule{
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:20px;
+    background:var(--bg-raised);
   }
-  .back-mark {
-    display: flex; flex-direction: column; align-items: center; gap: 6px;
-    border: 1px solid rgba(201,162,75,0.35); width: 110px; height: 110px; border-radius: 50%;
-    justify-content: center;
+  .formule .when{color:var(--cream-dim); font-size:13px; margin-bottom:14px;}
+  .menu-option{margin-bottom:16px;}
+  .menu-option:last-child{margin-bottom:0;}
+  .menu-option .opt-label{
+    font-size:12px; letter-spacing:0.08em; text-transform:uppercase;
+    color:var(--ember); margin-bottom:6px;
   }
-  .back-mark-ks { font-family: 'Cinzel', serif; font-size: 26px; letter-spacing: 0.04em; color: var(--ks-gold-light); }
-  .back-mark-sub { font-size: 8px; letter-spacing: 0.25em; color: var(--ks-gold-dim); text-transform: uppercase; }
+  .menu-option .courses{color:var(--cream); font-size:15px; line-height:1.6;}
+  .formule .foot{
+    margin-top:16px; padding-top:16px; border-top:1px solid var(--line);
+    display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;
+  }
+  .formule .foot .price{font-size:20px; font-weight:700; color:var(--gold); font-family:'Fraunces',serif;}
+  .formule .garnitures{font-size:13px; color:var(--cream-dim); margin-top:10px;}
 
-  /* ---------- MENU PAGE CONTENT ---------- */
+  /* Footer */
+  footer{
+    text-align:center;
+    padding:36px 18px 40px;
+    color:var(--cream-dim);
+    font-size:13px;
+  }
+  footer .fname{color:var(--gold); font-family:'Fraunces',serif; font-size:18px; margin-bottom:8px;}
+  footer .socials{margin-top:10px; font-size:12px; letter-spacing:0.05em;}
 
-  .menu-page {
-    width: 100%; height: 100%;
-    background: linear-gradient(160deg, var(--ks-panel) 0%, var(--ks-panel-2) 62%, #080706 100%);
-    border: 1px solid rgba(201,162,75,0.16);
-    padding: 22px 17px 14px;
-    display: flex; flex-direction: column;
-    position: relative;
-    overflow: hidden;
+  /* WhatsApp floating button */
+  .wa-float{
+    position:fixed;
+    right:18px; bottom:18px;
+    background:#25D366;
+    color:#fff;
+    width:56px; height:56px;
+    border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 6px 18px rgba(0,0,0,0.35);
+    z-index:30;
+    text-decoration:none;
+  }
+  .wa-float svg{width:28px; height:28px;}
+  body.cart-active .wa-float{bottom:84px;}
+
+  /* Add-to-cart buttons */
+  .item-row{position:relative; padding-right:36px;}
+  .add-btn{
+    position:absolute;
+    right:0; top:50%;
+    transform:translateY(-50%);
+    width:26px; height:26px;
+    border-radius:50%;
+    border:1px solid var(--gold);
+    background:transparent;
+    color:var(--gold);
+    font-size:16px;
+    line-height:1;
+    cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .add-btn:active{background:var(--gold); color:var(--bg);}
+
+  /* Cart bar */
+  .cart-bar{
+    position:fixed; left:0; right:0; bottom:0;
+    background:var(--gold);
+    color:var(--bg);
+    display:flex; justify-content:space-between; align-items:center;
+    gap:10px;
+    padding:12px 14px 12px 20px;
+    font-weight:600;
+    font-size:14px;
+    z-index:25;
+    box-shadow:0 -4px 14px rgba(0,0,0,0.25);
+  }
+  .cart-bar.hidden{display:none;}
+  .cart-bar-main{
+    flex:1;
+    min-width:0;
+    display:flex;
+    flex-direction:column;
+    gap:2px;
+    cursor:pointer;
+  }
+  .cart-bar-label{
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+    opacity:0.75;
+  }
+  .cart-bar-info{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+  }
+  .cart-clear-btn{
+    flex:0 0 auto;
+    width:32px; height:32px;
+    border-radius:50%;
+    border:1.5px solid var(--bg);
+    background:transparent;
+    color:var(--bg);
+    font-size:15px;
+    line-height:1;
+    cursor:pointer;
   }
 
-  .menu-page::before, .menu-page::after,
-  .menu-page .corner-a, .menu-page .corner-b { content: ""; }
-
-  .menu-page .corner {
-    position: absolute; width: 16px; height: 16px; border: 1px solid var(--ks-gold-dim); opacity: 0.55;
+  /* Cart drawer */
+  .cart-drawer{
+    position:fixed; left:0; right:0; bottom:0;
+    max-height:82vh;
+    overflow-y:auto;
+    background:var(--bg-raised);
+    border-top:1px solid var(--line);
+    border-radius:16px 16px 0 0;
+    padding:20px;
+    z-index:40;
+    box-shadow:0 -8px 30px rgba(0,0,0,0.4);
   }
-  .menu-page::before {
-    position: absolute; top: 8px; left: 8px; width: 14px; height: 14px;
-    border-top: 1px solid var(--ks-gold-dim); border-left: 1px solid var(--ks-gold-dim); opacity: 0.5;
+  .cart-drawer.hidden{display:none;}
+  .cart-drawer-head{
+    display:flex; justify-content:space-between; align-items:center;
+    margin-bottom:14px;
   }
-  .menu-page::after {
-    position: absolute; bottom: 8px; right: 8px; width: 14px; height: 14px;
-    border-bottom: 1px solid var(--ks-gold-dim); border-right: 1px solid var(--ks-gold-dim); opacity: 0.5;
+  .cart-drawer-head h3{font-size:20px; color:var(--cream);}
+  .close-btn{
+    background:none; border:none; color:var(--cream-dim);
+    font-size:18px; cursor:pointer;
   }
-
-  .mini-brand {
-    display: flex; align-items: center; justify-content: center; gap: 7px;
-    font-family: 'Cinzel', serif; font-size: 9.5px; letter-spacing: 0.22em;
-    color: var(--ks-gold-dim); text-transform: uppercase; margin-bottom: 10px;
+  .cart-line{
+    display:flex; align-items:center; justify-content:space-between;
+    gap:10px;
+    padding:10px 0;
+    border-bottom:1px dashed var(--line);
+    font-size:14px;
   }
-  .mini-ks { color: var(--ks-gold-light); font-size: 11px; }
-  .mini-sep { width: 3px; height: 3px; border-radius: 50%; background: var(--ks-gold-dim); }
-
-  .page-head { text-align: center; flex-shrink: 0; }
-  .page-script {
-    font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 500;
-    font-size: 17px; color: var(--ks-gold-dim); margin-bottom: -2px;
+  .cart-line .cl-name{flex:1; color:var(--cream);}
+  .cart-line .cl-qty{
+    display:flex; align-items:center; gap:8px;
+    color:var(--cream);
   }
-  .page-title {
-    font-family: 'Cinzel', serif; font-weight: 600;
-    font-size: clamp(22px, 7vw, 30px); letter-spacing: 0.06em;
-    color: var(--ks-gold-light); margin: 2px 0 10px;
-    text-shadow: 0 1px 12px rgba(201,162,75,0.18);
+  .cart-line .cl-qty button{
+    width:22px; height:22px;
+    border-radius:50%;
+    border:1px solid var(--line);
+    background:transparent;
+    color:var(--cream);
+    cursor:pointer;
   }
-  .title-rule {
-    width: 64px; height: 1px; margin: 0 auto 14px;
-    background: linear-gradient(90deg, transparent, var(--ks-gold), transparent);
-    position: relative;
+  .cart-line .cl-price{color:var(--gold); font-weight:600; white-space:nowrap;}
+  .cart-total-row{
+    display:flex; justify-content:space-between;
+    font-size:17px; font-weight:700;
+    color:var(--cream);
+    padding:14px 0;
+    border-bottom:1px solid var(--line);
+    margin-bottom:14px;
   }
-  .title-rule::before {
-    content: "◆"; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-    font-size: 6px; color: var(--ks-gold); background: var(--ks-panel); padding: 0 6px;
+  .cart-action{
+    display:block; width:100%;
+    padding:13px;
+    margin-bottom:10px;
+    border:none;
+    border-radius:8px;
+    font-size:14px;
+    font-weight:600;
+    cursor:pointer;
+    font-family:'Work Sans', sans-serif;
   }
-
-  .page-body {
-    flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 13px;
-    overflow: hidden;
+  .wa-action{background:#25D366; color:#fff;}
+  .om-action{background:#FF6600; color:#fff;}
+  .momo-action{background:#FFCC00; color:#0e1b1c;}
+  .pay-note{font-size:12px; color:var(--cream-dim); margin:4px 0 12px;}
+  .pay-warning{font-size:11px; color:var(--cream-dim); margin-top:8px; line-height:1.5;}
+  .ussd-fallback{
+    font-size:12px; color:var(--cream-dim); margin-top:8px; padding:10px;
+    border:1px dashed var(--line); border-radius:8px; text-align:center;
   }
-  .page-body.scrollable { overflow-y: auto; padding-right: 2px; }
-  .page-body.scrollable::-webkit-scrollbar { width: 3px; }
-  .page-body.scrollable::-webkit-scrollbar-thumb { background: var(--ks-gold-dim); border-radius: 3px; }
-
-  .group { flex-shrink: 0; }
-  .group-title {
-    font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600;
-    font-size: 13px; letter-spacing: 0.04em; color: var(--ks-gold);
-    padding-bottom: 4px; margin-bottom: 8px;
-    border-bottom: 1px solid rgba(201,162,75,0.22);
-  }
-  .group-items { display: flex; flex-direction: column; gap: 8px; }
-
-  .item { display: flex; align-items: flex-start; gap: 9px; }
-  .item-icon {
-    flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%;
-    border: 1px solid rgba(201,162,75,0.4);
-    display: flex; align-items: center; justify-content: center;
-    color: var(--ks-gold); margin-top: 1px;
-  }
-  .item-body { flex: 1; min-width: 0; }
-  .item-row { display: flex; align-items: baseline; gap: 4px; }
-  .item-name {
-    font-size: 15.5px; font-weight: 600; color: var(--ks-cream); line-height: 1.25;
-    white-space: normal;
-  }
-  .leader { flex: 1; min-width: 8px; border-bottom: 1.5px dotted rgba(201,162,75,0.55); transform: translateY(-4px); margin: 0 2px; }
-  .item-price {
-    font-family: 'Cinzel', serif; font-size: 13.5px; font-weight: 600; color: var(--ks-gold-light); white-space: nowrap;
-  }
-  .item-price em { font-style: normal; font-family: 'Cormorant Garamond', serif; font-size: 10px; color: var(--ks-gold-dim); margin-left: 1px; }
-  .item-sub { font-size: 12.5px; font-style: italic; color: var(--ks-cream-dim); margin-top: 1px; line-height: 1.3; }
-  .badge {
-    font-family: 'Cinzel', serif; font-size: 7.5px; letter-spacing: 0.08em; color: var(--ks-panel);
-    background: var(--ks-gold-light); border-radius: 3px; padding: 2px 4px; margin-right: 5px;
-    transform: translateY(-1px); display: inline-block;
+  .ussd-code{
+    margin-top:6px; font-size:16px; font-weight:700; letter-spacing:0.03em;
+    color:var(--gold); user-select:all; -webkit-user-select:all;
   }
 
-  .page-footnote { flex-shrink: 0; text-align: center; margin-top: 10px; }
-  .leafrule { display: flex; align-items: center; justify-content: center; gap: 8px; color: var(--ks-gold-dim); margin-bottom: 6px; }
-  .leafrule span { width: 30px; height: 1px; background: var(--ks-line); }
-  .footnote-text { font-size: 11.5px; font-style: italic; color: var(--ks-cream-dim); line-height: 1.4; }
-
-  /* ---------- COVER PAGE ---------- */
-
-  .cover-page { align-items: center; text-align: center; justify-content: space-between; padding: 26px 20px 18px; }
-  .cover-frame { display: flex; flex-direction: column; align-items: center; }
-  .cover-monogram {
-    width: 92px; height: 92px; border-radius: 50%; border: 1px solid var(--ks-gold);
-    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
-    box-shadow: 0 0 0 4px rgba(201,162,75,0.08), inset 0 0 20px rgba(201,162,75,0.08);
+  @media (min-width:640px){
+    .hero h1{font-size:56px;}
+    .cart-drawer{max-width:480px; left:auto; right:18px; bottom:18px; border-radius:16px;}
   }
-  .cover-monogram-ks { font-family: 'Cinzel', serif; font-size: 30px; color: var(--ks-gold-light); line-height: 1; }
-  .cover-monogram-bar { font-family: 'Cinzel', serif; font-size: 8px; letter-spacing: 0.2em; color: var(--ks-panel); background: var(--ks-gold); padding: 2px 7px; border-radius: 2px; }
-  .cover-caption { margin-top: 10px; font-size: 12.5px; letter-spacing: 0.1em; color: var(--ks-gold-dim); font-style: italic; }
-  .cover-tel { margin-top: 6px; font-size: 13px; color: var(--ks-cream); letter-spacing: 0.03em; }
-  .cover-addr { font-size: 10.5px; color: var(--ks-cream-dim); margin-top: 1px; }
-  .cover-contact { display: none; }
-
-  .cover-menu-word {
-    font-family: 'Cinzel', serif; font-weight: 700; font-size: clamp(38px, 13vw, 56px);
-    letter-spacing: 0.12em; color: var(--ks-gold-light);
-    background: linear-gradient(180deg, var(--ks-gold-light), var(--ks-gold) 60%, var(--ks-gold-dim));
-    -webkit-background-clip: text; background-clip: text; color: transparent;
-    text-shadow: 0 2px 24px rgba(201,162,75,0.25);
-    margin: 6px 0 2px;
-  }
-  .cover-fork-rule { width: 56px; height: 1px; background: linear-gradient(90deg, transparent, var(--ks-gold), transparent); margin-bottom: 14px; }
-
-  .cover-cats { width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 10px 8px; }
-  .cover-cat:nth-child(5) { grid-column: 1 / span 2; }
-  .cover-cat {
-    border: 1px solid rgba(201,162,75,0.22); border-radius: 6px; padding: 10px 6px;
-    display: flex; flex-direction: column; align-items: center; gap: 3px;
-  }
-  .cover-cat-icon { color: var(--ks-gold); margin-bottom: 2px; }
-  .cover-cat-name { font-family: 'Cinzel', serif; font-size: 11px; letter-spacing: 0.08em; color: var(--ks-gold-light); }
-  .cover-cat-sub { font-size: 10px; color: var(--ks-cream-dim); font-style: italic; }
-
-  .cover-tagline { font-size: 12.5px; font-style: italic; color: var(--ks-gold-dim); margin-top: 14px; padding: 0 8px; line-height: 1.4; }
-
-  /* ---------- DRINKS OVERVIEW ---------- */
-
-  .drink-cats { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 16px; }
-  .drink-cat { display: flex; align-items: center; gap: 14px; padding: 0 6px; }
-  .drink-cat-icon {
-    flex-shrink: 0; width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(201,162,75,0.4);
-    display: flex; align-items: center; justify-content: center; color: var(--ks-gold);
-  }
-  .drink-cat-text { display: flex; flex-direction: column; gap: 2px; text-align: left; }
-  .drink-cat-name { font-family: 'Cinzel', serif; font-size: 15px; letter-spacing: 0.05em; color: var(--ks-gold-light); }
-  .drink-cat-sub { font-size: 12px; font-style: italic; color: var(--ks-cream-dim); }
-
-  /* ---------- NAV / CHROME ---------- */
-
-  .navzone { position: fixed; top: 0; bottom: 0; width: 18%; z-index: 50; display: flex; align-items: center; cursor: pointer; }
-  .navzone.left { left: 0; justify-content: flex-start; }
-  .navzone.right { right: 0; justify-content: flex-end; }
-  .navbtn {
-    width: 36px; height: 36px; margin: 0 8px; border-radius: 50%;
-    border: 1px solid rgba(201,162,75,0.4); background: rgba(10,9,8,0.55); backdrop-filter: blur(6px);
-    display: flex; align-items: center; justify-content: center; color: var(--ks-gold-light);
-    opacity: 0.75; transition: opacity 0.25s ease, transform 0.25s ease; pointer-events: none;
-  }
-  .navbtn svg { width: 15px; height: 15px; }
-  .navzone:active .navbtn { transform: scale(0.9); }
-  .navzone.disabled { pointer-events: none; }
-  .navzone.disabled .navbtn { opacity: 0.15; }
-
-  .bottombar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 500; display: flex; flex-direction: column; align-items: center; gap: 9px; padding: 0 24px 16px; pointer-events: none; }
-  .progress-track { width: min(70vw, 260px); height: 2px; background: rgba(201,162,75,0.18); border-radius: 2px; overflow: hidden; }
-  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--ks-gold-dim), var(--ks-gold-light)); width: 6.6%; transition: width 0.5s cubic-bezier(0.45,0.05,0.15,1); }
-  .pagecount { font-family: 'Cormorant Garamond', serif; font-size: 11px; letter-spacing: 0.16em; color: var(--ks-gold-dim); text-transform: uppercase; }
-  .pagecount b { color: var(--ks-gold-light); font-weight: 600; }
-
-  .hint {
-    position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 600;
-    display: flex; flex-direction: column; align-items: center; gap: 14px; color: var(--ks-cream);
-    opacity: 1; transition: opacity 0.6s ease; pointer-events: none; text-align: center; padding: 0 30px;
-  }
-  .hint.hidden { opacity: 0; }
-  .hint-icon { color: var(--ks-gold-light); }
-  .hint-icon svg { width: 22px; height: 22px; animation: swipehand 1.6s ease-in-out infinite; }
-  @keyframes swipehand { 0%, 100% { transform: translateX(0); opacity: 0.5; } 50% { transform: translateX(-10px); opacity: 1; } }
-  .hint-text { font-family: 'Cormorant Garamond', serif; font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ks-gold-dim); }
-
-  @media (min-width: 720px) { .book { width: min(46vh, 380px); } }
 </style>
 </head>
 <body>
 
-  <div class="topbar">
-    <div class="brand"><span class="dot"></span>K STAY <span class="dot"></span> Meublés · Lounge · Restaurant</div>
-  </div>
+<div class="hero">
+  <div class="mark">EAT · DRINK · DANCE · REST</div>
+  <h1>O'Mba'p <span>Lounge</span></h1>
+  <div class="tag">Restaurant · <a href="#hebergement" class="tag-link">Hébergement</a> · Rooftop · Grill · Pizzeria</div>
+  <div class="loc">Mini Prix Bastos, Yaoundé — +237 686 868 630</div>
+  <div id="table-badge" class="table-badge hidden"></div>
+</div>
 
-  <div class="stage">
-    <div class="book" id="book">
-      <div class="page" data-index="0" style="z-index:15;">
-        <div class="page-inner">
-          <div class="page-face page-front"><div class="menu-page cover-page">
-        <div class="cover-frame">
-          <div class="cover-monogram">
-            <div class="cover-monogram-ks">KS</div>
-            <div class="cover-monogram-bar">K STAY</div>
-          </div>
-          <div class="cover-caption">Meublés · Lounge · Restaurant</div>
-          <div class="cover-contact">
-            <span><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 9h11v5a5 5 0 0 1-5 5H9a4 4 0 0 1-4-4V9z"/><path d="M16 10h1.5a2.2 2.2 0 0 1 0 4.4H16"/><path d="M8 6c0-1 1-1 1-2M11.5 6c0-1 1-1 1-2"/></svg></span>
-          </div>
-          <div class="cover-tel">689 01 64 51</div>
-          <div class="cover-addr">Ancienne gendarmerie, Bastos — Yaoundé</div>
-        </div>
-        <div class="cover-menu-word">MENU</div>
-        <div class="cover-fork-rule"></div>
-        <div class="cover-cats"><div class="cover-cat">
-          <div class="cover-cat-icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M7 9c-2-1-3-3-2-4s3 0 3 2"/><path d="M17 9c2-1 3-3 2-4s-3 0-3 2"/><ellipse cx="12" cy="13" rx="6" ry="5"/><path d="M9 12.5c0-1 .5-1.5 1-1.5s1 .5 1 1.5M13 12.5c0-1 .5-1.5 1-1.5s1 .5 1 1.5"/><path d="M10.5 16c.5.6 2.5.6 3 0"/></svg></div>
-          <div class="cover-cat-name">VIANDE</div>
-          <div class="cover-cat-sub">Grillades & spécialités</div>
-        </div>
-<div class="cover-cat">
-          <div class="cover-cat-icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20L20 4"/><ellipse cx="8" cy="15" rx="2" ry="1.6" transform="rotate(-45 8 15)"/><ellipse cx="12.2" cy="10.8" rx="1.8" ry="1.4" transform="rotate(-45 12.2 10.8)"/><ellipse cx="16" cy="7" rx="1.6" ry="1.2" transform="rotate(-45 16 7)"/></svg></div>
-          <div class="cover-cat-name">SHAWARMA</div>
-          <div class="cover-cat-sub">Poulet & viande</div>
-        </div>
-<div class="cover-cat">
-          <div class="cover-cat-icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4l9 15H3z"/><circle cx="11" cy="13" r="0.9" fill="currentColor" stroke="none"/><circle cx="14.5" cy="15.5" r="0.7" fill="currentColor" stroke="none"/><circle cx="9.5" cy="16.5" r="0.6" fill="currentColor" stroke="none"/><path d="M8 14.2L16 14.2"/></svg></div>
-          <div class="cover-cat-name">PIZZA</div>
-          <div class="cover-cat-sub">Saveurs authentiques</div>
-        </div>
-<div class="cover-cat">
-          <div class="cover-cat-icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="11" cy="13" rx="6" ry="5.2"/><path d="M15.5 10.5c1.2-1 2.8-1 3.6 0-.3 1.3-1.4 2-2.6 2"/><path d="M9 9.3h.01"/><path d="M7.5 8.2c-.7-.8-.6-1.8.2-2.2"/><path d="M9.5 16c.6.7 2.4.7 3 0"/></svg></div>
-          <div class="cover-cat-name">POULET</div>
-          <div class="cover-cat-sub">Plats savoureux</div>
-        </div>
-<div class="cover-cat">
-          <div class="cover-cat-icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16a8 6 0 0 1-16 0z"/><path d="M12 6c-.8 0-1.4.6-1.4 1.3 0 1 1.4 1 1.4 2"/></svg></div>
-          <div class="cover-cat-name">ACCOMPAGNEMENTS</div>
-          <div class="cover-cat-sub">Boissons & desserts</div>
-        </div></div>
-        <div class="cover-tagline">Des saveurs d'exception, des moments inoubliables.</div>
-      </div></div>
-          <div class="page-face page-back">
-            <div class="back-mark">
-              <span class="back-mark-ks">KS</span>
-              <span class="back-mark-sub">K STAY</span>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="page" data-index="1" style="z-index:14;">
-        <div class="page-inner">
-          <div class="page-face page-front"><div class="menu-page">
-        <div class="page-head">
-        <div class="mini-brand"><span class="mini-ks">KS</span><span class="mini-sep"></span>K STAY</div>
-        <div class="page-script">Nos</div>
-        <h2 class="page-title">ENTRÉES</h2>
-        <div class="title-rule"></div>
-      </div>
-        <div class="page-body">
-          <div class="group"><div class="group-items"><div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19c8 1 13-4 14-14-10 0-15 5-14 14z"/><path d="M6 18c3-4 6-7 12-12"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Salade composée au poulet</span><span class="leader"></span><span class="item-price">4 000 <em>FCFA</em></span>
-          </div>
-          <div class="item-sub">Laitue, poulet grillé, oeufs durs, tomates, carottes râpées</div>
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12c3-4 7-6 12-6 3 3 5 4 6 6-1 2-3 3-6 6-5 0-9-2-12-6z"/><circle cx="15" cy="10.5" r="0.6" fill="currentColor" stroke="none"/><path d="M3 12l-2-3m2 3l-2 3"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Salade thon</span><span class="leader"></span><span class="item-price">4 000 <em>FCFA</em></span>
-          </div>
-          <div class="item-sub">Thon, maïs doux, oeuf, tomates, laitue</div>
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 17c-2-4-1-9 3-12 1 3 1 5 0 7 3-1 6-1 8 1 2 2 2 5 0 6-3 2-8 1-11-2z"/><path d="M9 6l-1.5-2M12 6.5L11 4"/><circle cx="7" cy="15.5" r="0.6" fill="currentColor" stroke="none"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Remontade d'avocat aux crevettes</span><span class="leader"></span><span class="item-price">5 500 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div></div></div>
-        </div>
-        <div class="page-footnote"><div class="leafrule"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19c8 1 13-4 14-14-10 0-15 5-14 14z"/><path d="M6 18c3-4 6-7 12-12"/></svg><span></span><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19c8 1 13-4 14-14-10 0-15 5-14 14z"/><path d="M6 18c3-4 6-7 12-12"/></svg></div><div class="footnote-text">Merci de nous faire part de vos éventuelles allergies.</div></div>
-      </div></div>
-          <div class="page-face page-back">
-            <div class="back-mark">
-              <span class="back-mark-ks">KS</span>
-              <span class="back-mark-sub">K STAY</span>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="page" data-index="2" style="z-index:13;">
-        <div class="page-inner">
-          <div class="page-face page-front"><div class="menu-page">
-        <div class="page-head">
-        <div class="mini-brand"><span class="mini-ks">KS</span><span class="mini-sep"></span>K STAY</div>
-        <div class="page-script">Station</div>
-        <h2 class="page-title">PETIT DÉJEUNER</h2>
-        <div class="title-rule"></div>
-      </div>
-        <div class="page-body">
-          <div class="group"><div class="group-items"><div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 9h11v5a5 5 0 0 1-5 5H9a4 4 0 0 1-4-4V9z"/><path d="M16 10h1.5a2.2 2.2 0 0 1 0 4.4H16"/><path d="M8 6c0-1 1-1 1-2M11.5 6c0-1 1-1 1-2"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Petit déjeuner simple</span><span class="leader"></span><span class="item-price">4 000 <em>FCFA</em></span>
-          </div>
-          <div class="item-sub">Trois éléments au choix — tomate poivron, jambon, fromage râpé, thon, sardines — + boissons chaudes</div>
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 9h11v5a5 5 0 0 1-5 5H9a4 4 0 0 1-4-4V9z"/><path d="M16 10h1.5a2.2 2.2 0 0 1 0 4.4H16"/><path d="M8 6c0-1 1-1 1-2M11.5 6c0-1 1-1 1-2"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Continental</span><span class="leader"></span><span class="item-price">5 000 <em>FCFA</em></span>
-          </div>
-          <div class="item-sub">Jus de fruits, croissant, omelette + boissons chaudes</div>
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10l8-5 8 5"/><path d="M4 10v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/><path d="M4 10h16"/><path d="M6 15l1 4h10l1-4"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Sandwich</span><span class="leader"></span><span class="item-price">4 500 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6v12M6 12h12"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Supplément garniture</span><span class="leader"></span><span class="item-price">1 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div></div></div>
-        </div>
-        <div class="page-footnote"><div class="leafrule"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19c8 1 13-4 14-14-10 0-15 5-14 14z"/><path d="M6 18c3-4 6-7 12-12"/></svg><span></span><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19c8 1 13-4 14-14-10 0-15 5-14 14z"/><path d="M6 18c3-4 6-7 12-12"/></svg></div><div class="footnote-text">Des saveurs d'exception, des moments inoubliables.</div></div>
-      </div></div>
-          <div class="page-face page-back">
-            <div class="back-mark">
-              <span class="back-mark-ks">KS</span>
-              <span class="back-mark-sub">K STAY</span>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="page" data-index="3" style="z-index:12;">
-        <div class="page-inner">
-          <div class="page-face page-front"><div class="menu-page">
-        <div class="page-head">
-        <div class="mini-brand"><span class="mini-ks">KS</span><span class="mini-sep"></span>K STAY</div>
-        <div class="page-script">Station</div>
-        <h2 class="page-title">PÂTES</h2>
-        <div class="title-rule"></div>
-      </div>
-        <div class="page-body">
-          <div class="group"><div class="group-items"><div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8c2 1.5 2 6 0 8m6-8c2 1.5 2 6 0 8m6-8c2 1.5 2 6 0 8"/><path d="M5 8h14M5 16h14"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Spaghetti bolognaise</span><span class="leader"></span><span class="item-price">6 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8c2 1.5 2 6 0 8m6-8c2 1.5 2 6 0 8m6-8c2 1.5 2 6 0 8"/><path d="M5 8h14M5 16h14"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Tagliatelles Alfredo</span><span class="leader"></span><span class="item-price">8 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8c2 1.5 2 6 0 8m6-8c2 1.5 2 6 0 8m6-8c2 1.5 2 6 0 8"/><path d="M5 8h14M5 16h14"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Tagliatelles carbonara</span><span class="leader"></span><span class="item-price">7 500 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8c2 1.5 2 6 0 8m6-8c2 1.5 2 6 0 8m6-8c2 1.5 2 6 0 8"/><path d="M5 8h14M5 16h14"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Tagliatelles bolognaise</span><span class="leader"></span><span class="item-price">7 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8c2 1.5 2 6 0 8m6-8c2 1.5 2 6 0 8m6-8c2 1.5 2 6 0 8"/><path d="M5 8h14M5 16h14"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Penne el pesto</span><span class="leader"></span><span class="item-price">4 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8c2 1.5 2 6 0 8m6-8c2 1.5 2 6 0 8m6-8c2 1.5 2 6 0 8"/><path d="M5 8h14M5 16h14"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Penne carbonara</span><span class="leader"></span><span class="item-price">6 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div></div></div>
-        </div>
-        <div class="page-footnote"><div class="leafrule"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19c8 1 13-4 14-14-10 0-15 5-14 14z"/><path d="M6 18c3-4 6-7 12-12"/></svg><span></span><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19c8 1 13-4 14-14-10 0-15 5-14 14z"/><path d="M6 18c3-4 6-7 12-12"/></svg></div><div class="footnote-text">Merci de nous faire part de vos éventuelles allergies.</div></div>
-      </div></div>
-          <div class="page-face page-back">
-            <div class="back-mark">
-              <span class="back-mark-ks">KS</span>
-              <span class="back-mark-sub">K STAY</span>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="page" data-index="4" style="z-index:11;">
-        <div class="page-inner">
-          <div class="page-face page-front"><div class="menu-page">
-        <div class="page-head">
-        <div class="mini-brand"><span class="mini-ks">KS</span><span class="mini-sep"></span>K STAY</div>
-        <div class="page-script">Station</div>
-        <h2 class="page-title">VIANDE</h2>
-        <div class="title-rule"></div>
-      </div>
-        <div class="page-body">
-          <div class="group"><div class="group-items"><div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M7 9c-2-1-3-3-2-4s3 0 3 2"/><path d="M17 9c2-1 3-3 2-4s-3 0-3 2"/><ellipse cx="12" cy="13" rx="6" ry="5"/><path d="M9 12.5c0-1 .5-1.5 1-1.5s1 .5 1 1.5M13 12.5c0-1 .5-1.5 1-1.5s1 .5 1 1.5"/><path d="M10.5 16c.5.6 2.5.6 3 0"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Steak grillé</span><span class="leader"></span><span class="item-price">6 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17h16l-1-8-4 3-3-5-3 5-4-3-1 8z"/><path d="M4 17v1.4h16V17"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Steak royal</span><span class="leader"></span><span class="item-price">7 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16a8 6 0 0 1-16 0z"/><path d="M12 6c-.8 0-1.4.6-1.4 1.3 0 1 1.4 1 1.4 2"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Bouillon de queue de bœuf</span><span class="leader"></span><span class="item-price">5 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="13" rx="6" ry="5"/><ellipse cx="12" cy="14" rx="2" ry="1.4"/><circle cx="11" cy="14" r="0.3" fill="currentColor" stroke="none"/><circle cx="13" cy="14" r="0.3" fill="currentColor" stroke="none"/><path d="M7 10l-1-2M17 10l1-2"/><path d="M9.5 10.5h.01M14.5 10.5h.01"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Côtelettes de porc grillé</span><span class="leader"></span><span class="item-price">7 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="13" rx="6" ry="5"/><ellipse cx="12" cy="14" rx="2" ry="1.4"/><circle cx="11" cy="14" r="0.3" fill="currentColor" stroke="none"/><circle cx="13" cy="14" r="0.3" fill="currentColor" stroke="none"/><path d="M7 10l-1-2M17 10l1-2"/><path d="M9.5 10.5h.01M14.5 10.5h.01"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Échine de porc dijonnaise</span><span class="leader"></span><span class="item-price">7 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M7 9c-2-1-3-3-2-4s3 0 3 2"/><path d="M17 9c2-1 3-3 2-4s-3 0-3 2"/><ellipse cx="12" cy="13" rx="6" ry="5"/><path d="M9 12.5c0-1 .5-1.5 1-1.5s1 .5 1 1.5M13 12.5c0-1 .5-1.5 1-1.5s1 .5 1 1.5"/><path d="M10.5 16c.5.6 2.5.6 3 0"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Émincé de bœuf</span><span class="leader"></span><span class="item-price">6 500 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div></div></div>
-<div class="group"><div class="group-title">Station Shawarma</div><div class="group-items"><div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20L20 4"/><ellipse cx="8" cy="15" rx="2" ry="1.6" transform="rotate(-45 8 15)"/><ellipse cx="12.2" cy="10.8" rx="1.8" ry="1.4" transform="rotate(-45 12.2 10.8)"/><ellipse cx="16" cy="7" rx="1.6" ry="1.2" transform="rotate(-45 16 7)"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Shawarma poulet</span><span class="leader"></span><span class="item-price">2 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20L20 4"/><ellipse cx="8" cy="15" rx="2" ry="1.6" transform="rotate(-45 8 15)"/><ellipse cx="12.2" cy="10.8" rx="1.8" ry="1.4" transform="rotate(-45 12.2 10.8)"/><ellipse cx="16" cy="7" rx="1.6" ry="1.2" transform="rotate(-45 16 7)"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Shawarma viande</span><span class="leader"></span><span class="item-price">2 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div></div></div>
-        </div>
-        
-      </div></div>
-          <div class="page-face page-back">
-            <div class="back-mark">
-              <span class="back-mark-ks">KS</span>
-              <span class="back-mark-sub">K STAY</span>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="page" data-index="5" style="z-index:10;">
-        <div class="page-inner">
-          <div class="page-face page-front"><div class="menu-page">
-        <div class="page-head">
-        <div class="mini-brand"><span class="mini-ks">KS</span><span class="mini-sep"></span>K STAY</div>
-        <div class="page-script">Station</div>
-        <h2 class="page-title">POISSON</h2>
-        <div class="title-rule"></div>
-      </div>
-        <div class="page-body">
-          <div class="group"><div class="group-items"><div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12c3-4 7-6 12-6 3 3 5 4 6 6-1 2-3 3-6 6-5 0-9-2-12-6z"/><circle cx="15" cy="10.5" r="0.6" fill="currentColor" stroke="none"/><path d="M3 12l-2-3m2 3l-2 3"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Sole grillée</span><span class="leader"></span><span class="item-price">10 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12c3-4 7-6 12-6 3 3 5 4 6 6-1 2-3 3-6 6-5 0-9-2-12-6z"/><circle cx="15" cy="10.5" r="0.6" fill="currentColor" stroke="none"/><path d="M3 12l-2-3m2 3l-2 3"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Filet capitaine</span><span class="leader"></span><span class="item-price">7 500 <em>FCFA</em></span>
-          </div>
-          <div class="item-sub">Grillé / à la crème fraîche champignons</div>
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12c3-4 7-6 12-6 3 3 5 4 6 6-1 2-3 3-6 6-5 0-9-2-12-6z"/><circle cx="15" cy="10.5" r="0.6" fill="currentColor" stroke="none"/><path d="M3 12l-2-3m2 3l-2 3"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Filet de capitaine</span><span class="leader"></span><span class="item-price">8 000 <em>FCFA</em></span>
-          </div>
-          <div class="item-sub">Escalope au poivron</div>
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12c3-4 7-6 12-6 3 3 5 4 6 6-1 2-3 3-6 6-5 0-9-2-12-6z"/><circle cx="15" cy="10.5" r="0.6" fill="currentColor" stroke="none"/><path d="M3 12l-2-3m2 3l-2 3"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Bar grillé</span><span class="leader"></span><span class="item-price">8 500 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12c3-4 7-6 12-6 3 3 5 4 6 6-1 2-3 3-6 6-5 0-9-2-12-6z"/><circle cx="15" cy="10.5" r="0.6" fill="currentColor" stroke="none"/><path d="M3 12l-2-3m2 3l-2 3"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Bar à la sauce tomate provençale</span><span class="leader"></span><span class="item-price">8 500 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12c3-4 7-6 12-6 3 3 5 4 6 6-1 2-3 3-6 6-5 0-9-2-12-6z"/><circle cx="15" cy="10.5" r="0.6" fill="currentColor" stroke="none"/><path d="M3 12l-2-3m2 3l-2 3"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Filet de bar à l'ail</span><span class="leader"></span><span class="item-price">9 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div></div></div>
-        </div>
-        <div class="page-footnote"><div class="leafrule"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19c8 1 13-4 14-14-10 0-15 5-14 14z"/><path d="M6 18c3-4 6-7 12-12"/></svg><span></span><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19c8 1 13-4 14-14-10 0-15 5-14 14z"/><path d="M6 18c3-4 6-7 12-12"/></svg></div><div class="footnote-text">Merci de nous faire part de vos éventuelles allergies.</div></div>
-      </div></div>
-          <div class="page-face page-back">
-            <div class="back-mark">
-              <span class="back-mark-ks">KS</span>
-              <span class="back-mark-sub">K STAY</span>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="page" data-index="6" style="z-index:9;">
-        <div class="page-inner">
-          <div class="page-face page-front"><div class="menu-page">
-        <div class="page-head">
-        <div class="mini-brand"><span class="mini-ks">KS</span><span class="mini-sep"></span>K STAY</div>
-        <div class="page-script">Station</div>
-        <h2 class="page-title">POULET</h2>
-        <div class="title-rule"></div>
-      </div>
-        <div class="page-body">
-          <div class="group"><div class="group-items"><div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="11" cy="13" rx="6" ry="5.2"/><path d="M15.5 10.5c1.2-1 2.8-1 3.6 0-.3 1.3-1.4 2-2.6 2"/><path d="M9 9.3h.01"/><path d="M7.5 8.2c-.7-.8-.6-1.8.2-2.2"/><path d="M9.5 16c.6.7 2.4.7 3 0"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Poulet DG</span><span class="leader"></span><span class="item-price">6 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="11" cy="13" rx="6" ry="5.2"/><path d="M15.5 10.5c1.2-1 2.8-1 3.6 0-.3 1.3-1.4 2-2.6 2"/><path d="M9 9.3h.01"/><path d="M7.5 8.2c-.7-.8-.6-1.8.2-2.2"/><path d="M9.5 16c.6.7 2.4.7 3 0"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Poulet grillé</span><span class="leader"></span><span class="item-price">5 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="11" cy="13" rx="6" ry="5.2"/><path d="M15.5 10.5c1.2-1 2.8-1 3.6 0-.3 1.3-1.4 2-2.6 2"/><path d="M9 9.3h.01"/><path d="M7.5 8.2c-.7-.8-.6-1.8.2-2.2"/><path d="M9.5 16c.6.7 2.4.7 3 0"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Poulet Yassa</span><span class="leader"></span><span class="item-price">4 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="11" cy="13" rx="6" ry="5.2"/><path d="M15.5 10.5c1.2-1 2.8-1 3.6 0-.3 1.3-1.4 2-2.6 2"/><path d="M9 9.3h.01"/><path d="M7.5 8.2c-.7-.8-.6-1.8.2-2.2"/><path d="M9.5 16c.6.7 2.4.7 3 0"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Poulet pané</span><span class="leader"></span><span class="item-price">6 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="11" cy="13" rx="6" ry="5.2"/><path d="M15.5 10.5c1.2-1 2.8-1 3.6 0-.3 1.3-1.4 2-2.6 2"/><path d="M9 9.3h.01"/><path d="M7.5 8.2c-.7-.8-.6-1.8.2-2.2"/><path d="M9.5 16c.6.7 2.4.7 3 0"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Escalope au poivron</span><span class="leader"></span><span class="item-price">6 500 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="11" cy="13" rx="6" ry="5.2"/><path d="M15.5 10.5c1.2-1 2.8-1 3.6 0-.3 1.3-1.4 2-2.6 2"/><path d="M9 9.3h.01"/><path d="M7.5 8.2c-.7-.8-.6-1.8.2-2.2"/><path d="M9.5 16c.6.7 2.4.7 3 0"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Chicken wings classic</span><span class="leader"></span><span class="item-price">6 500 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c1 3-3 4-3 7a3 3 0 0 0 6 0c1 .8 1.5 2 1.5 3.2A4.5 4.5 0 0 1 12 18a4.5 4.5 0 0 1-4.5-4.8C7.5 9 12 8 12 3z"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Chicken wings BBQ</span><span class="leader"></span><span class="item-price">6 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div></div></div>
-        </div>
-        <div class="page-footnote"><div class="leafrule"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19c8 1 13-4 14-14-10 0-15 5-14 14z"/><path d="M6 18c3-4 6-7 12-12"/></svg><span></span><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19c8 1 13-4 14-14-10 0-15 5-14 14z"/><path d="M6 18c3-4 6-7 12-12"/></svg></div><div class="footnote-text">Merci de nous faire part de vos éventuelles allergies.</div></div>
-      </div></div>
-          <div class="page-face page-back">
-            <div class="back-mark">
-              <span class="back-mark-ks">KS</span>
-              <span class="back-mark-sub">K STAY</span>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="page" data-index="7" style="z-index:8;">
-        <div class="page-inner">
-          <div class="page-face page-front"><div class="menu-page">
-        <div class="page-head">
-        <div class="mini-brand"><span class="mini-ks">KS</span><span class="mini-sep"></span>K STAY</div>
-        <div class="page-script">Station</div>
-        <h2 class="page-title">CRUSTACÉS</h2>
-        <div class="title-rule"></div>
-      </div>
-        <div class="page-body">
-          <div class="group"><div class="group-items"><div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 17c-2-4-1-9 3-12 1 3 1 5 0 7 3-1 6-1 8 1 2 2 2 5 0 6-3 2-8 1-11-2z"/><path d="M9 6l-1.5-2M12 6.5L11 4"/><circle cx="7" cy="15.5" r="0.6" fill="currentColor" stroke="none"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Gambas grillées</span><span class="leader"></span><span class="item-price">10 500 <em>FCFA</em></span>
-          </div>
-          <div class="item-sub">Au vin / curry</div>
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 17c-2-4-1-9 3-12 1 3 1 5 0 7 3-1 6-1 8 1 2 2 2 5 0 6-3 2-8 1-11-2z"/><path d="M9 6l-1.5-2M12 6.5L11 4"/><circle cx="7" cy="15.5" r="0.6" fill="currentColor" stroke="none"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Crevettes sautées</span><span class="leader"></span><span class="item-price">8 500 <em>FCFA</em></span>
-          </div>
-          <div class="item-sub">À l'ail / à la béchamel</div>
-        </div>
-      </div></div></div>
-<div class="group"><div class="group-title">Station Riz</div><div class="group-items"><div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16a8 6 0 0 1-16 0z"/><path d="M8 6.5c1-.6 1.6.4 1 1M12 6c1-.6 1.6.4 1 1M16 6.5c1-.6 1.6.4 1 1"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Riz Jolof</span><span class="leader"></span><span class="item-price">4 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div></div></div>
-        </div>
-        <div class="page-footnote"><div class="leafrule"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19c8 1 13-4 14-14-10 0-15 5-14 14z"/><path d="M6 18c3-4 6-7 12-12"/></svg><span></span><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19c8 1 13-4 14-14-10 0-15 5-14 14z"/><path d="M6 18c3-4 6-7 12-12"/></svg></div><div class="footnote-text">Merci de nous faire part de vos éventuelles allergies.</div></div>
-      </div></div>
-          <div class="page-face page-back">
-            <div class="back-mark">
-              <span class="back-mark-ks">KS</span>
-              <span class="back-mark-sub">K STAY</span>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="page" data-index="8" style="z-index:7;">
-        <div class="page-inner">
-          <div class="page-face page-front"><div class="menu-page">
-        <div class="page-head">
-        <div class="mini-brand"><span class="mini-ks">KS</span><span class="mini-sep"></span>K STAY</div>
-        
-        <h2 class="page-title">GARNITURES & SAUCES</h2>
-        <div class="title-rule"></div>
-      </div>
-        <div class="page-body scrollable">
-          <div class="group"><div class="group-title">Garnitures — à partir de 1 000 FCFA</div><div class="group-items"><div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 10h12l-1.2 9H7.2z"/><path d="M8 10V6M11 10V5M14 10V5.3M17 10V6.6"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Frite plantain</span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 10h12l-1.2 9H7.2z"/><path d="M8 10V6M11 10V5M14 10V5.3M17 10V6.6"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Frite pomme</span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19c8 1 13-4 14-14-10 0-15 5-14 14z"/><path d="M6 18c3-4 6-7 12-12"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Jardinier de légumes</span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16a8 6 0 0 1-16 0z"/><path d="M12 6c-.8 0-1.4.6-1.4 1.3 0 1 1.4 1 1.4 2"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Purée de pomme</span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16a8 6 0 0 1-16 0z"/><path d="M8 6.5c1-.6 1.6.4 1 1M12 6c1-.6 1.6.4 1 1M16 6.5c1-.6 1.6.4 1 1"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Riz</span>
-          </div>
-          
-        </div>
-      </div></div></div>
-<div class="group"><div class="group-title">Autres sauces — supplément à partir de 500 FCFA</div><div class="group-items"><div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14a7 5 0 0 1-14 0z"/><path d="M12 6.5c1-.8 1.8.2 1 1.2-.8.8 0 1.6 1 1"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Sauce dijonnaise</span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14a7 5 0 0 1-14 0z"/><path d="M12 6.5c1-.8 1.8.2 1 1.2-.8.8 0 1.6 1 1"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Sauce au poivre</span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14a7 5 0 0 1-14 0z"/><path d="M12 6.5c1-.8 1.8.2 1 1.2-.8.8 0 1.6 1 1"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Sauce au citron</span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14a7 5 0 0 1-14 0z"/><path d="M12 6.5c1-.8 1.8.2 1 1.2-.8.8 0 1.6 1 1"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Sauce basquaise</span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14a7 5 0 0 1-14 0z"/><path d="M12 6.5c1-.8 1.8.2 1 1.2-.8.8 0 1.6 1 1"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Sauce à l'ail</span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14a7 5 0 0 1-14 0z"/><path d="M12 6.5c1-.8 1.8.2 1 1.2-.8.8 0 1.6 1 1"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Sauce crème</span>
-          </div>
-          
-        </div>
-      </div></div></div>
-        </div>
-        <div class="page-footnote"><div class="leafrule"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19c8 1 13-4 14-14-10 0-15 5-14 14z"/><path d="M6 18c3-4 6-7 12-12"/></svg><span></span><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19c8 1 13-4 14-14-10 0-15 5-14 14z"/><path d="M6 18c3-4 6-7 12-12"/></svg></div><div class="footnote-text">Des saveurs d'exception, des moments inoubliables.</div></div>
-      </div></div>
-          <div class="page-face page-back">
-            <div class="back-mark">
-              <span class="back-mark-ks">KS</span>
-              <span class="back-mark-sub">K STAY</span>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="page" data-index="9" style="z-index:6;">
-        <div class="page-inner">
-          <div class="page-face page-front"><div class="menu-page">
-        <div class="page-head">
-        <div class="mini-brand"><span class="mini-ks">KS</span><span class="mini-sep"></span>K STAY</div>
-        <div class="page-script">Station</div>
-        <h2 class="page-title">BURGER</h2>
-        <div class="title-rule"></div>
-      </div>
-        <div class="page-body">
-          <div class="group"><div class="group-items"><div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 10.5c0-3 3-5.5 7-5.5s7 2.5 7 5.5z"/><path d="M4.5 11h15M5 13.2h14M5 13.2c0 1 .3 1.6 1 1.9h12c.7-.3 1-1 1-1.9M6.2 16.6h11.6l-.8 2.4H7z"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Chicken burger</span><span class="leader"></span><span class="item-price">4 500 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 10.5c0-3 3-5.5 7-5.5s7 2.5 7 5.5z"/><path d="M4.5 11h15M5 13.2h14M5 13.2c0 1 .3 1.6 1 1.9h12c.7-.3 1-1 1-1.9M6.2 16.6h11.6l-.8 2.4H7z"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Steak burger</span><span class="leader"></span><span class="item-price">4 500 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 10.5c0-3 3-5.5 7-5.5s7 2.5 7 5.5z"/><path d="M4.5 11h15M5 13.2h14M5 13.2c0 1 .3 1.6 1 1.9h12c.7-.3 1-1 1-1.9M6.2 16.6h11.6l-.8 2.4H7z"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Burger du chef</span><span class="leader"></span><span class="item-price">5 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6v12M6 12h12"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Supplément garniture</span><span class="leader"></span><span class="item-price">1 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div></div></div>
-        </div>
-        <div class="page-footnote"><div class="leafrule"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19c8 1 13-4 14-14-10 0-15 5-14 14z"/><path d="M6 18c3-4 6-7 12-12"/></svg><span></span><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19c8 1 13-4 14-14-10 0-15 5-14 14z"/><path d="M6 18c3-4 6-7 12-12"/></svg></div><div class="footnote-text">Des saveurs d'exception, des moments inoubliables.</div></div>
-      </div></div>
-          <div class="page-face page-back">
-            <div class="back-mark">
-              <span class="back-mark-ks">KS</span>
-              <span class="back-mark-sub">K STAY</span>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="page" data-index="10" style="z-index:5;">
-        <div class="page-inner">
-          <div class="page-face page-front"><div class="menu-page">
-        <div class="page-head">
-        <div class="mini-brand"><span class="mini-ks">KS</span><span class="mini-sep"></span>K STAY</div>
-        <div class="page-script">Station</div>
-        <h2 class="page-title">PIZZA</h2>
-        <div class="title-rule"></div>
-      </div>
-        <div class="page-body">
-          <div class="group"><div class="group-items"><div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4l9 15H3z"/><circle cx="11" cy="13" r="0.9" fill="currentColor" stroke="none"/><circle cx="14.5" cy="15.5" r="0.7" fill="currentColor" stroke="none"/><circle cx="9.5" cy="16.5" r="0.6" fill="currentColor" stroke="none"/><path d="M8 14.2L16 14.2"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Pizza viande</span>
-          </div>
-          <div class="item-sub">Sauce tomate, viande hachée, fromage, poivron</div>
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4l9 15H3z"/><circle cx="11" cy="13" r="0.9" fill="currentColor" stroke="none"/><circle cx="14.5" cy="15.5" r="0.7" fill="currentColor" stroke="none"/><circle cx="9.5" cy="16.5" r="0.6" fill="currentColor" stroke="none"/><path d="M8 14.2L16 14.2"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Pizza poulet</span>
-          </div>
-          <div class="item-sub">Sauce tomate, poulet, fromage, oignon, poivron</div>
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4l9 15H3z"/><circle cx="11" cy="13" r="0.9" fill="currentColor" stroke="none"/><circle cx="14.5" cy="15.5" r="0.7" fill="currentColor" stroke="none"/><circle cx="9.5" cy="16.5" r="0.6" fill="currentColor" stroke="none"/><path d="M8 14.2L16 14.2"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">All'America</span>
-          </div>
-          <div class="item-sub">Sauce tomate, jambon, poulet, viande hachée, fromage, tomate, poivron</div>
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4l9 15H3z"/><circle cx="11" cy="13" r="0.9" fill="currentColor" stroke="none"/><circle cx="14.5" cy="15.5" r="0.7" fill="currentColor" stroke="none"/><circle cx="9.5" cy="16.5" r="0.6" fill="currentColor" stroke="none"/><path d="M8 14.2L16 14.2"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Pizza Royal</span>
-          </div>
-          <div class="item-sub">Sauce tomate, jambon, fromage</div>
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4l9 15H3z"/><circle cx="11" cy="13" r="0.9" fill="currentColor" stroke="none"/><circle cx="14.5" cy="15.5" r="0.7" fill="currentColor" stroke="none"/><circle cx="9.5" cy="16.5" r="0.6" fill="currentColor" stroke="none"/><path d="M8 14.2L16 14.2"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Pizza burger</span>
-          </div>
-          <div class="item-sub">Sauce tomate, viande hachée, fromage cheddar, blanc et jaune</div>
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4l9 15H3z"/><circle cx="11" cy="13" r="0.9" fill="currentColor" stroke="none"/><circle cx="14.5" cy="15.5" r="0.7" fill="currentColor" stroke="none"/><circle cx="9.5" cy="16.5" r="0.6" fill="currentColor" stroke="none"/><path d="M8 14.2L16 14.2"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Pizza de chèvre</span>
-          </div>
-          <div class="item-sub">Crème fraîche, fromage de chèvre, fromage</div>
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4l9 15H3z"/><circle cx="11" cy="13" r="0.9" fill="currentColor" stroke="none"/><circle cx="14.5" cy="15.5" r="0.7" fill="currentColor" stroke="none"/><circle cx="9.5" cy="16.5" r="0.6" fill="currentColor" stroke="none"/><path d="M8 14.2L16 14.2"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Pizza K STAY</span>
-          </div>
-          <div class="item-sub">Sauce tomate, lardon, viande hachée, poulet, œuf, champignons, fromage, poivron</div>
-        </div>
-      </div></div></div>
-        </div>
-        <div class="page-footnote"><div class="leafrule"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19c8 1 13-4 14-14-10 0-15 5-14 14z"/><path d="M6 18c3-4 6-7 12-12"/></svg><span></span><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19c8 1 13-4 14-14-10 0-15 5-14 14z"/><path d="M6 18c3-4 6-7 12-12"/></svg></div><div class="footnote-text">Des saveurs d'exception, des moments inoubliables.</div></div>
-      </div></div>
-          <div class="page-face page-back">
-            <div class="back-mark">
-              <span class="back-mark-ks">KS</span>
-              <span class="back-mark-sub">K STAY</span>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="page" data-index="11" style="z-index:4;">
-        <div class="page-inner">
-          <div class="page-face page-front"><div class="menu-page">
-        <div class="page-head">
-        <div class="mini-brand"><span class="mini-ks">KS</span><span class="mini-sep"></span>K STAY</div>
-        <div class="page-script">Desserts</div>
-        <h2 class="page-title">GOURMANDS</h2>
-        <div class="title-rule"></div>
-      </div>
-        <div class="page-body">
-          <div class="group"><div class="group-items"><div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l7-13 9 13z"/><path d="M7.5 14.5h9"/><path d="M11 7l1-2.4L13 7"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Crêpe caramel</span><span class="leader"></span><span class="item-price">2 500 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l7-13 9 13z"/><path d="M7.5 14.5h9"/><path d="M11 7l1-2.4L13 7"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Crêpe suzette</span><span class="leader"></span><span class="item-price">3 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l7-13 9 13z"/><path d="M7.5 14.5h9"/><path d="M11 7l1-2.4L13 7"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Crêpe nature</span><span class="leader"></span><span class="item-price">2 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l7-13 9 13z"/><path d="M7.5 14.5h9"/><path d="M11 7l1-2.4L13 7"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Crêpe chocolat</span><span class="leader"></span><span class="item-price">2 500 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l7-13 9 13z"/><path d="M7.5 14.5h9"/><path d="M11 7l1-2.4L13 7"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Pancakes à sa sauce caramel beurre salé</span><span class="leader"></span><span class="item-price">3 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="14" r="4"/><circle cx="15.5" cy="14" r="3.2"/><path d="M9 10c0-1.4.9-2.4 2-2.6"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Cascade de fruits</span><span class="leader"></span><span class="item-price">2 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="14" r="4"/><circle cx="15.5" cy="14" r="3.2"/><path d="M9 10c0-1.4.9-2.4 2-2.6"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Salade de fruits</span><span class="leader"></span><span class="item-price">2 500 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l7-13 9 13z"/><path d="M7.5 14.5h9"/><path d="M11 7l1-2.4L13 7"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Fondant chocolat</span><span class="leader"></span><span class="item-price">3 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l7-13 9 13z"/><path d="M7.5 14.5h9"/><path d="M11 7l1-2.4L13 7"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="badge">NOUVEAU</span><span class="item-name">Cake citron</span><span class="leader"></span><span class="item-price">2 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l7-13 9 13z"/><path d="M7.5 14.5h9"/><path d="M11 7l1-2.4L13 7"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="badge">NOUVEAU</span><span class="item-name">Cake chocolat</span><span class="leader"></span><span class="item-price">2 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l7-13 9 13z"/><path d="M7.5 14.5h9"/><path d="M11 7l1-2.4L13 7"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="badge">NOUVEAU</span><span class="item-name">Cake nature</span><span class="leader"></span><span class="item-price">2 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l7-13 9 13z"/><path d="M7.5 14.5h9"/><path d="M11 7l1-2.4L13 7"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="badge">NOUVEAU</span><span class="item-name">Moelleux chocolat / glace</span><span class="leader"></span><span class="item-price">4 500 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div></div></div>
-        </div>
-        <div class="page-footnote"><div class="leafrule"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19c8 1 13-4 14-14-10 0-15 5-14 14z"/><path d="M6 18c3-4 6-7 12-12"/></svg><span></span><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19c8 1 13-4 14-14-10 0-15 5-14 14z"/><path d="M6 18c3-4 6-7 12-12"/></svg></div><div class="footnote-text">Merci de nous faire part de vos éventuelles allergies.</div></div>
-      </div></div>
-          <div class="page-face page-back">
-            <div class="back-mark">
-              <span class="back-mark-ks">KS</span>
-              <span class="back-mark-sub">K STAY</span>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="page" data-index="12" style="z-index:3;">
-        <div class="page-inner">
-          <div class="page-face page-front"><div class="menu-page drinks-page">
-        <div class="page-head">
-        <div class="mini-brand"><span class="mini-ks">KS</span><span class="mini-sep"></span>K STAY</div>
-        
-        <h2 class="page-title">BOISSONS</h2>
-        <div class="title-rule"></div>
-      </div>
-        <div class="drink-cats"><div class="drink-cat">
-          <div class="drink-cat-icon"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4c3 4 6 7.6 6 11a6 6 0 0 1-12 0c0-3.4 3-7 6-11z"/></svg></div>
-          <div class="drink-cat-text">
-            <div class="drink-cat-name">Jus naturels</div>
-            <div class="drink-cat-sub">Fraîcheur & vitamines</div>
-          </div>
-        </div>
-<div class="drink-cat">
-          <div class="drink-cat-icon"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16l-8 8v6"/><path d="M8.5 20h7"/><path d="M6.5 8h11"/></svg></div>
-          <div class="drink-cat-text">
-            <div class="drink-cat-name">Cocktails</div>
-            <div class="drink-cat-sub">Créations & saveurs</div>
-          </div>
-        </div>
-<div class="drink-cat">
-          <div class="drink-cat-icon"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3h4v3.2c1.4.8 2 2 2 3.8V19a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-9c0-1.8.6-3 2-3.8z"/><path d="M9 13h6"/></svg></div>
-          <div class="drink-cat-text">
-            <div class="drink-cat-name">Boissons fraîches</div>
-            <div class="drink-cat-sub">Plaisir & désaltération</div>
-          </div>
-        </div>
-<div class="drink-cat">
-          <div class="drink-cat-icon"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 9h11v5a5 5 0 0 1-5 5H9a4 4 0 0 1-4-4V9z"/><path d="M16 10h1.5a2.2 2.2 0 0 1 0 4.4H16"/><path d="M8 6c0-1 1-1 1-2M11.5 6c0-1 1-1 1-2"/></svg></div>
-          <div class="drink-cat-text">
-            <div class="drink-cat-name">Boissons chaudes</div>
-            <div class="drink-cat-sub">Douceur & réconfort</div>
-          </div>
-        </div>
-<div class="drink-cat">
-          <div class="drink-cat-icon"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6v3l1.4 1.6c.4.5.6 1.1.6 1.7V19a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V9.3c0-.6.2-1.2.6-1.7L11 6V3z"/><path d="M9 6h6"/></svg></div>
-          <div class="drink-cat-text">
-            <div class="drink-cat-name">Eaux</div>
-            <div class="drink-cat-sub">Pureté & hydratation</div>
-          </div>
-        </div></div>
-        <div class="page-footnote"><div class="leafrule"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19c8 1 13-4 14-14-10 0-15 5-14 14z"/><path d="M6 18c3-4 6-7 12-12"/></svg><span></span><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19c8 1 13-4 14-14-10 0-15 5-14 14z"/><path d="M6 18c3-4 6-7 12-12"/></svg></div><div class="footnote-text">Des saveurs d'exception, des moments inoubliables.</div></div>
-      </div></div>
-          <div class="page-face page-back">
-            <div class="back-mark">
-              <span class="back-mark-ks">KS</span>
-              <span class="back-mark-sub">K STAY</span>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="page" data-index="13" style="z-index:2;">
-        <div class="page-inner">
-          <div class="page-face page-front"><div class="menu-page">
-        <div class="page-head">
-        <div class="mini-brand"><span class="mini-ks">KS</span><span class="mini-sep"></span>K STAY</div>
-        <div class="page-script">Station Boisson</div>
-        <h2 class="page-title">VINS</h2>
-        <div class="title-rule"></div>
-      </div>
-        <div class="page-body scrollable">
-          <div class="group"><div class="group-title">Vin rouge</div><div class="group-items"><div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4h8c0 4.5-2 7-4 7s-4-2.5-4-7z"/><path d="M12 11v6M9 20h6"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Haut-Médoc Giscours</span><span class="leader"></span><span class="item-price">40 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4h8c0 4.5-2 7-4 7s-4-2.5-4-7z"/><path d="M12 11v6M9 20h6"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Château Mongravey</span><span class="leader"></span><span class="item-price">60 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4h8c0 4.5-2 7-4 7s-4-2.5-4-7z"/><path d="M12 11v6M9 20h6"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Château d'Arcins</span><span class="leader"></span><span class="item-price">40 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4h8c0 4.5-2 7-4 7s-4-2.5-4-7z"/><path d="M12 11v6M9 20h6"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Château Bayerres</span><span class="leader"></span><span class="item-price">40 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4h8c0 4.5-2 7-4 7s-4-2.5-4-7z"/><path d="M12 11v6M9 20h6"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Château Ferrand</span><span class="leader"></span><span class="item-price">40 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4h8c0 4.5-2 7-4 7s-4-2.5-4-7z"/><path d="M12 11v6M9 20h6"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Château Gravière</span><span class="leader"></span><span class="item-price">60 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4h8c0 4.5-2 7-4 7s-4-2.5-4-7z"/><path d="M12 11v6M9 20h6"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Château Valac</span><span class="leader"></span><span class="item-price">30 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4h8c0 4.5-2 7-4 7s-4-2.5-4-7z"/><path d="M12 11v6M9 20h6"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Carillonade</span><span class="leader"></span><span class="item-price">30 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div></div></div>
-<div class="group"><div class="group-title">Vin blanc</div><div class="group-items"><div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4h8c0 4.5-2 7-4 7s-4-2.5-4-7z"/><path d="M12 11v6M9 20h6"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Misterio</span><span class="leader"></span><span class="item-price">20 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4h8c0 4.5-2 7-4 7s-4-2.5-4-7z"/><path d="M12 11v6M9 20h6"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Château Valac</span><span class="leader"></span><span class="item-price">20 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4h8c0 4.5-2 7-4 7s-4-2.5-4-7z"/><path d="M12 11v6M9 20h6"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Carillonade</span><span class="leader"></span><span class="item-price">20 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4h8c0 4.5-2 7-4 7s-4-2.5-4-7z"/><path d="M12 11v6M9 20h6"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Grand Versant</span><span class="leader"></span><span class="item-price">20 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4h8c0 4.5-2 7-4 7s-4-2.5-4-7z"/><path d="M12 11v6M9 20h6"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Gustave Lorentz</span><span class="leader"></span><span class="item-price">25 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4h8c0 4.5-2 7-4 7s-4-2.5-4-7z"/><path d="M12 11v6M9 20h6"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Uby</span><span class="leader"></span><span class="item-price">25 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div></div></div>
-<div class="group"><div class="group-title">Vin mousseux</div><div class="group-items"><div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4h8c0 4.5-2 7-4 7s-4-2.5-4-7z"/><path d="M12 11v6M9 20h6"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Moscato</span><span class="leader"></span><span class="item-price">25 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4h8c0 4.5-2 7-4 7s-4-2.5-4-7z"/><path d="M12 11v6M9 20h6"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Carillonade Mousseux</span><span class="leader"></span><span class="item-price">25 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4h8c0 4.5-2 7-4 7s-4-2.5-4-7z"/><path d="M12 11v6M9 20h6"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">JP Chenet</span><span class="leader"></span><span class="item-price">25 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div></div></div>
-        </div>
-        <div class="page-footnote"><div class="leafrule"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19c8 1 13-4 14-14-10 0-15 5-14 14z"/><path d="M6 18c3-4 6-7 12-12"/></svg><span></span><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19c8 1 13-4 14-14-10 0-15 5-14 14z"/><path d="M6 18c3-4 6-7 12-12"/></svg></div><div class="footnote-text">Des saveurs d'exception, des moments inoubliables.</div></div>
-      </div></div>
-          <div class="page-face page-back">
-            <div class="back-mark">
-              <span class="back-mark-ks">KS</span>
-              <span class="back-mark-sub">K STAY</span>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="page" data-index="14" style="z-index:1;">
-        <div class="page-inner">
-          <div class="page-face page-front"><div class="menu-page">
-        <div class="page-head">
-        <div class="mini-brand"><span class="mini-ks">KS</span><span class="mini-sep"></span>K STAY</div>
-        <div class="page-script">Station Boisson</div>
-        <h2 class="page-title">SPIRITUEUX</h2>
-        <div class="title-rule"></div>
-      </div>
-        <div class="page-body scrollable">
-          <div class="group"><div class="group-title">Whisky</div><div class="group-items"><div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6h12l-1 12H7z"/><path d="M6 10h12"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Blue Label</span><span class="leader"></span><span class="item-price">240 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6h12l-1 12H7z"/><path d="M6 10h12"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Glenfiddich 12 ans (1L)</span><span class="leader"></span><span class="item-price">50 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6h12l-1 12H7z"/><path d="M6 10h12"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Glenfiddich 12 ans (75cl)</span><span class="leader"></span><span class="item-price">45 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6h12l-1 12H7z"/><path d="M6 10h12"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Glenfiddich 15 ans</span><span class="leader"></span><span class="item-price">80 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6h12l-1 12H7z"/><path d="M6 10h12"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Hennessy XO</span><span class="leader"></span><span class="item-price">310 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6h12l-1 12H7z"/><path d="M6 10h12"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Hennessy VS</span><span class="leader"></span><span class="item-price">60 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6h12l-1 12H7z"/><path d="M6 10h12"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Hennessy VSOP</span><span class="leader"></span><span class="item-price">90 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6h12l-1 12H7z"/><path d="M6 10h12"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Green Label 15 ans</span><span class="leader"></span><span class="item-price">90 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6h12l-1 12H7z"/><path d="M6 10h12"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Black Label 12 ans</span><span class="leader"></span><span class="item-price">50 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6h12l-1 12H7z"/><path d="M6 10h12"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Jack Daniel's Single Barrel</span><span class="leader"></span><span class="item-price">80 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6h12l-1 12H7z"/><path d="M6 10h12"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Chivas 12 ans</span><span class="leader"></span><span class="item-price">50 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6h12l-1 12H7z"/><path d="M6 10h12"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Chivas 15 ans</span><span class="leader"></span><span class="item-price">80 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6h12l-1 12H7z"/><path d="M6 10h12"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Chivas 18 ans</span><span class="leader"></span><span class="item-price">100 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6h12l-1 12H7z"/><path d="M6 10h12"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Jameson Barrel</span><span class="leader"></span><span class="item-price">35 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6h12l-1 12H7z"/><path d="M6 10h12"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Dewar's 12 ans</span><span class="leader"></span><span class="item-price">45 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6h12l-1 12H7z"/><path d="M6 10h12"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Jack Daniel's</span><span class="leader"></span><span class="item-price">50 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6h12l-1 12H7z"/><path d="M6 10h12"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Monkey Shoulder</span><span class="leader"></span><span class="item-price">55 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6h12l-1 12H7z"/><path d="M6 10h12"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Singleton 12 ans</span><span class="leader"></span><span class="item-price">55 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div></div></div>
-<div class="group"><div class="group-title">Liqueur & vodka</div><div class="group-items"><div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16l-8 8.5z"/><path d="M12 13.5V20M8.5 20h7"/><path d="M9 5.5l1.6 1.7"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Ciroc</span><span class="leader"></span><span class="item-price">60 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16l-8 8.5z"/><path d="M12 13.5V20M8.5 20h7"/><path d="M9 5.5l1.6 1.7"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Belvedere</span><span class="leader"></span><span class="item-price">60 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16l-8 8.5z"/><path d="M12 13.5V20M8.5 20h7"/><path d="M9 5.5l1.6 1.7"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Absolut Vodka</span><span class="leader"></span><span class="item-price">30 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div></div></div>
-<div class="group"><div class="group-title">Apéro</div><div class="group-items"><div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16l-8 8.5z"/><path d="M12 13.5V20M8.5 20h7"/><path d="M9 5.5l1.6 1.7"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Martini</span><span class="leader"></span><span class="item-price">25 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16l-8 8.5z"/><path d="M12 13.5V20M8.5 20h7"/><path d="M9 5.5l1.6 1.7"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Campari</span><span class="leader"></span><span class="item-price">25 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div>
-<div class="item">
-        <div class="item-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16l-8 8.5z"/><path d="M12 13.5V20M8.5 20h7"/><path d="M9 5.5l1.6 1.7"/></svg></div>
-        <div class="item-body">
-          <div class="item-row">
-            <span class="item-name">Baileys</span><span class="leader"></span><span class="item-price">25 000 <em>FCFA</em></span>
-          </div>
-          
-        </div>
-      </div></div></div>
-        </div>
-        <div class="page-footnote"><div class="leafrule"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19c8 1 13-4 14-14-10 0-15 5-14 14z"/><path d="M6 18c3-4 6-7 12-12"/></svg><span></span><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19c8 1 13-4 14-14-10 0-15 5-14 14z"/><path d="M6 18c3-4 6-7 12-12"/></svg></div><div class="footnote-text">Des saveurs d'exception, des moments inoubliables.</div></div>
-      </div></div>
-          <div class="page-face page-back">
-            <div class="back-mark">
-              <span class="back-mark-ks">KS</span>
-              <span class="back-mark-sub">K STAY</span>
-            </div>
-          </div>
-        </div>
+<div class="catnav-wrap">
+  <nav class="catnav" id="catnav">
+    <a href="#petit-dej">Petits-déj</a>
+    <a href="#table">La Table</a>
+    <a href="#salades">Salades</a>
+    <a href="#sandwichs">Sandwichs</a>
+    <a href="#aperitifs">Apéritifs</a>
+    <a href="#volailles">Volailles</a>
+    <a href="#viandes">Viandes</a>
+    <a href="#poissons">Poissons</a>
+    <a href="#pates">Pâtes</a>
+    <a href="#pizzas">Pizzas</a>
+    <a href="#burgers">Burgers</a>
+    <a href="#sauces">Sauces</a>
+    <a href="#desserts">Desserts</a>
+    <a href="#glaces">Glaces &amp; Milkshakes</a>
+    <a href="#boissons">Boissons</a>
+    <a href="#vins">Vins</a>
+    <a href="#champagnes">Champagnes</a>
+    <a href="#whiskys">Whiskys</a>
+    <a href="#cocktails">Cocktails</a>
+  </nav>
+</div>
+
+<main>
+
+  <section id="petit-dej">
+    <div class="sec-head"><h2>Nos petits-déjeuners</h2></div>
+    <div class="item"><div class="item-row"><span class="name">Petit-déjeuner Simple</span><span class="price">4 000 FCFA</span></div><div class="desc">Omelette simple, pain, boisson chaude.</div></div>
+    <div class="item"><div class="item-row"><span class="name">Petit-déjeuner Continental</span><span class="price">5 000 FCFA</span></div><div class="desc">Omelette garnie, pain, boisson chaude, salade.</div></div>
+    <div class="item"><div class="item-row"><span class="name">Petit-déjeuner Français</span><span class="price">6 000 FCFA</span></div><div class="desc">Omelette, boisson chaude, viennoiserie, jus naturel au choix.</div></div>
+    <div class="item"><div class="item-row"><span class="name">Petit-déjeuner Américain</span><span class="price">7 000 FCFA</span></div><div class="desc">Omelette, boisson chaude, céréales, lait, assiette de fruits, confiture, yaourt, nems chinoises.</div></div>
+  </section>
+
+  <section id="table">
+    <div class="sec-head"><h2>The O'Mba'p Table</h2><span class="price-banner">Lun–Ven, 12h30–17h</span></div>
+    <div class="formule">
+      <div class="menu-option">
+        <div class="opt-label">Menu 1</div>
+        <div class="courses">Salade Fraîcheur · Bœuf Stroganoff · Coupe de fruits de saison</div>
+      </div>
+      <div class="menu-option">
+        <div class="opt-label">Menu 2</div>
+        <div class="courses">Salade Folle · Carpe en Papillote · Crêpes natures</div>
+      </div>
+      <div class="garnitures">Garnitures : plantains frits, riz parfumé aux feuilles de laurier, pommes rissolées. Offert : une bouteille d'eau.</div>
+      <div class="foot">
+        <span>Le menu, au choix</span>
+        <span class="price">10 000 FCFA</span>
       </div>
     </div>
-  </div>
+  </section>
 
-  <div class="navzone left" id="navLeft" aria-label="Page précédente">
-    <div class="navbtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></div>
-  </div>
-  <div class="navzone right" id="navRight" aria-label="Page suivante">
-    <div class="navbtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
-  </div>
+  <section id="hebergement">
+    <div class="sec-head"><h2>Hébergement</h2></div>
+    <div class="item" data-lodging="nuit"><div class="item-row"><span class="name-group"><span class="name">Chambre Standard</span><span class="avail-badge avail-yes">Disponible</span></span><span class="price">35 000 FCFA</span></div><div class="desc">Prix par nuit.</div></div>
+    <div class="item" data-lodging="nuit"><div class="item-row"><span class="name-group"><span class="name">Chambre VIP</span><span class="avail-badge avail-yes">Disponible</span></span><span class="price">50 000 FCFA</span></div><div class="desc">Prix par nuit.</div></div>
+    <div class="item" data-lodging="passage"><div class="item-row"><span class="name-group"><span class="name">Sieste</span><span class="avail-badge avail-yes">Disponible</span></span><span class="price">20 000 FCFA</span></div><div class="desc">Forfait passage (quelques heures).</div></div>
+  </section>
 
-  <div class="bottombar">
-    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
-    <div class="pagecount"><b id="pageNow">1</b> / 15</div>
-  </div>
+  <section id="salades">
+    <div class="sec-head"><h2>Nos salades</h2></div>
+    <div class="item"><div class="item-row"><span class="name">Salade Composée</span><span class="price">5 000 FCFA</span></div><div class="desc">Salade, carotte, oignon, œuf, poulet/thon.</div></div>
+    <div class="item"><div class="item-row"><span class="name">Salade Fattouch</span><span class="price">5 000 FCFA</span></div><div class="desc">Laitue, tomates, concombre, oignons, persil, jus de citron.</div></div>
+    <div class="item"><div class="item-row"><span class="name">Salade Italienne</span><span class="price">6 000 FCFA</span></div><div class="desc">Pâtes aux 3 couleurs, tomates sierra, olives noires.</div></div>
+    <div class="item"><div class="item-row"><span class="name">Salade Avocat-Crevettes</span><span class="price">6 500 FCFA</span></div><div class="desc">Laitue, avocat, crevettes, tomates.</div></div>
+    <div class="item"><div class="item-row"><span class="name">Salade César</span><span class="price">8 000 FCFA</span></div><div class="desc">Laitue, croûtons, œuf, poulet, tomates, parmesan.</div></div>
+    <div class="item"><div class="item-row"><span class="name">Salade Mexicaine</span><span class="price">8 000 FCFA</span></div><div class="desc">Salade, carottes, maïs doux, haricot rouge.</div></div>
+  </section>
 
-  <div class="hint" id="hint">
-    <div class="hint-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M13 5l7 7-7 7M20 12H4"></path></svg></div>
-    <div class="hint-text">Glissez pour feuilleter</div>
+  <section id="sandwichs">
+    <div class="sec-head"><h2>Nos sandwichs</h2></div>
+    <div class="item"><div class="item-row"><span class="name">Shawarma Poulet / Viande</span><span class="price">4 000 FCFA</span></div><div class="desc">Poulet ou viande, tomate, salade, oignons.</div></div>
+    <div class="item"><div class="item-row"><span class="name">Sandwich Fajita</span><span class="price">5 000 FCFA</span></div><div class="desc">Poulet, oignons, poivrons, champignons, maïs, fromage, sauce soja.</div></div>
+    <div class="item"><div class="item-row"><span class="name">Sandwich Philadelphia</span><span class="price">5 000 FCFA</span></div><div class="desc">Viande, oignons, poivrons, champignons, maïs, fromage, sauce à l'avocat, mayonnaise.</div></div>
+    <div class="item"><div class="item-row"><span class="name">Sandwich Kafta</span><span class="price">5 000 FCFA</span></div><div class="desc">Viande hachée, tomate grillée, cornichons, oignons, pois chiches.</div></div>
+    <div class="item"><div class="item-row"><span class="name">Club Sandwich Avocat &amp; Thon</span><span class="price">5 000 FCFA</span></div><div class="desc">Salade, tomates, œuf, avocat, maïs, thon.</div></div>
+    <div class="item"><div class="item-row"><span class="name">Poulet désossé</span><span class="price">6 000 FCFA</span></div><div class="desc">Morceaux de poulet désossés, frites, salade, sauce barbecue.</div></div>
+  </section>
+
+  <section id="aperitifs">
+    <div class="sec-head"><h2>Nos apéritifs</h2></div>
+    <div class="item"><div class="item-row"><span class="name">Nems chinoises</span><span class="price">5 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Samoussas</span><span class="price">5 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Quesadilla au poulet</span><span class="price">6 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Ailes de poulet</span><span class="price">6 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Beignets de crevettes croustillants (tempura)</span><span class="price">6 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Goujonnettes de poulet</span><span class="price">6 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Tacos viande ou poulet</span><span class="price">6 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Calamars frits</span><span class="price">8 000 FCFA</span></div></div>
+  </section>
+
+  <section id="volailles">
+    <div class="sec-head"><h2>Nos volailles</h2></div>
+    <div class="item"><div class="item-row"><span class="name">Quart de poulet braisé</span><span class="price">7 500 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Blanc de poulet</span><span class="price">6 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Ailes de poulet</span><span class="price">6 500 FCFA</span></div><div class="desc">Braisé ou pané.</div></div>
+    <div class="item"><div class="item-row"><span class="name">Cuisses de poulet</span><span class="price">7 500 FCFA</span></div><div class="desc">Braisé ou pané.</div></div>
+    <div class="item"><div class="item-row"><span class="name">Cordon Bleu</span><span class="price">8 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Demi poulet braisé</span><span class="price">15 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Poulet DG (demi)</span><span class="price">12 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Canard braisé (entier)</span><span class="price">30 000 – 42 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Canard rôti au four (entier)</span><span class="price">30 000 – 42 000 FCFA</span></div></div>
+  </section>
+
+  <section id="viandes">
+    <div class="sec-head"><h2>Nos viandes</h2></div>
+    <div class="item"><div class="item-row"><span class="name">Brochettes de viande</span><span class="price">6 500 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Brochettes de porc</span><span class="price">6 500 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Brochettes de rognon</span><span class="price">6 500 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Brochettes de gésiers</span><span class="price">6 500 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Bouillon de queue de bœuf</span><span class="price">6 500 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Fajitas (assaisonnées)</span><span class="price">7 500 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Mix côte d'agneau</span><span class="price">14 500 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Steak grillé</span><span class="price">7 500 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Steak avec sauce</span><span class="price">9 500 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Petite grillade mixte</span><span class="price">18 500 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Grillade mixte terre et mer</span><span class="price">30 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Grande grillade mixte</span><span class="price">40 000 FCFA</span></div><div class="desc">Bœuf, brochettes de poulet, saucisses, merguez, rognons, gésiers.</div></div>
+  </section>
+
+  <section id="poissons">
+    <div class="sec-head"><h2>Nos poissons</h2></div>
+    <div class="item"><div class="item-row"><span class="name">Brochettes de capitaine</span><span class="price">9 500 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Crevettes sautées à l'ail</span><span class="price">6 500 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Goujonnettes de poisson panés</span><span class="price">6 500 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Pavé de capitaine</span><span class="price">9 500 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Moyenne Carpe braisée</span><span class="price">10 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Moyen Bar braisé</span><span class="price">12 500 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Carpe grillée moyenne avec sauce</span><span class="price">12 500 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Sole moyenne</span><span class="price">13 500 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Grande Carpe Braisée/Sauce</span><span class="price">13 500 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Trio de gambas</span><span class="price">15 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Grand Bar Braisé/Sauce</span><span class="price">15 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Grande sole</span><span class="price">18 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Roulade de sole</span><span class="price">18 500 FCFA</span></div></div>
+  </section>
+
+  <section id="pates">
+    <div class="sec-head"><h2>Nos pâtes</h2></div>
+    <div class="item"><div class="item-row"><span class="name">Penne Arrabiata</span><span class="price">5 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Penne au Pesto</span><span class="price">6 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Lasagne Italienne</span><span class="price">7 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Spaghetti Bolognaise</span><span class="price">8 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Tagliatelles Carbonara</span><span class="price">9 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Linguine au Saumon</span><span class="price">10 000 FCFA</span></div></div>
+  </section>
+
+  <section id="pizzas">
+    <div class="sec-head"><h2>Nos pizzas</h2></div>
+    <div class="item"><div class="item-row"><span class="name">Pizza margherita</span><span class="price">7 500 FCFA</span></div><div class="desc">Tomate, fromage, basilic, origan.</div></div>
+    <div class="item"><div class="item-row"><span class="name">Pizza végétarienne</span><span class="price">8 500 FCFA</span></div><div class="desc">Maïs, champignons, olives noires, courgettes, oignon, tomate.</div></div>
+    <div class="item"><div class="item-row"><span class="name">Pizza italienne</span><span class="price">10 000 FCFA</span></div><div class="desc">Tomate, jambon, fromage.</div></div>
+    <div class="item"><div class="item-row"><span class="name">Pizza orientale</span><span class="price">10 000 FCFA</span></div><div class="desc">Tomate, viande hachée, oignon, poivrons jaunes et verts.</div></div>
+    <div class="item"><div class="item-row"><span class="name">Pizza 4 fromages</span><span class="price">10 000 FCFA</span></div><div class="desc">Emmental, mozzarella, blue cheese, mimolette.</div></div>
+    <div class="item"><div class="item-row"><span class="name">Pizza tropicale</span><span class="price">11 000 FCFA</span></div><div class="desc">Tomate, origan, fromage, pepperoni.</div></div>
+    <div class="item"><div class="item-row"><span class="name">Pizza attuti</span><span class="price">11 000 FCFA</span></div><div class="desc">Tomate, poulet, champignons, poivrons, sauce barbecue.</div></div>
+    <div class="item"><div class="item-row"><span class="name">Pizza carbonara</span><span class="price">12 000 FCFA</span></div><div class="desc">Tomate, crème, poulet émincé.</div></div>
+    <div class="item"><div class="item-row"><span class="name">Pizza O'Mbap</span><span class="price">12 000 FCFA</span></div><div class="desc">Poulet, viande hachée, bacon, olives noires, fromage.</div></div>
+    <div class="item"><div class="item-row"><span class="name">Pizza relax</span><span class="price">13 000 FCFA</span></div><div class="desc">Calamars, moules, crevettes, tomate, oignon, basilic.</div></div>
+  </section>
+
+  <section id="burgers">
+    <div class="sec-head"><h2>Nos burgers</h2></div>
+    <div class="item"><div class="item-row"><span class="name">Classic Burger</span><span class="price">5 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Cheese Burger</span><span class="price">7 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Double Burger</span><span class="price">8 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Burger au Porc</span><span class="price">8 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Chicken Burger</span><span class="price">8 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">O'Mba'p Burger</span><span class="price">10 000 FCFA</span></div></div>
+  </section>
+
+  <section id="sauces">
+    <div class="sec-head"><h2>Nos sauces</h2></div>
+    <ul class="flat-list">
+      <li>Sauce tartare</li>
+      <li>Sauce au vin</li>
+      <li>Tomates concassées au basilic</li>
+      <li>Rôti</li>
+      <li>Sauce basquaise</li>
+      <li>Sauce yassa</li>
+      <li>Sauce crémeuse aux poivres verts</li>
+      <li>Sauce crémeuse aux champignons</li>
+    </ul>
+  </section>
+
+  <section id="desserts">
+    <div class="sec-head"><h2>Nos desserts</h2></div>
+    <div class="item"><div class="item-row"><span class="name">Mousse au chocolat</span><span class="price">4 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Forêt Noire</span><span class="price">4 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Cheesecake</span><span class="price">5 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Tiramisu</span><span class="price">5 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">L'île flottante</span><span class="price">5 000 FCFA</span></div></div>
+
+    <div class="sub-label">Nos crêpes</div>
+    <div class="item"><div class="item-row"><span class="name">Crêpe nature</span><span class="price">2 500 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Crêpe flambée</span><span class="price">3 500 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Crêpe au miel citron</span><span class="price">3 500 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Crêpe à la glace</span><span class="price">4 500 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Crêpe coco-noix</span><span class="price">3 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Crêpe Nutella</span><span class="price">3 500 FCFA</span></div></div>
+
+    <div class="sub-label">Entremets</div>
+    <div class="item"><div class="item-row"><span class="name">Crème brûlée</span><span class="price">3 500 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Crème caramel</span><span class="price">3 500 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Fondant au chocolat</span><span class="price">4 500 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Banana split</span><span class="price">4 500 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Brownies à la glace</span><span class="price">5 000 FCFA</span></div></div>
+
+    <div class="sub-label">Nos glaces</div>
+    <div class="item"><div class="item-row"><span class="name">Chocolat liégeois</span><span class="price">3 500 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Dame blanche</span><span class="price">3 500 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Café liégeois</span><span class="price">3 500 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Coupe colonel</span><span class="price">5 500 FCFA</span></div></div>
+  </section>
+
+  <section id="glaces">
+    <div class="sec-head"><h2>Glaces &amp; milkshakes</h2></div>
+    <div class="sub-label">Glaces</div>
+    <div class="item"><div class="item-row"><span class="name">Boule de glace</span><span class="price">2 000 FCFA</span></div><div class="desc">Vanille et chocolat, Tiramisu, Fraise, Caramel, Café.</div></div>
+    <div class="item"><div class="item-row"><span class="name">Coupe de glace maison</span><span class="price">5 000 FCFA</span></div><div class="desc">Dame Blanche, Pêche Melba.</div></div>
+    <div class="sub-label">Milkshakes — 8 000 FCFA</div>
+    <div class="item"><div class="item-row"><span class="name">Milkshake Vanille</span></div><div class="desc">Glace vanille, lait demi-écrémé, crème fraîche, sirop de vanille, chantilly, vermicelles.</div></div>
+    <div class="item"><div class="item-row"><span class="name">Milkshake Chocolat</span></div><div class="desc">Glace chocolat, lait demi-écrémé, coulis au chocolat, chantilly, vermicelles.</div></div>
+    <div class="item"><div class="item-row"><span class="name">Milkshake Fraise</span></div><div class="desc">Glace fraise, lait demi-écrémé, chantilly, vermicelles.</div></div>
+    <div class="item"><div class="item-row"><span class="name">Milkshake Framboise</span></div><div class="desc">Glace framboise, lait demi-écrémé, chantilly, vermicelles.</div></div>
+  </section>
+
+  <section id="boissons">
+    <div class="sec-head"><h2>Nos boissons</h2></div>
+    <div class="item"><div class="item-row"><span class="name">Bières (grand format)</span><span class="price">2 500 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Sodas</span><span class="price">2 500 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Eau</span><span class="price">2 000 FCFA</span></div></div>
+  </section>
+
+  <section id="vins">
+    <div class="sec-head"><h2>Nos vins</h2></div>
+    <div class="sub-label">Vins rouges</div>
+    <div class="item"><div class="item-row"><span class="name">La Petite Sirène</span><span class="price">30 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Mouton Cadet Bordeaux Rouge</span><span class="price">35 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">St. Emilion</span><span class="price">45 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Château Barreyrs</span><span class="price">45 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Château Ferand</span><span class="price">45 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Château d'Arcin</span><span class="price">45 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Haut Médoc de Giscours</span><span class="price">45 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">La Fiole du Pape Côtes du Rhône</span><span class="price">65 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">La Sirène Giscours</span><span class="price">80 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Château Giscours Margaux</span><span class="price">130 000 FCFA</span></div></div>
+
+    <div class="sub-label">Vins blancs</div>
+    <div class="item"><div class="item-row"><span class="name">Riesling</span><span class="price">30 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Chardonnay</span><span class="price">30 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Gewurztraminer</span><span class="price">35 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Sauternes</span><span class="price">35 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Sancerre</span><span class="price">35 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Mouton Cadet</span><span class="price">35 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Chablis</span><span class="price">40 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Monbazillac</span><span class="price">45 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">GB. Gris Blanc</span><span class="price">35 000 FCFA</span></div></div>
+
+    <div class="sub-label">Vins rosés</div>
+    <div class="item"><div class="item-row"><span class="name">Cabernet d'Anjou</span><span class="price">30 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Côtes de Provence</span><span class="price">30 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Whispering Angel Rosé</span><span class="price">45 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Santero Muscato</span><span class="price">45 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Lucbelair</span><span class="price">80 000 FCFA</span></div></div>
+
+    <div class="sub-label">Vins mousseux</div>
+    <div class="item"><div class="item-row"><span class="name">Martini Asti</span><span class="price">35 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Martini Rosé</span><span class="price">35 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Martini Prosecco</span><span class="price">35 000 FCFA</span></div></div>
+
+    <div class="item" style="margin-top:6px;"><div class="item-row"><span class="name">Verre de vin (rouge/blanc/sec/moelleux)</span><span class="price">10 000 FCFA</span></div></div>
+  </section>
+
+  <section id="champagnes">
+    <div class="sec-head"><h2>Nos champagnes</h2></div>
+    <div class="item"><div class="item-row"><span class="name">Moët &amp; Chandon Impérial Brut</span><span class="price">80 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Moët &amp; Chandon Impérial Brut Rosé</span><span class="price">90 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Moët &amp; Chandon Impérial Nectar</span><span class="price">110 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Veuve Clicquot</span><span class="price">120 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Ruinart Brut</span><span class="price">120 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Moët &amp; Chandon Impérial Nectar Rosé</span><span class="price">120 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Veuve Clicquot Rich</span><span class="price">130 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Ruinart Blanc de Blancs</span><span class="price">150 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Dom Pérignon</span><span class="price">280 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Cristal – Louis Roederer</span><span class="price">350 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Armand de Brignac</span><span class="price">550 000 FCFA</span></div></div>
+  </section>
+
+  <section id="whiskys">
+    <div class="sec-head"><h2>Nos whiskys &amp; spiritueux</h2></div>
+
+    <div class="sub-label">Whisky 6 ans</div>
+    <div class="item"><div class="item-row"><span class="name">Red Label</span><span class="price">30 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Ballantine's Finest &amp; Brasil</span><span class="price">30 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Ballantine's</span><span class="price">30 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">J&amp;B</span><span class="price">30 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Jameson</span><span class="price">30 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Bailey's</span><span class="price">30 000 FCFA</span></div></div>
+
+    <div class="sub-label">Whisky 12 ans</div>
+    <div class="item"><div class="item-row"><span class="name">Chivas 12 ans</span><span class="price">60 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Monkey Shoulder</span><span class="price">70 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Singleton 12 ans</span><span class="price">70 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Glenfiddich 12 ans</span><span class="price">70 000 FCFA</span></div></div>
+
+    <div class="sub-label">Whisky 15 ans</div>
+    <div class="item"><div class="item-row"><span class="name">Chivas 15 ans</span><span class="price">150 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Glenfiddich 15 ans</span><span class="price">180 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Macallan 15 ans</span><span class="price">170 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Johnnie Walker Green Label 15 ans</span><span class="price">160 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Lagavulin 16 ans</span><span class="price">190 000 FCFA</span></div></div>
+
+    <div class="sub-label">Whisky 18 ans</div>
+    <div class="item"><div class="item-row"><span class="name">Chivas 18 ans</span><span class="price">110 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Glenfiddich 18 ans</span><span class="price">150 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">The Macallan 18 ans</span><span class="price">190 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Johnnie Walker Gold Label 18 ans</span><span class="price">170 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Talisker 18 ans</span><span class="price">160 000 FCFA</span></div></div>
+
+    <div class="sub-label">Whisky 21 ans</div>
+    <div class="item"><div class="item-row"><span class="name">Chivas 21 ans</span><span class="price">320 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Glenfiddich 21 ans</span><span class="price">350 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Royal Salute 21 ans</span><span class="price">380 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Macallan 21 ans</span><span class="price">360 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Johnnie Walker Blue Label</span><span class="price">400 000 FCFA</span></div></div>
+
+    <div class="sub-label">Whisky 25 ans</div>
+    <div class="item"><div class="item-row"><span class="name">Macallan 25 ans</span><span class="price">550 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Royal Salute 25 ans</span><span class="price">600 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Glenfiddich 25 ans</span><span class="price">580 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Hibiki 25 ans</span><span class="price">700 000 FCFA</span></div></div>
+
+    <div class="sub-label">Vodka</div>
+    <div class="item"><div class="item-row"><span class="name">Absolut Vodka</span><span class="price">40 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Jack Daniel's Honey</span><span class="price">60 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Jack Daniel's 1.5L</span><span class="price">60 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Belvedere Vodka</span><span class="price">70 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Grey Goose</span><span class="price">90 000 FCFA</span></div></div>
+
+    <div class="sub-label">Gin</div>
+    <div class="item"><div class="item-row"><span class="name">Gin Gordon</span><span class="price">40 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Bombay Sapphire</span><span class="price">60 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Hendrick's</span><span class="price">80 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Tanqueray</span><span class="price">80 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">G'Vine</span><span class="price">90 000 FCFA</span></div></div>
+
+    <div class="sub-label">Cognac</div>
+    <div class="item"><div class="item-row"><span class="name">Hennessy Vs</span><span class="price">70 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Hennessy X.O</span><span class="price">150 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Rémy Martin Vsop</span><span class="price">90 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Rémy Martin X.O</span><span class="price">180 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Martell Vs</span><span class="price">80 000 FCFA</span></div></div>
+    <div class="item"><div class="item-row"><span class="name">Martell X.O</span><span class="price">160 000 FCFA</span></div></div>
+  </section>
+
+  <section id="cocktails">
+    <div class="sec-head"><h2>Nos cocktails</h2></div>
+
+    <div class="sub-label">Cocktails alcoolisés — 7 000 à 8 000 FCFA</div>
+    <div class="item"><div class="item-row"><span class="name">Margarita</span><span class="price">7 000 FCFA</span></div><div class="desc">Tequila, Cointreau, citron vert.</div></div>
+    <div class="item"><div class="item-row"><span class="name">Tequila Sunrise</span><span class="price">7 000 FCFA</span></div><div class="desc">Tequila, orange, grenadine.</div></div>
+    <div class="item"><div class="item-row"><span class="name">Caipirinha</span><span class="price">7 000 FCFA</span></div><div class="desc">Rhum cachaça, citron, sucre de canne, eau gazeuse.</div></div>
+    <div class="item"><div class="item-row"><span class="name">Piña Colada</span><span class="price">7 000 FCFA</span></div><div class="desc">Rhum blanc, lait de coco, jus d'ananas, sucre de canne, crème fraîche.</div></div>
+    <div class="item"><div class="item-row"><span class="name">Lagon Bleu</span><span class="price">7 000 FCFA</span></div><div class="desc">Vodka, curaçao, triple sec, citron.</div></div>
+    <div class="item"><div class="item-row"><span class="name">Mojito</span><span class="price">7 000 FCFA</span></div><div class="desc">Rhum blanc, citron, feuilles de menthe, sucre de canne, eau gazeuse, glaçons pilés.</div></div>
+    <div class="item"><div class="item-row"><span class="name">Blue Hawaïen</span><span class="price">8 000 FCFA</span></div><div class="desc">Rhum, curaçao bleu, ananas, lait de coco.</div></div>
+    <div class="item"><div class="item-row"><span class="name">Pink Lady</span><span class="price">8 000 FCFA</span></div><div class="desc">Gin, citron, blanc d'œuf, lait, grenadine.</div></div>
+    <div class="item"><div class="item-row"><span class="name">TGV</span><span class="price">8 000 FCFA</span></div><div class="desc">Tequila, triple sec, gin, vodka.</div></div>
+    <div class="item"><div class="item-row"><span class="name">Porn Star Martini</span><span class="price">8 000 FCFA</span></div><div class="desc">Vodka, vanille, passion, citron, vin mousseux.</div></div>
+    <div class="item"><div class="item-row"><span class="name">Elektrik Ice Tea</span><span class="price">8 000 FCFA</span></div><div class="desc">Vodka, tequila, rhum, gin, curaçao bleu, triple sec, citron, Sprite.</div></div>
+    <div class="item"><div class="item-row"><span class="name">Long Island Ice Tea</span><span class="price">8 000 FCFA</span></div><div class="desc">Vodka, rhum, tequila, gin, triple sec, jus de citron, Coca-Cola.</div></div>
+    <div class="item"><div class="item-row"><span class="name">Maï Taï</span><span class="price">8 000 FCFA</span></div><div class="desc">Rhum blanc, rhum ambré, sirop d'orgeat, triple sec, citron, angostura bitters.</div></div>
+    <div class="item"><div class="item-row"><span class="name">Sexe on the Beach</span><span class="price">8 000 FCFA</span></div><div class="desc">Vodka, jus d'orange, liqueur de pêche, jus de cranberry, sirop de grenadine.</div></div>
+    <div class="item"><div class="item-row"><span class="name">Negroni</span><span class="price">8 000 FCFA</span></div><div class="desc">Gin, Campari, Martini Rosso.</div></div>
+
+    <div class="sub-label">Créations du barman — 9 000 FCFA</div>
+    <div class="item"><div class="item-row"><span class="name">Madrina</span></div><div class="desc">Rhum, Malibu, vodka, citron, sucre de canne.</div></div>
+    <div class="item"><div class="item-row"><span class="name">Yaoundé Sling</span></div><div class="desc">Rhum, vodka, gin, tequila, cognac, Get 31, sucre de canne (option café noir).</div></div>
+    <div class="item"><div class="item-row"><span class="name">Pikantis Ginger</span></div><div class="desc">Gin, sirop de gingembre, citron, pêche, orgeat, Tabasco.</div></div>
+    <div class="item"><div class="item-row"><span class="name">Cocaïna Blue</span></div><div class="desc">Vodka, curaçao bleu, tequila, citron, Sprite.</div></div>
+    <div class="item"><div class="item-row"><span class="name">Purple Mermaid</span></div><div class="desc">Vodka, curaçao bleu, citron, grenadine.</div></div>
+
+    <div class="sub-label">Cocktails au vin — 12 000 FCFA</div>
+    <div class="item"><div class="item-row"><span class="name">Kir Impérial</span></div><div class="desc">Vin blanc, triple sec, crème de cassis.</div></div>
+    <div class="item"><div class="item-row"><span class="name">Mon Chéri</span></div><div class="desc">Vin blanc, orange, Cointreau.</div></div>
+    <div class="item"><div class="item-row"><span class="name">O'Mbap Red Carpet</span></div><div class="desc">Vin blanc, gin, Sprite, grenadine.</div></div>
+    <div class="item"><div class="item-row"><span class="name">Spritz</span></div><div class="desc">Vin blanc, Campari, Sprite.</div></div>
+
+    <div class="sub-label">Cocktails au champagne — 15 000 FCFA</div>
+    <div class="item"><div class="item-row"><span class="name">Kir Royal</span></div><div class="desc">Champagne, crème de cassis.</div></div>
+    <div class="item"><div class="item-row"><span class="name">Bleu Champagne</span></div><div class="desc">Champagne, curaçao bleu, vodka, citron.</div></div>
+    <div class="item"><div class="item-row"><span class="name">Royal Mojito</span></div><div class="desc">Champagne, feuilles de menthe, citron, rhum, sucre.</div></div>
+    <div class="item"><div class="item-row"><span class="name">Champagne Cocktail</span></div><div class="desc">Champagne, cognac, sucre roux, angostura bitters.</div></div>
+    <div class="item"><div class="item-row"><span class="name">Mimosa</span></div><div class="desc">Champagne, orange, Grand Marnier.</div></div>
+    <div class="item"><div class="item-row"><span class="name">O'Mbap Diamond</span></div><div class="desc">Champagne, Cointreau, cognac, orange.</div></div>
+
+    <div class="sub-label">Shooters &amp; aphrodisiaques — 3 000 FCFA</div>
+    <div class="item"><div class="item-row"><span class="name">B52</span></div><div class="desc">Baileys, Cointreau, Kahlúa.</div></div>
+    <div class="item"><div class="item-row"><span class="name">Orgasme</span></div><div class="desc">Baileys, tequila, Get 27.</div></div>
+    <div class="item"><div class="item-row"><span class="name">Kiss Cool</span></div><div class="desc">Curaçao bleu, Get 31, vodka.</div></div>
+    <div class="item"><div class="item-row"><span class="name">Kamikaze</span></div><div class="desc">Vodka, citron (triple sec / Cointreau / Grand Marnier).</div></div>
+    <div class="item"><div class="item-row"><span class="name">Tequila Piaf (Shoot Gun)</span></div><div class="desc">Tequila, morceaux de citron, sel fin, tonic.</div></div>
+
+    <div class="sub-label">Cocktails sans alcool — 6 000 FCFA</div>
+    <div class="item"><div class="item-row"><span class="name">Virgin Colada</span></div><div class="desc">Lait de coco, ananas, sucre.</div></div>
+    <div class="item"><div class="item-row"><span class="name">Virgin Mojito</span></div><div class="desc">Feuilles de menthe, sucre de canne, citron, eau gazeuse.</div></div>
+    <div class="item"><div class="item-row"><span class="name">Pussy Foot</span></div><div class="desc">Orange, ananas, jaune d'œuf, citron, grenadine.</div></div>
+    <div class="item"><div class="item-row"><span class="name">Bora Bora</span></div><div class="desc">Ananas, passion, citron, grenadine.</div></div>
+    <div class="item"><div class="item-row"><span class="name">Rose d'Été</span></div><div class="desc">Papaye, pastèque, mangue, citron, sirop de fraise.</div></div>
+    <div class="item"><div class="item-row"><span class="name">All Attitude</span></div><div class="desc">Ananas, gingembre, citron, framboise.</div></div>
+    <div class="item"><div class="item-row"><span class="name">Relaxe Guava Drink</span></div><div class="desc">Ananas, orange, lait, pêche, grenadine.</div></div>
+    <div class="item"><div class="item-row"><span class="name">Cassis Juice</span></div><div class="desc">Orange, ananas, citron, pêche, sirop de cassis.</div></div>
+    <div class="item"><div class="item-row"><span class="name">Bella Luna</span></div><div class="desc">Orange, ananas, citron, grenadine.</div></div>
+    <div class="item"><div class="item-row"><span class="name">Menthe au Lait</span><span class="price">4 000 FCFA</span></div><div class="desc">Lait demi-écrémé, sirop de menthe.</div></div>
+    <div class="item"><div class="item-row"><span class="name">Diabolo Menthe</span></div><div class="desc">Sirop de menthe, Sprite, citron.</div></div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="fname">O'Mba'p Lounge</div>
+  <div>Mini Prix Bastos, Yaoundé</div>
+  <div>+237 686 868 630 · contact@ombaplounge.org</div>
+  <div class="socials">Facebook · Instagram · TikTok — O'Mba'p Lounge</div>
+  <div style="margin-top:10px;"><a href="mentions-legales.html" style="color:var(--cream-dim); font-size:12px; text-decoration:underline;">Mentions légales &amp; confidentialité</a></div>
+</footer>
+
+
+<div id="cart-bar" class="cart-bar hidden">
+  <div class="cart-bar-main" onclick="toggleCart()">
+    <span class="cart-bar-label">Commandez ici</span>
+    <span class="cart-bar-info">
+      <span id="cart-count">0 article</span>
+      <span id="cart-total">0 FCFA</span>
+    </span>
   </div>
+  <button id="cart-clear-btn" class="cart-clear-btn" type="button" aria-label="Vider le panier">✕</button>
+</div>
+
+<div id="cart-drawer" class="cart-drawer hidden">
+  <div class="cart-drawer-head">
+    <h3>Votre commande</h3>
+    <button class="close-btn" onclick="toggleCart()" aria-label="Fermer">✕</button>
+  </div>
+  <div id="cart-items"></div>
+  <div class="cart-total-row">
+    <span>Total</span>
+    <span id="cart-total-2">0 FCFA</span>
+  </div>
+  <button id="pay-terminal-btn" class="cart-action wa-action">Payer au Terminal (carte)</button>
+  <button id="pay-cash-btn" class="cart-action wa-action">Payer en espèces</button>
+  <div class="pay-note">Le code de paiement se compose automatiquement avec le montant exact — il ne reste qu'à appuyer sur l'appel.</div>
+  <button id="pay-om-btn" class="cart-action om-action">Payer avec Orange Money</button>
+  <button id="pay-momo-btn" class="cart-action momo-action">Payer avec MTN MoMo</button>
+  <div id="ussd-fallback" class="ussd-fallback hidden">
+    L'appel ne s'est pas lancé automatiquement ? Composez ce code vous-même :
+    <div id="ussd-code" class="ussd-code" onclick="this.select && this.select()"></div>
+  </div>
+  <div class="pay-warning">Après paiement, gardez la confirmation reçue et montrez-la au personnel pour valider votre commande.</div>
+</div>
+
+<div id="custom-modal-overlay" class="modal-overlay hidden">
+  <div class="modal-box">
+    <div class="modal-title" id="modal-title"></div>
+    <div class="modal-message" id="modal-message"></div>
+    <input type="text" id="modal-input" class="modal-input" inputmode="text" />
+    <div class="modal-actions">
+      <button id="modal-cancel" class="modal-btn modal-cancel" type="button">Annuler</button>
+      <button id="modal-confirm" class="modal-btn modal-confirm" type="button">Valider</button>
+    </div>
+  </div>
+</div>
+
+<button id="my-order-float" class="my-order-float hidden" type="button" onclick="showMyOrderPanel()">🧾 Voir ma commande</button>
+
+<div id="my-order-overlay" class="modal-overlay hidden">
+  <div class="modal-box">
+    <div class="modal-title">Ma commande</div>
+    <div id="my-order-items" class="my-order-items"></div>
+    <div class="my-order-total-row"><span>Total</span><span id="my-order-total">0 FCFA</span></div>
+    <div id="my-order-status" class="my-order-status"></div>
+    <div class="modal-actions">
+      <button id="my-order-close-btn" class="modal-btn modal-cancel" type="button">Fermer</button>
+      <button id="my-order-cancel-btn" class="modal-btn my-order-cancel-btn" type="button">Annuler la commande</button>
+    </div>
+  </div>
+</div>
+
+<!-- ======================================================================
+     FIREBASE — transmission des commandes aux tablettes des serveurs.
+     Remplacer les valeurs ci-dessous par celles de TON projet Firebase
+     (voir les instructions fournies séparément pour créer le projet).
+     ====================================================================== -->
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyAMbijp8xA3BLbaulDxZRzSh_jBNI8cqK8",
+    authDomain: "omba-p-lounge.firebaseapp.com",
+    projectId: "omba-p-lounge",
+    storageBucket: "omba-p-lounge.firebasestorage.app",
+    messagingSenderId: "469786469177",
+    appId: "1:469786469177:web:614e9c606f58ba79e6bee8"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+</script>
 
 <script>
-(function() {
-  var N = 15;
-  var book = document.getElementById('book');
-  var pages = Array.prototype.slice.call(book.querySelectorAll('.page'));
-  var current = 0;
-  var navLeft = document.getElementById('navLeft');
-  var navRight = document.getElementById('navRight');
-  var progressFill = document.getElementById('progressFill');
-  var pageNow = document.getElementById('pageNow');
-  var hint = document.getElementById('hint');
-  var animating = false;
+  // ---------- Panier ----------
+  const cart = {};
+  let orderCounter = null;
 
-  function updateUI() {
-    pageNow.textContent = current + 1;
-    progressFill.style.width = (((current + 1) / N) * 100) + '%';
-    navLeft.classList.toggle('disabled', current === 0);
-    navRight.classList.toggle('disabled', current === N - 1);
+  // ---------- Identification de la table (via QR unique par table) ----------
+  const urlParams = new URLSearchParams(window.location.search);
+  const tableNumber = urlParams.get('table');
+  if(tableNumber){
+    const badge = document.getElementById('table-badge');
+    badge.textContent = 'Table n° ' + tableNumber;
+    badge.classList.remove('hidden');
   }
 
-  function goNext() {
-    if (animating || current >= N - 1) return;
-    animating = true;
-    var p = pages[current];
-    p.style.zIndex = current + 1;
-    p.classList.add('flipped');
-    current++;
-    updateUI();
-    setTimeout(function() { animating = false; }, 500);
-    hideHint();
-  }
+  // ---------- Journal des visites (heure + PWA/Site web) ----------
+  (function(){
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+    db.collection('visits').add({
+      device: isStandalone ? 'PWA' : 'Site web',
+      etablissement: 'ombap',
+      table: tableNumber || null,
+      location: typeof detectLocation === 'function' ? detectLocation() : null,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    }).catch(err => console.warn('Log visite impossible :', err));
+  })();
 
-  function goPrev() {
-    if (animating || current <= 0) return;
-    animating = true;
-    current--;
-    var p = pages[current];
-    p.classList.remove('flipped');
-    p.style.zIndex = N - current;
-    updateUI();
-    setTimeout(function() { animating = false; }, 500);
-    hideHint();
-  }
+  // ---------- Modal doré (remplace prompt()) ----------
+  function showModal(title, message, defaultValue, hideInput){
+    return new Promise((resolve) => {
+      const overlay = document.getElementById('custom-modal-overlay');
+      const titleEl = document.getElementById('modal-title');
+      const msgEl = document.getElementById('modal-message');
+      const input = document.getElementById('modal-input');
+      const btnConfirm = document.getElementById('modal-confirm');
+      const btnCancel = document.getElementById('modal-cancel');
 
-  function hideHint() { if (hint) hint.classList.add('hidden'); }
+      titleEl.textContent = title;
+      msgEl.textContent = message;
+      input.value = defaultValue || '';
+      input.style.display = hideInput ? 'none' : 'block';
+      overlay.classList.remove('hidden');
+      if(!hideInput) setTimeout(() => input.focus(), 50);
 
-  navLeft.addEventListener('click', goPrev);
-  navRight.addEventListener('click', goNext);
+      function cleanup(value){
+        overlay.classList.add('hidden');
+        input.style.display = 'block';
+        btnConfirm.removeEventListener('click', onConfirm);
+        btnCancel.removeEventListener('click', onCancel);
+        input.removeEventListener('keydown', onKey);
+        resolve(value);
+      }
+      function onConfirm(){ cleanup(hideInput ? true : input.value); }
+      function onCancel(){ cleanup(hideInput ? false : null); }
+      function onKey(e){ if(e.key === 'Enter'){ onConfirm(); } }
 
-  document.addEventListener('keydown', function(e) {
-    if (e.key === 'ArrowRight') goNext();
-    if (e.key === 'ArrowLeft') goPrev();
-  });
-
-  var startX = null, startY = null, tracking = false;
-  book.addEventListener('touchstart', function(e) {
-    startX = e.touches[0].clientX; startY = e.touches[0].clientY; tracking = true;
-  }, { passive: true });
-  book.addEventListener('touchend', function(e) {
-    if (!tracking || startX === null) return;
-    tracking = false;
-    var dx = e.changedTouches[0].clientX - startX;
-    var dy = e.changedTouches[0].clientY - startY;
-    if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) { if (dx < 0) goNext(); else goPrev(); }
-    startX = null; startY = null;
-  }, { passive: true });
-
-  var mDownX = null;
-  book.addEventListener('mousedown', function(e) { mDownX = e.clientX; });
-  book.addEventListener('mouseup', function(e) {
-    if (mDownX === null) return;
-    var dx = e.clientX - mDownX;
-    if (Math.abs(dx) > 40) { if (dx < 0) goNext(); else goPrev(); }
-    mDownX = null;
-  });
-
-  pages.forEach(function(p) {
-    p.addEventListener('click', function(e) {
-      var rect = book.getBoundingClientRect();
-      var x = e.clientX - rect.left;
-      if (x > rect.width / 2) goNext(); else goPrev();
+      btnConfirm.addEventListener('click', onConfirm);
+      btnCancel.addEventListener('click', onCancel);
+      input.addEventListener('keydown', onKey);
     });
+  }
+
+  let customerName = null;
+  async function getCustomerName(){
+    if(customerName) return customerName;
+    const val = await showModal(
+      'Votre nom',
+      'À quel nom ou pseudo souhaitez-vous associer cette commande ?',
+      ''
+    );
+    customerName = (val && val.trim()) ? val.trim() : 'Client';
+    return customerName;
+  }
+
+  function extractPrice(text){
+    if(!text) return null;
+    if(text.indexOf(' à ') !== -1) return null;
+    const m = text.replace(/\u00A0/g,' ').match(/([\d\s]+)\s*FCFA/);
+    if(!m) return null;
+    const num = parseInt(m[1].replace(/\s/g,''), 10);
+    return isNaN(num) ? null : num;
+  }
+
+  function cartTotal(){
+    return Object.values(cart).reduce((s,i)=> s + i.price*i.qty, 0);
+  }
+  function cartCount(){
+    return Object.values(cart).reduce((s,i)=> s + i.qty, 0);
+  }
+
+  // unit: '' pour un plat/boisson classique, 'nuit' ou 'passage' pour l'hébergement
+  async function addToCart(name, price, unit){
+    unit = unit || '';
+    if(unit === 'nuit' || unit === 'passage'){
+      const question = unit === 'nuit'
+        ? 'Pour combien de nuits souhaitez-vous réserver cette chambre ?'
+        : 'Combien de passages souhaitez-vous réserver ?';
+      const input = await showModal(name, question, '1');
+      if(input === null) return; // annulé
+      let n = parseInt(input, 10);
+      if(isNaN(n) || n <= 0) n = 1;
+      if(!cart[name]) cart[name] = {price, qty:0, unit};
+      cart[name].qty += n;
+      renderCart();
+      toggleCart(true);
+      return;
+    }
+    if(!cart[name]) cart[name] = {price, qty:0, unit:''};
+    cart[name].qty += 1;
+    renderCart();
+  }
+
+  function changeQty(name, delta){
+    if(!cart[name]) return;
+    cart[name].qty += delta;
+    if(cart[name].qty <= 0) delete cart[name];
+    renderCart();
+  }
+
+  function unitLabel(data){
+    if(data.unit === 'nuit') return data.qty>1 ? 'nuits' : 'nuit';
+    if(data.unit === 'passage') return data.qty>1 ? 'passages' : 'passage';
+    return '';
+  }
+
+  function renderCart(){
+    const count = cartCount();
+    const total = cartTotal();
+    document.getElementById('cart-count').textContent = count + (count>1 ? ' articles' : ' article');
+    document.getElementById('cart-total').textContent = total.toLocaleString('fr-FR') + ' FCFA';
+    document.getElementById('cart-total-2').textContent = total.toLocaleString('fr-FR') + ' FCFA';
+
+    const itemsEl = document.getElementById('cart-items');
+    itemsEl.innerHTML = '';
+    Object.entries(cart).forEach(([name, data]) => {
+      const row = document.createElement('div');
+      row.className = 'cart-line';
+      const safeName = name.replace(/'/g, "\\'");
+      const unit = unitLabel(data);
+      const qtyDisplay = unit ? (data.qty + ' ' + unit) : data.qty;
+      row.innerHTML =
+        '<span class="cl-name">'+name+ (unit ? ' <small style="color:var(--cream-dim);">('+data.price.toLocaleString('fr-FR')+' FCFA / '+ (data.unit==='nuit'?'nuit':'passage') +')</small>' : '') +'</span>' +
+        '<span class="cl-qty">' +
+          '<button onclick="changeQty(\''+safeName+'\', -1)">–</button>' +
+          qtyDisplay +
+          '<button onclick="changeQty(\''+safeName+'\', 1)">+</button>' +
+        '</span>' +
+        '<span class="cl-price">'+(data.price*data.qty).toLocaleString('fr-FR')+' FCFA</span>';
+      itemsEl.appendChild(row);
+    });
+
+    const cartBar = document.getElementById('cart-bar');
+    const isEmpty = count === 0;
+    cartBar.classList.toggle('hidden', isEmpty);
+    document.body.classList.toggle('cart-active', !isEmpty);
+    if(isEmpty) document.getElementById('cart-drawer').classList.add('hidden');
+  }
+
+  function buildInvoiceLines(){
+    return Object.entries(cart).map(([name,d]) => {
+      const unit = unitLabel(d);
+      const qtyPart = unit ? (d.qty + ' ' + unit) : (d.qty + ' x');
+      return '- ' + qtyPart + ' ' + name + ' — ' + d.price.toLocaleString('fr-FR') + ' FCFA' + (unit?' /'+ (d.unit==='nuit'?'nuit':'passage'):'') + ' = ' + (d.price*d.qty).toLocaleString('fr-FR') + ' FCFA';
+    });
+  }
+
+  // Envoie la commande directement aux tablettes des serveurs (Firestore),
+  // remplace l'ancien envoi de facture par WhatsApp.
+  let orderSent = false;
+  let orderInFlight = false;
+  async function sendOrderToTablets(statusNote, paymentMethod, location){
+    if(orderSent || orderInFlight) return; // évite un double-envoi pendant l'écriture ou après succès
+    orderInFlight = true;
+    const name = await getCustomerName();
+    if(!orderCounter) orderCounter = 'CMD-' + Date.now().toString().slice(-6);
+
+    const items = Object.entries(cart).map(([itemName, d]) => ({
+      name: itemName,
+      qty: d.qty,
+      price: d.price,
+      unit: d.unit || null
+    }));
+    const total = cartTotal();
+    const loc = location || detectLocation();
+
+    try{
+      const docRef = await db.collection('orders').add({
+        orderRef: orderCounter,
+        etablissement: 'ombap',
+        table: tableNumber || null,
+        location: loc, // 'rooftop' ou 'restaurant'
+        customerName: name,
+        items: items,
+        total: total,
+        statusNote: statusNote || null,
+        paymentMethod: paymentMethod || null, // 'om' | 'momo' | 'terminal' | 'cash'
+        paymentStatus: 'en_attente', // passe a 'validee' quand la caissiere confirme
+        status: 'nouvelle',
+        claimedBy: null,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      orderSent = true;
+      lastOrderId = docRef.id;
+      lastOrderSummary = { items, total, table: tableNumber || null };
+
+      // Panier vidé, retour automatique au menu principal
+      Object.keys(cart).forEach(k => delete cart[k]);
+      renderCart();
+      document.getElementById('cart-drawer').classList.add('hidden');
+      document.getElementById('cart-bar').classList.add('hidden');
+      document.getElementById('my-order-float').classList.remove('hidden');
+      window.scrollTo({top:0, behavior:'smooth'});
+
+      await showModal('Commande envoyée', 'Votre commande a été transmise en salle. Un serveur va s\'en occuper.', '', true);
+    } catch(err){
+      console.error('Erreur envoi commande :', err);
+      await showModal('Problème de connexion', 'La commande n\'a pas pu être transmise. Vérifiez votre connexion et réessayez, ou signalez-le directement à un serveur.', '', true);
+    } finally {
+      orderInFlight = false;
+    }
+  }
+
+  // ---------- Panneau "Voir ma commande" + annulation côté client ----------
+  let lastOrderId = null;
+  let lastOrderSummary = null;
+
+  function showMyOrderPanel(){
+    if(!lastOrderId || !lastOrderSummary) return;
+    const itemsEl = document.getElementById('my-order-items');
+    itemsEl.innerHTML = lastOrderSummary.items.map(it =>
+      `<div class="my-order-item-row"><span>${it.qty}× ${it.name}</span><span>${(it.price*it.qty).toLocaleString('fr-FR')} FCFA</span></div>`
+    ).join('');
+    document.getElementById('my-order-total').textContent = lastOrderSummary.total.toLocaleString('fr-FR') + ' FCFA';
+    document.getElementById('my-order-status').textContent = 'Commande envoyée en salle — en attente de prise en charge.';
+    document.getElementById('my-order-overlay').classList.remove('hidden');
+  }
+  function hideMyOrderPanel(){
+    document.getElementById('my-order-overlay').classList.add('hidden');
+  }
+  document.getElementById('my-order-close-btn').addEventListener('click', hideMyOrderPanel);
+
+  document.getElementById('my-order-cancel-btn').addEventListener('click', async () => {
+    if(!lastOrderId) return;
+    const sure = confirm('Voulez-vous vraiment annuler votre commande ?');
+    if(!sure) return;
+
+    try{
+      const snap = await db.collection('orders').doc(lastOrderId).get();
+      if(!snap.exists){
+        document.getElementById('my-order-status').textContent = 'Cette commande a déjà été prise en charge, elle ne peut plus être annulée.';
+        return;
+      }
+      await db.collection('orders').doc(lastOrderId).delete();
+      hideMyOrderPanel();
+      document.getElementById('my-order-float').classList.add('hidden');
+      lastOrderId = null;
+      lastOrderSummary = null;
+      orderSent = false; // le client peut repasser une nouvelle commande
+      await showModal('Commande annulée', 'Votre commande a bien été annulée.', '', true);
+    } catch(err){
+      console.error('Erreur annulation :', err);
+      alert("Erreur : impossible d'annuler la commande pour le moment.");
+    }
   });
 
-  setTimeout(hideHint, 3800);
-  updateUI();
-})();
+  function toggleCart(forceOpen){
+    const drawer = document.getElementById('cart-drawer');
+    if(forceOpen === true){ drawer.classList.remove('hidden'); return; }
+    drawer.classList.toggle('hidden');
+  }
+
+  function initAddButtons(){
+    document.querySelectorAll('main section .item').forEach(item => {
+      const row = item.querySelector('.item-row');
+      const nameEl = row ? row.querySelector('.name') : null;
+      if(!row || !nameEl) return;
+
+      let price = null;
+      const priceEl = row.querySelector('.price');
+      if(priceEl){
+        price = extractPrice(priceEl.textContent);
+      } else {
+        let sib = item.previousElementSibling;
+        while(sib && !sib.classList.contains('sub-label') && !sib.classList.contains('sec-head')){
+          sib = sib.previousElementSibling;
+        }
+        if(sib && sib.classList.contains('sub-label')){
+          price = extractPrice(sib.textContent);
+        }
+      }
+      if(price == null) return;
+
+      const isComplet = item.querySelector('.avail-no') !== null;
+      const btn = document.createElement('button');
+      btn.className = 'add-btn';
+      btn.type = 'button';
+      btn.setAttribute('aria-label', 'Ajouter au panier');
+      const itemName = nameEl.textContent.trim();
+      const unit = item.getAttribute('data-lodging') || '';
+
+      if(isComplet){
+        btn.textContent = '✕';
+        btn.disabled = true;
+        btn.style.opacity = '0.35';
+        btn.style.cursor = 'not-allowed';
+      } else {
+        btn.textContent = '+';
+        btn.addEventListener('click', () => addToCart(itemName, price, unit));
+      }
+      row.appendChild(btn);
+    });
+  }
+
+  initAddButtons();
+  renderCart();
+
+  document.getElementById('cart-clear-btn').addEventListener('click', async (e) => {
+    e.stopPropagation();
+    if(cartCount() === 0) return;
+    const ok = await showModal('Vider le panier', 'Voulez-vous vraiment supprimer tous les articles sélectionnés ?', '', true);
+    if(!ok) return;
+    Object.keys(cart).forEach(k => delete cart[k]);
+    renderCart();
+  });
+
+  // Le lieu (Rooftop ou Restaurant) est déduit automatiquement du numéro de
+  // table — aucune question posée au client, aucun risque qu'il se trompe.
+  // Tables 1 à 30 = Rooftop, tables 31 à 45 = Restaurant.
+  function detectLocation(){
+    const t = parseInt(tableNumber, 10);
+    if(t >= 31 && t <= 75) return 'restaurant';
+    return 'rooftop';
+  }
+
+  // Codes marchands par lieu (l'API de paiement mobile diffère entre le Rooftop et le Restaurant)
+  const PAYMENT_CODES = {
+    rooftop:    { om: '1038767', momo: '881521' },
+    restaurant: { om: '1038766', momo: '643679' }
+  };
+
+  // La commande part vers la caissière au même instant que l'ouverture du
+  // clavier d'appel — plus besoin d'attendre le retour sur la page.
+  async function payAndInvoice(method){
+    await getCustomerName(); // demande le nom une seule fois (mémorisé ensuite)
+    const location = detectLocation();
+    const codes = PAYMENT_CODES[location];
+    const locationLabel = location === 'restaurant' ? 'Restaurant' : 'Rooftop';
+    const telCode = method === 'om'
+      ? '#150*47*' + codes.om + '*' + cartTotal() + '#'
+      : '*126*4*' + codes.momo + '*' + cartTotal() + '#';
+    const methodLabel = (method === 'om' ? 'Orange Money' : 'MTN MoMo') + ' — ' + locationLabel;
+
+    // Affiche le code en texte au cas où l'appel ne se lance pas automatiquement
+    // (navigateur intégré d'une autre appli, permissions bloquées, etc.)
+    document.getElementById('ussd-code').textContent = telCode;
+    document.getElementById('ussd-fallback').classList.remove('hidden');
+
+    // Envoi immédiat à la caissière — le paiement n'est pas encore confirmé,
+    // elle devra vérifier la réception avant d'encaisser.
+    sendOrderToTablets('⚠️ Paiement par ' + methodLabel + ' — à vérifier avant d\'encaisser', method, location);
+
+    window.location.href = 'tel:' + encodeURIComponent(telCode);
+  }
+
+  document.getElementById('pay-om-btn').addEventListener('click', () => {
+    payAndInvoice('om');
+  });
+
+  document.getElementById('pay-momo-btn').addEventListener('click', () => {
+    payAndInvoice('momo');
+  });
+
+  document.getElementById('pay-terminal-btn').addEventListener('click', () => {
+    const location = detectLocation();
+    sendOrderToTablets('Mode de paiement choisi : Terminal (carte bancaire) — à encaisser sur place', 'terminal', location);
+  });
+
+  document.getElementById('pay-cash-btn').addEventListener('click', () => {
+    const location = detectLocation();
+    sendOrderToTablets('Mode de paiement choisi : Espèces — à encaisser sur place', 'cash', location);
+  });
 </script>
+
+<script>
+  // Highlight active category on scroll
+  const links = document.querySelectorAll('#catnav a');
+  const sections = Array.from(links).map(l => document.querySelector(l.getAttribute('href')));
+  const setActive = () => {
+    let idx = 0;
+    const y = window.scrollY + 140;
+    sections.forEach((sec, i) => { if (sec && sec.offsetTop <= y) idx = i; });
+    links.forEach((l, i) => l.classList.toggle('active', i === idx));
+    const active = links[idx];
+    if (active) active.scrollIntoView({behavior:'smooth', inline:'center', block:'nearest'});
+  };
+  window.addEventListener('scroll', setActive, {passive:true});
+  setActive();
+</script>
+
 </body>
 </html>

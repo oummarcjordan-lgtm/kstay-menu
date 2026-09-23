@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>OMJ — Tableau de bord</title>
+<link rel="manifest" href="manifest-admin.json">
+<meta name="theme-color" content="#0e1b1c">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="OMB Bord">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root{
+    --bg: #0e1b1c; --bg-raised: #142627; --bg-card: #1a2f30;
+    --gold: #f2b705; --ember: #e2572b; --green: #3ba55c;
+    --cream: #f4ede1; --cream-dim: #cfc6b8; --line: rgba(244,237,225,0.14);
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--bg); color:var(--cream); font-family:'Work Sans', sans-serif; min-height:100vh; padding-bottom:40px;}
+  h1,h2{font-family:'Fraunces', serif; margin:0;}
+
+  #login-screen{
+    position:fixed; inset:0; background:var(--bg); display:flex; flex-direction:column;
+    align-items:center; justify-content:center; gap:16px; z-index:200; text-align:center; padding:30px;
+  }
+  #login-screen input{
+    width:100%; max-width:280px; padding:13px 14px; border-radius:8px; border:1px solid var(--line);
+    background:var(--bg-raised); color:var(--cream); font-size:15px; letter-spacing:0.3em; text-align:center;
+  }
+  #login-screen button{
+    background:var(--gold); color:#241a03; border:none; padding:14px 30px; border-radius:30px;
+    font-size:15px; font-weight:700; cursor:pointer; width:100%; max-width:280px; font-family:'Work Sans', sans-serif;
+  }
+  #login-error{color:var(--ember); font-size:13px; min-height:18px;}
+
+  header{
+    padding:18px 20px 14px; border-bottom:1px solid var(--line); position:sticky; top:0; z-index:20;
+    background:var(--bg); display:flex; align-items:center; justify-content:space-between; gap:12px;
+  }
+  header h1{font-size:19px;}
+  header h1 span{color:var(--gold);}
+  #logout-btn{
+    background:none; border:1px solid var(--line); color:var(--cream-dim);
+    font-size:11px; padding:5px 10px; border-radius:20px; cursor:pointer;
+  }
+
+  .stats-row{
+    display:flex; gap:10px; padding:14px 14px 4px; max-width:680px; margin:0 auto; flex-wrap:wrap;
+  }
+  .stat-card{
+    flex:1; min-width:130px; background:var(--bg-card); border:1px solid var(--line);
+    border-radius:10px; padding:12px 14px;
+  }
+  .stat-card .num{font-family:'Fraunces', serif; font-size:22px; color:var(--gold);}
+  .stat-card .lbl{font-size:11px; color:var(--cream-dim); margin-top:2px;}
+  .stat-card.highlight{border-color:var(--gold); background:rgba(242,183,5,0.08);}
+  .stat-card.highlight .num{font-size:26px;}
+
+  .date-row{
+    display:flex; align-items:center; gap:10px; padding:14px 14px 4px; max-width:680px; margin:0 auto; flex-wrap:wrap;
+  }
+  .date-row label{font-size:13px; color:var(--cream-dim);}
+  .date-row input[type="date"]{
+    padding:8px 10px; border-radius:8px; border:1px solid var(--line);
+    background:var(--bg-raised); color:var(--cream); font-size:13px;
+  }
+  #today-btn{
+    padding:8px 12px; border-radius:8px; border:1px solid var(--line); background:none;
+    color:var(--cream-dim); font-size:12px; cursor:pointer;
+  }
+  #download-report-btn{
+    margin-left:auto; padding:10px 16px; border-radius:8px; border:none;
+    background:var(--gold); color:#241a03; font-weight:700; font-size:13px; cursor:pointer;
+  }
+
+  .panel-row{
+    display:flex; gap:10px; padding:8px 14px; max-width:680px; margin:0 auto; flex-wrap:wrap;
+  }
+  .panel{
+    flex:1; min-width:260px; background:var(--bg-card); border:1px solid var(--line);
+    border-radius:10px; padding:14px;
+  }
+  .panel h3{font-size:14px; color:var(--gold); margin-bottom:10px; font-family:'Work Sans', sans-serif; font-weight:700;}
+  .panel-row-line{
+    display:flex; justify-content:space-between; font-size:13px; padding:6px 0; border-bottom:1px dashed var(--line);
+  }
+  .panel-row-line:last-child{border-bottom:none;}
+  .panel-row-line .name{color:var(--cream);}
+  .panel-row-line .val{color:var(--cream-dim); text-align:right;}
+  .panel-empty{font-size:12px; color:var(--cream-dim); text-align:center; padding:10px 0;}
+
+  .filters{
+    display:flex; gap:8px; padding:12px 14px; max-width:680px; margin:0 auto; flex-wrap:wrap;
+  }
+  .filters select{
+    padding:8px 10px; border-radius:8px; border:1px solid var(--line);
+    background:var(--bg-raised); color:var(--cream); font-size:13px;
+  }
+
+  main{max-width:680px; margin:0 auto; padding:6px 14px 30px;}
+  .empty-state{text-align:center; padding:60px 20px; color:var(--cream-dim);}
+  .empty-state .big{font-size:40px; margin-bottom:10px;}
+
+  .order-card{
+    background:var(--bg-card); border:1px solid var(--line); border-left:4px solid var(--green);
+    border-radius:10px; padding:16px; margin:14px 0;
+  }
+  .order-card.cancelled{border-left-color:var(--ember); opacity:0.75;}
+  .oc-payment.cancelled{background:rgba(226,87,43,0.1); color:var(--ember);}
+  .oc-head{display:flex; justify-content:space-between; align-items:flex-start; gap:10px; margin-bottom:6px;}
+  .oc-table{font-family:'Fraunces', serif; font-size:20px; color:var(--gold);}
+  .oc-loc{display:inline-block; font-size:11px; padding:2px 8px; border-radius:12px; border:1px solid var(--gold); color:var(--gold); margin-left:8px; vertical-align:middle;}
+  .oc-meta{text-align:right; font-size:12px; color:var(--cream-dim); line-height:1.5;}
+  .oc-name{font-weight:600; color:var(--cream);}
+  .oc-items{margin:10px 0; font-size:14px;}
+  .oc-item{display:flex; justify-content:space-between; gap:10px; padding:4px 0; border-bottom:1px dashed var(--line);}
+  .oc-item:last-child{border-bottom:none;}
+  .oc-item .qty{color:var(--gold); font-weight:600; min-width:34px;}
+  .oc-total{display:flex; justify-content:space-between; font-weight:700; font-size:15px; margin-top:10px; padding-top:10px; border-top:1px solid var(--line);}
+  .oc-payment{display:flex; align-items:center; gap:8px; margin-top:10px; font-size:13px; padding:8px 10px; border-radius:8px; background:rgba(59,165,92,0.08);}
+  .oc-actions{display:flex; gap:10px; margin-top:12px;}
+  .oc-btn{flex:1; padding:10px; border-radius:8px; border:1px solid var(--gold); background:none; color:var(--cream); font-weight:600; font-size:13px; cursor:pointer;}
+  .hidden{display:none !important;}
+</style>
+</head>
+<body>
+
+<div id="login-screen">
+  <h1>O'Mba'p & <span>K Stay</span></h1>
+  <h2 style="font-size:16px; color:var(--cream-dim); font-family:'Work Sans',sans-serif; font-weight:500;">Tableau de bord — Accès développeur</h2>
+  <input id="login-pin" type="password" inputmode="numeric" maxlength="8" placeholder="Code d'accès">
+  <button id="login-btn" type="button">Se connecter</button>
+  <div id="login-error"></div>
+</div>
+
+<div id="app" class="hidden">
+  <header>
+    <h1>O'Mba'p & <span>K Stay</span> — Tableau de bord</h1>
+    <div style="text-align:right;">
+      <div id="admin-name-val" style="font-size:12px; color:var(--gold); margin-bottom:4px;"></div>
+      <button id="logout-btn" type="button">Se déconnecter</button>
+    </div>
+  </header>
+
+  <div class="date-row">
+    <label for="filter-date">Rapport du :</label>
+    <input type="date" id="filter-date">
+    <button id="today-btn" type="button">Aujourd'hui</button>
+    <button id="download-report-btn" type="button">📥 Télécharger le rapport du jour</button>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card highlight"><div class="num" id="stat-revenue">0</div><div class="lbl">Total encaissé ce jour (FCFA)</div></div>
+    <div class="stat-card"><div class="num" id="stat-validated">0</div><div class="lbl">Commandes validées</div></div>
+    <div class="stat-card"><div class="num" id="stat-cancelled">0</div><div class="lbl">Commandes annulées</div></div>
+    <div class="stat-card"><div class="num" id="stat-orders-count">0</div><div class="lbl">Total commandes du jour</div></div>
+  </div>
+
+  <div class="panel-row">
+    <div class="panel">
+      <h3>Par mode de paiement</h3>
+      <div id="breakdown-payment"></div>
+    </div>
+    <div class="panel">
+      <h3>Par lieu</h3>
+      <div id="breakdown-location"></div>
+    </div>
+  </div>
+
+  <div class="panel-row">
+    <div class="panel">
+      <h3>Tables les plus commandées</h3>
+      <div id="top-tables"></div>
+    </div>
+    <div class="panel">
+      <h3>Menus les plus commandés</h3>
+      <div id="top-items"></div>
+    </div>
+  </div>
+
+  <div id="connections-panel" class="panel-row hidden">
+    <div class="panel">
+      <h3>🔑 Connexions comptes (caisse + admin)</h3>
+      <div id="connections-log"><div class="panel-empty">Chargement…</div></div>
+    </div>
+    <div class="panel">
+      <h3>👀 Visites du menu (visiteurs)</h3>
+      <div id="visits-log"><div class="panel-empty">Chargement…</div></div>
+    </div>
+  </div>
+
+  <div class="filters">
+    <select id="filter-etablissement">
+      <option value="">Les deux établissements</option>
+      <option value="ombap">O'Mba'p Lounge</option>
+      <option value="kstay">K Stay</option>
+    </select>
+    <select id="filter-location">
+      <option value="">Tous les lieux</option>
+      <option value="rooftop">Rooftop</option>
+      <option value="restaurant">Restaurant</option>
+    </select>
+    <select id="filter-method">
+      <option value="">Tous les paiements</option>
+      <option value="om">Orange Money</option>
+      <option value="momo">MTN MoMo</option>
+      <option value="terminal">Terminal</option>
+      <option value="cash">Espèces</option>
+    </select>
+    <select id="filter-status">
+      <option value="">Validées + annulées</option>
+      <option value="validee">Validées seulement</option>
+      <option value="annulee">Annulées seulement</option>
+    </select>
+  </div>
+
+  <main>
+    <div id="empty-state" class="empty-state hidden">
+      <div class="big">🗂️</div>
+      Aucune commande pour cette date.
+    </div>
+    <div id="orders-list"></div>
+  </main>
+</div>
+
+<!-- ======================================================================
+     FIREBASE — mêmes clés que les autres pages du projet.
+     ====================================================================== -->
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyAMbijp8xA3BLbaulDxZRzSh_jBNI8cqK8",
+    authDomain: "omba-p-lounge.firebaseapp.com",
+    projectId: "omba-p-lounge",
+    storageBucket: "omba-p-lounge.firebasestorage.app",
+    messagingSenderId: "469786469177",
+    appId: "1:469786469177:web:614e9c606f58ba79e6bee8"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+
+  // ======================================================================
+  // VERROU D'ACCÈS À DISTANCE — contrôlé depuis la console Firebase, sans
+  // avoir à republier de fichier. Document : system/access, champ "active"
+  // (true/false) et champ optionnel "message" (texte affiché si verrouillé).
+  // ======================================================================
+  function showAccessLock(message){
+    if(document.getElementById('access-lock-overlay')) return;
+    const overlay = document.createElement('div');
+    overlay.id = 'access-lock-overlay';
+    overlay.style.cssText = 'position:fixed;inset:0;background:#f4f4f4;color:#3c3c3c;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px;font-family:Arial,Helvetica,sans-serif;';
+    overlay.innerHTML =
+      '<div style="font-size:42px;margin-bottom:14px;color:#c0392b;">⚠️</div>' +
+      '<div style="font-size:20px;font-weight:700;margin-bottom:8px;color:#2b2b2b;">Erreur 402 — Service suspendu</div>' +
+      '<div style="color:#5a5a5a;font-size:14.5px;max-width:340px;line-height:1.6;margin-bottom:18px;">' +
+      (message || "L'accès à ce service a été suspendu suite à un problème de facturation sur l'abonnement associé. Le service sera automatiquement rétabli dès régularisation. Pour toute question, contactez votre prestataire technique.") +
+      '</div>' +
+      '<div style="font-size:11px;color:#9a9a9a;font-family:monospace;">Code d\'erreur : ORDR-402-SUBEXPIRED</div>';
+    document.body.appendChild(overlay);
+  }
+  function hideAccessLock(){
+    const el = document.getElementById('access-lock-overlay');
+    if(el) el.remove();
+  }
+  db.collection('system').doc('access').onSnapshot((snap) => {
+    const data = snap.exists ? snap.data() : { active: true };
+    if(data.active === false){
+      showAccessLock(data.message);
+    } else {
+      hideAccessLock();
+    }
+  }, (err) => console.warn('Verrou d\'accès : lecture impossible', err));
+</script>
+
+<script>
+  // ======================================================================
+  // CODES D'ACCÈS — chacun donne le même accès complet à l'interface.
+  // Ajoute/retire des lignes ici si d'autres personnes doivent avoir accès.
+  // ======================================================================
+  const ADMIN_CODES = {
+    "9137": "Marc (Développeur)",
+    "4826": "Patron"
+  };
+
+  let currentAdminName = null;
+
+  document.getElementById('login-btn').addEventListener('click', tryLogin);
+  document.getElementById('login-pin').addEventListener('keydown', (e) => { if(e.key==='Enter') tryLogin(); });
+
+  function tryLogin(){
+    const pin = document.getElementById('login-pin').value.trim();
+    if(!ADMIN_CODES[pin]){
+      document.getElementById('login-error').textContent = 'Code incorrect.';
+      return;
+    }
+    currentAdminName = ADMIN_CODES[pin];
+    sessionStorage.setItem('omjAdminOk', pin);
+    startApp();
+  }
+  document.getElementById('logout-btn').addEventListener('click', () => {
+    sessionStorage.removeItem('omjAdminOk');
+    location.reload();
+  });
+  const savedPin = sessionStorage.getItem('omjAdminOk');
+  if(savedPin && ADMIN_CODES[savedPin]){
+    currentAdminName = ADMIN_CODES[savedPin];
+  }
+  if(currentAdminName){ startApp(); }
+
+  function startApp(){
+    document.getElementById('login-screen').classList.add('hidden');
+    document.getElementById('app').classList.remove('hidden');
+    document.getElementById('admin-name-val').textContent = currentAdminName || '';
+    logConnection(currentAdminName);
+    subscribeArchive();
+    if(currentAdminName === 'Marc (Développeur)'){
+      document.getElementById('connections-panel').classList.remove('hidden');
+      subscribeConnectionsLog();
+      subscribeVisitsLog();
+    }
+  }
+
+  // ---------- Journal des connexions (heures + PWA/Site web) ----------
+  function detectDevice(){
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+    return isStandalone ? 'PWA' : 'Site web';
+  }
+  function logConnection(role){
+    db.collection('connections').add({
+      role: role,
+      device: detectDevice(),
+      timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    }).catch(err => console.warn('Log connexion impossible :', err));
+  }
+  function subscribeConnectionsLog(){
+    db.collection('connections').orderBy('timestamp', 'desc').limit(50)
+      .onSnapshot((snap) => {
+        const el = document.getElementById('connections-log');
+        if(snap.empty){ el.innerHTML = '<div class="panel-empty">Aucune connexion enregistrée.</div>'; return; }
+        el.innerHTML = snap.docs.map(d => {
+          const c = d.data();
+          return '<div class="panel-row-line"><span class="name">' + (c.role||'—') + ' · ' + (c.device||'—') +
+            '</span><span class="val">' + fmtDateTime(c.timestamp) + '</span></div>';
+        }).join('');
+      }, err => console.warn('Lecture connexions impossible :', err));
+  }
+  function subscribeVisitsLog(){
+    db.collection('visits').orderBy('timestamp', 'desc').limit(50)
+      .onSnapshot((snap) => {
+        const el = document.getElementById('visits-log');
+        if(snap.empty){ el.innerHTML = '<div class="panel-empty">Aucune visite enregistrée.</div>'; return; }
+        el.innerHTML = snap.docs.map(d => {
+          const v = d.data();
+          const where = [v.location ? locLabel(v.location) : null, v.table ? ('Table ' + v.table) : null].filter(Boolean).join(' · ');
+          return '<div class="panel-row-line"><span class="name">' + (where || 'Visiteur') + ' · ' + (v.device||'—') +
+            '</span><span class="val">' + fmtDateTime(v.timestamp) + '</span></div>';
+        }).join('');
+      }, err => console.warn('Lecture visites impossible :', err));
+  }
+
+  document.getElementById('filter-etablissement').addEventListener('change', renderAll);
+  document.getElementById('filter-location').addEventListener('change', renderAll);
+  document.getElementById('filter-method').addEventListener('change', renderAll);
+  document.getElementById('filter-status').addEventListener('change', renderAll);
+  document.getElementById('filter-date').addEventListener('change', renderAll);
+  document.getElementById('today-btn').addEventListener('click', () => {
+    document.getElementById('filter-date').value = todayStr();
+    renderAll();
+  });
+  document.getElementById('download-report-btn').addEventListener('click', downloadDailyReport);
+
+  const PAYMENT_LABELS = { om: 'Orange Money', momo: 'MTN MoMo', terminal: 'Terminal (carte)', cash: 'Espèces' };
+  function locLabel(loc){ return loc === 'restaurant' ? 'Restaurant' : 'Rooftop'; }
+  function etabLabel(o){ return o.etablissement === 'kstay' ? 'K Stay' : ('O\'Mba\'p — ' + locLabel(o.location)); }
+  function fmtDateTime(ts){
+    if(!ts || !ts.toDate) return '';
+    return ts.toDate().toLocaleDateString('fr-FR') + ' ' + ts.toDate().toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'});
+  }
+  function todayStr(){
+    const d = new Date();
+    const off = d.getTimezoneOffset();
+    return new Date(d.getTime() - off*60000).toISOString().slice(0,10);
+  }
+  function orderDateKey(o){
+    const ts = o.archivedAt || o.paymentValidatedAt || o.createdAt;
+    if(!ts || !ts.toDate) return null;
+    const d = ts.toDate();
+    const off = d.getTimezoneOffset();
+    return new Date(d.getTime() - off*60000).toISOString().slice(0,10);
+  }
+  function orderOutcome(o){
+    return o.orderStatus || (o.paymentStatus === 'validee' ? 'validee' : 'inconnu');
+  }
+
+  document.getElementById('filter-date').value = todayStr();
+
+  let allArchived = [];
+  function subscribeArchive(){
+    db.collection('archive').onSnapshot((snap) => {
+      allArchived = snap.docs
+        .map(d => ({id: d.id, ...d.data()}))
+        .sort((a,b) => (b.archivedAt?.toMillis?.() || b.paymentValidatedAt?.toMillis?.() || b.createdAt?.toMillis?.() || 0) - (a.archivedAt?.toMillis?.() || a.paymentValidatedAt?.toMillis?.() || a.createdAt?.toMillis?.() || 0));
+      renderAll();
+    }, (err) => console.error(err));
+  }
+
+  function computeDayStats(dateStr, etabFilter){
+    let dayOrders = allArchived.filter(o => orderDateKey(o) === dateStr);
+    if(etabFilter) dayOrders = dayOrders.filter(o => (o.etablissement || 'ombap') === etabFilter);
+    const validated = dayOrders.filter(o => orderOutcome(o) === 'validee');
+    const cancelled = dayOrders.filter(o => orderOutcome(o) === 'annulee');
+    const revenue = validated.reduce((s,o) => s + (o.total||0), 0);
+
+    const byMethod = {};
+    const byLocation = {};
+    const byTable = {};
+    const byItem = {};
+    validated.forEach(o => {
+      const m = o.paymentMethod || 'inconnu';
+      byMethod[m] = byMethod[m] || {count:0, total:0};
+      byMethod[m].count++; byMethod[m].total += (o.total||0);
+
+      const l = etabLabel(o);
+      byLocation[l] = byLocation[l] || {count:0, total:0};
+      byLocation[l].count++; byLocation[l].total += (o.total||0);
+
+      const t = 'Table ' + (o.table || '—') + ' (' + etabLabel(o) + ')';
+      byTable[t] = byTable[t] || {count:0, total:0};
+      byTable[t].count++; byTable[t].total += (o.total||0);
+
+      (o.items||[]).forEach(it => {
+        byItem[it.name] = byItem[it.name] || {qty:0, total:0};
+        byItem[it.name].qty += (it.qty||0);
+        byItem[it.name].total += (it.qty||0)*(it.price||0);
+      });
+    });
+
+    const topTables = Object.entries(byTable).sort((a,b)=>b[1].total-a[1].total).slice(0,8);
+    const topItems = Object.entries(byItem).sort((a,b)=>b[1].qty-a[1].qty).slice(0,10);
+
+    return { dayOrders, validated, cancelled, revenue, byMethod, byLocation, topTables, topItems };
+  }
+
+  function renderAll(){
+    const dateStr = document.getElementById('filter-date').value || todayStr();
+    const etabFilter = document.getElementById('filter-etablissement').value;
+    const locFilter = document.getElementById('filter-location').value;
+    const methodFilter = document.getElementById('filter-method').value;
+    const statusFilter = document.getElementById('filter-status').value;
+
+    const stats = computeDayStats(dateStr, etabFilter);
+
+    // ---------- Cartes resume ----------
+    document.getElementById('stat-revenue').textContent = stats.revenue.toLocaleString('fr-FR');
+    document.getElementById('stat-validated').textContent = stats.validated.length;
+    document.getElementById('stat-cancelled').textContent = stats.cancelled.length;
+    document.getElementById('stat-orders-count').textContent = stats.dayOrders.length;
+
+    // ---------- Panneau paiement ----------
+    const payEl = document.getElementById('breakdown-payment');
+    const methodEntries = Object.entries(stats.byMethod);
+    payEl.innerHTML = methodEntries.length ? methodEntries.map(([m, v]) =>
+      `<div class="panel-row-line"><span class="name">${PAYMENT_LABELS[m]||m}</span><span class="val">${v.count} · ${v.total.toLocaleString('fr-FR')} FCFA</span></div>`
+    ).join('') : '<div class="panel-empty">Aucune donnée pour ce jour.</div>';
+
+    // ---------- Panneau lieu ----------
+    const locEl = document.getElementById('breakdown-location');
+    const locEntries = Object.entries(stats.byLocation);
+    locEl.innerHTML = locEntries.length ? locEntries.map(([l, v]) =>
+      `<div class="panel-row-line"><span class="name">${l}</span><span class="val">${v.count} · ${v.total.toLocaleString('fr-FR')} FCFA</span></div>`
+    ).join('') : '<div class="panel-empty">Aucune donnée pour ce jour.</div>';
+
+    // ---------- Top tables ----------
+    const tablesEl = document.getElementById('top-tables');
+    tablesEl.innerHTML = stats.topTables.length ? stats.topTables.map(([t, v]) =>
+      `<div class="panel-row-line"><span class="name">${t}</span><span class="val">${v.count} cmd · ${v.total.toLocaleString('fr-FR')} FCFA</span></div>`
+    ).join('') : '<div class="panel-empty">Aucune donnée pour ce jour.</div>';
+
+    // ---------- Top items ----------
+    const itemsEl = document.getElementById('top-items');
+    itemsEl.innerHTML = stats.topItems.length ? stats.topItems.map(([n, v]) =>
+      `<div class="panel-row-line"><span class="name">${n}</span><span class="val">${v.qty}×</span></div>`
+    ).join('') : '<div class="panel-empty">Aucune donnée pour ce jour.</div>';
+
+    // ---------- Liste detaillee (filtree) ----------
+    let list = stats.dayOrders;
+    if(locFilter) list = list.filter(o => o.location === locFilter);
+    if(methodFilter) list = list.filter(o => o.paymentMethod === methodFilter);
+    if(statusFilter) list = list.filter(o => orderOutcome(o) === statusFilter);
+
+    const listEl = document.getElementById('orders-list');
+    document.getElementById('empty-state').classList.toggle('hidden', list.length > 0);
+    listEl.innerHTML = '';
+
+    list.forEach(o => {
+      const card = document.createElement('div');
+      const outcome = orderOutcome(o);
+      card.className = 'order-card' + (outcome === 'annulee' ? ' cancelled' : '');
+      const itemsHtml = (o.items || []).map(it =>
+        `<div class="oc-item"><span><span class="qty">${it.qty}×</span> ${it.name}</span><span>${(it.price*it.qty).toLocaleString('fr-FR')} FCFA</span></div>`
+      ).join('');
+      const methodLabel = PAYMENT_LABELS[o.paymentMethod] || 'Non précisé';
+      const statusLine = outcome === 'annulee'
+        ? `<div class="oc-payment cancelled">✕ Annulée${o.cancelReason ? ' — ' + o.cancelReason : ''}</div>`
+        : `<div class="oc-payment">✓ Encaissé — <b>${methodLabel}</b></div>`;
+
+      card.innerHTML = `
+        <div class="oc-head">
+          <div><span class="oc-table">Table n° ${o.table || '—'}</span><span class="oc-loc">${etabLabel(o)}</span></div>
+          <div class="oc-meta">
+            <div class="oc-name">${o.customerName || 'Client'}</div>
+            <div>${fmtDateTime(o.archivedAt || o.paymentValidatedAt || o.createdAt)} · ${o.orderRef || ''}</div>
+          </div>
+        </div>
+        <div class="oc-items">${itemsHtml}</div>
+        <div class="oc-total"><span>Total</span><span>${(o.total||0).toLocaleString('fr-FR')} FCFA</span></div>
+        ${statusLine}
+        ${outcome !== 'annulee' ? `<div class="oc-actions"><button class="oc-btn" data-id="${o.id}">📥 Télécharger la facture PDF</button></div>` : ''}
+      `;
+      listEl.appendChild(card);
+    });
+
+    listEl.querySelectorAll('.oc-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const order = allArchived.find(o => o.id === btn.dataset.id);
+        if(order) generateInvoicePDF(order);
+      });
+    });
+  }
+
+  // Formatage des montants pour les PDF : la police standard des PDF ne sait
+  // pas afficher l'espace fine utilisée par le format français (elle
+  // s'affichait comme un "/"). On force donc ce format-ci : 4.000.00
+  function formatMontantPDF(n){
+    n = Math.round(n || 0);
+    return n.toLocaleString('en-US').replace(/,/g, '.') + '.00';
+  }
+
+  // ---------- Rapport journalier PDF (pour le patron, simple a telecharger) ----------
+  function downloadDailyReport(){
+    const dateStr = document.getElementById('filter-date').value || todayStr();
+    const etabFilter = document.getElementById('filter-etablissement').value;
+    const etabTitle = etabFilter === 'kstay' ? 'K Stay' : etabFilter === 'ombap' ? "O'Mba'p Lounge" : "O'Mba'p Lounge & K Stay";
+    const stats = computeDayStats(dateStr, etabFilter);
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+    const goldRGB = [194, 155, 15];
+    const navyRGB = [14, 27, 28];
+    let y = 20;
+
+    doc.setTextColor(...navyRGB);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(20);
+    doc.text(etabTitle + " — Rapport journalier", 105, y, {align:'center'});
+    y += 8;
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'normal');
+    const dObj = new Date(dateStr + 'T12:00:00');
+    doc.text(dObj.toLocaleDateString('fr-FR', {weekday:'long', year:'numeric', month:'long', day:'numeric'}), 105, y, {align:'center'});
+    y += 10;
+
+    doc.setDrawColor(...goldRGB);
+    doc.setLineWidth(0.6);
+    doc.line(20, y, 190, y);
+    y += 10;
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(14);
+    doc.text('TOTAL ENCAISSÉ : ' + formatMontantPDF(stats.revenue) + ' FCFA', 20, y);
+    y += 8;
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(11);
+    doc.text('Commandes validées : ' + stats.validated.length + '   |   Commandes annulées : ' + stats.cancelled.length + '   |   Total du jour : ' + stats.dayOrders.length, 20, y);
+    y += 12;
+
+    function sectionTitle(title){
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(12);
+      doc.setTextColor(...navyRGB);
+      doc.text(title, 20, y);
+      y += 3;
+      doc.setDrawColor(200,200,200);
+      doc.line(20, y, 190, y);
+      y += 6;
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(10.5);
+    }
+
+    sectionTitle('Répartition par mode de paiement');
+    const methodEntries = Object.entries(stats.byMethod);
+    if(!methodEntries.length){ doc.text('Aucune donnée.', 20, y); y += 6; }
+    methodEntries.forEach(([m,v]) => {
+      doc.text((PAYMENT_LABELS[m]||m) + ' — ' + v.count + ' commande(s)', 20, y);
+      doc.text(formatMontantPDF(v.total) + ' FCFA', 190, y, {align:'right'});
+      y += 6;
+    });
+    y += 4;
+
+    sectionTitle('Répartition par lieu');
+    const locEntries = Object.entries(stats.byLocation);
+    if(!locEntries.length){ doc.text('Aucune donnée.', 20, y); y += 6; }
+    locEntries.forEach(([l,v]) => {
+      doc.text(l + ' — ' + v.count + ' commande(s)', 20, y);
+      doc.text(formatMontantPDF(v.total) + ' FCFA', 190, y, {align:'right'});
+      y += 6;
+    });
+    y += 4;
+
+    sectionTitle('Tables les plus commandées');
+    if(!stats.topTables.length){ doc.text('Aucune donnée.', 20, y); y += 6; }
+    stats.topTables.forEach(([t,v]) => {
+      if(y > 270){ doc.addPage(); y = 20; }
+      doc.text(t + ' — ' + v.count + ' commande(s)', 20, y);
+      doc.text(formatMontantPDF(v.total) + ' FCFA', 190, y, {align:'right'});
+      y += 6;
+    });
+    y += 4;
+
+    sectionTitle('Menus les plus commandés');
+    if(!stats.topItems.length){ doc.text('Aucune donnée.', 20, y); y += 6; }
+    stats.topItems.forEach(([n,v]) => {
+      if(y > 270){ doc.addPage(); y = 20; }
+      doc.text(String(n).slice(0,55), 20, y);
+      doc.text(v.qty + '×', 190, y, {align:'right'});
+      y += 6;
+    });
+
+    doc.save('rapport-omba-p-lounge-' + dateStr + '.pdf');
+  }
+
+  // ---------- Génération de la facture PDF (identique à l'interface caisse) ----------
+  function generateInvoicePDF(o){
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ unit: 'mm', format: 'a5' });
+    const goldRGB = [194, 155, 15];
+    const navyRGB = [14, 27, 28];
+    let y = 18;
+
+    doc.setTextColor(...navyRGB);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(18);
+    doc.text(o.etablissement === 'kstay' ? "K STAY" : "O'Mba'p Lounge", 74, y, {align:'center'});
+    y += 7;
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'normal');
+    doc.text((o.etablissement === 'kstay' ? '' : (locLabel(o.location) + ' — ')) + 'Table n° ' + (o.table || '—'), 74, y, {align:'center'});
+    y += 9;
+
+    doc.setDrawColor(...goldRGB);
+    doc.setLineWidth(0.6);
+    doc.line(14, y, 134, y);
+    y += 8;
+
+    doc.setFontSize(10);
+    doc.text('N° commande : ' + (o.orderRef || '—'), 14, y); y += 6;
+    doc.text('Date : ' + fmtDateTime(o.paymentValidatedAt || o.createdAt), 14, y); y += 6;
+    doc.text('Client : ' + (o.customerName || '—'), 14, y); y += 6;
+    doc.text('Mode de paiement : ' + (PAYMENT_LABELS[o.paymentMethod] || '—'), 14, y); y += 10;
+
+    doc.setFont('helvetica', 'bold');
+    doc.text('Article', 14, y);
+    doc.text('Qté', 92, y);
+    doc.text('Total', 120, y);
+    doc.setFont('helvetica', 'normal');
+    y += 3;
+    doc.setDrawColor(200,200,200);
+    doc.line(14, y, 134, y);
+    y += 6;
+
+    (o.items || []).forEach(it => {
+      if(y > 190){ doc.addPage(); y = 20; }
+      const lineTotal = formatMontantPDF(it.price * it.qty) + ' FCFA';
+      doc.text(String(it.name).slice(0, 38), 14, y);
+      doc.text(String(it.qty), 94, y);
+      doc.text(lineTotal, 120, y, {align:'left'});
+      y += 6;
+    });
+
+    y += 4;
+    doc.setDrawColor(...goldRGB);
+    doc.line(14, y, 134, y);
+    y += 8;
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(13);
+    doc.text('TOTAL : ' + formatMontantPDF(o.total||0) + ' FCFA', 14, y);
+    y += 14;
+
+    doc.setFillColor(...goldRGB);
+    doc.roundedRect(14, y, 50, 12, 2, 2, 'F');
+    doc.setTextColor(255,255,255);
+    doc.setFontSize(12);
+    doc.text('✓ SOLDÉE', 39, y + 8, {align:'center'});
+
+    y += 26;
+    if(y > 185){ doc.addPage(); y = 24; }
+    doc.setTextColor(...navyRGB);
+    doc.setFont('helvetica', 'italic');
+    doc.setFontSize(11);
+    doc.text('Vivement de vous revoir très bientôt', 74, y, {align:'center'});
+    y += 6;
+    doc.setFont('helvetica', 'bold');
+    doc.text(o.etablissement === 'kstay' ? "K STAY" : "O'Mba'p", 74, y, {align:'center'});
+
+    doc.save('facture-' + (o.orderRef || o.id) + '.pdf');
+  }
+</script>
+
+<script>
+  // Enregistrement du service worker pour permettre l'installation en PWA
+  if('serviceWorker' in navigator){
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js').catch(err => console.warn('SW non enregistre :', err));
+    });
+  }
+</script>
+
+</body>
+</html>

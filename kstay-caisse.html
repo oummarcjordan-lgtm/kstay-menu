@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>K STAY — Caisse</title>
+<link rel="manifest" href="manifest-caisse-kstay.json">
+<meta name="theme-color" content="#0a0908">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="KS Caisse">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root{
+    --bg: #0e1b1c;
+    --bg-raised: #142627;
+    --bg-card: #1a2f30;
+    --gold: #f2b705;
+    --ember: #e2572b;
+    --green: #3ba55c;
+    --cream: #f4ede1;
+    --cream-dim: #cfc6b8;
+    --line: rgba(244,237,225,0.14);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--bg); color:var(--cream);
+    font-family:'Work Sans', sans-serif; min-height:100vh; padding-bottom:40px;
+  }
+  h1,h2{font-family:'Fraunces', serif; margin:0;}
+
+  #login-screen{
+    position:fixed; inset:0; background:var(--bg);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:16px; z-index:200; text-align:center; padding:30px;
+  }
+  #login-screen input{
+    width:100%; max-width:280px; padding:13px 14px; border-radius:8px;
+    border:1px solid var(--line); background:var(--bg-raised); color:var(--cream);
+    font-size:15px; letter-spacing:0.3em; text-align:center;
+  }
+  #login-screen button{
+    background:var(--gold); color:#241a03; border:none; padding:14px 30px;
+    border-radius:30px; font-size:15px; font-weight:700; cursor:pointer;
+    width:100%; max-width:280px; font-family:'Work Sans', sans-serif;
+  }
+  #login-error{color:var(--ember); font-size:13px; min-height:18px;}
+
+  header{
+    padding:18px 20px 14px; border-bottom:1px solid var(--line);
+    position:sticky; top:0; z-index:20; background:var(--bg);
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+  }
+  header h1{font-size:20px;}
+  header h1 span{color:var(--gold);}
+  #logout-btn{
+    background:none; border:1px solid var(--line); color:var(--cream-dim);
+    font-size:11px; padding:5px 10px; border-radius:20px; cursor:pointer;
+  }
+
+  .tabs{
+    display:flex; gap:0; border-bottom:1px solid var(--line);
+    position:sticky; top:60px; background:var(--bg); z-index:19;
+  }
+  .tab{
+    flex:1; text-align:center; padding:13px 8px; font-size:13.5px; font-weight:600;
+    color:var(--cream-dim); cursor:pointer; border-bottom:2px solid transparent;
+  }
+  .tab.active{color:var(--gold); border-bottom-color:var(--gold);}
+
+  main{max-width:680px; margin:0 auto; padding:10px 14px 30px;}
+
+  .empty-state{text-align:center; padding:60px 20px; color:var(--cream-dim);}
+  .empty-state .big{font-size:40px; margin-bottom:10px;}
+
+  .order-card{
+    background:var(--bg-card); border:1px solid var(--line);
+    border-left:4px solid var(--gold); border-radius:10px;
+    padding:16px; margin:14px 0;
+  }
+  .order-card.validee{border-left-color:var(--green); opacity:0.9;}
+  .oc-head{display:flex; justify-content:space-between; align-items:flex-start; gap:10px; margin-bottom:6px;}
+  .oc-table{font-family:'Fraunces', serif; font-size:20px; color:var(--gold);}
+  .oc-loc{
+    display:inline-block; font-size:11px; padding:2px 8px; border-radius:12px;
+    border:1px solid var(--gold); color:var(--gold); margin-left:8px; vertical-align:middle;
+  }
+  .oc-meta{text-align:right; font-size:12px; color:var(--cream-dim); line-height:1.5;}
+  .oc-name{font-weight:600; color:var(--cream);}
+  .oc-items{margin:10px 0; font-size:14px;}
+  .oc-item{display:flex; justify-content:space-between; gap:10px; padding:4px 0; border-bottom:1px dashed var(--line);}
+  .oc-item:last-child{border-bottom:none;}
+  .oc-item .qty{color:var(--gold); font-weight:600; min-width:34px;}
+  .oc-total{
+    display:flex; justify-content:space-between; font-weight:700; font-size:15px;
+    margin-top:10px; padding-top:10px; border-top:1px solid var(--line);
+  }
+  .oc-payment{
+    display:flex; align-items:center; gap:8px; margin-top:10px;
+    font-size:13px; padding:8px 10px; border-radius:8px; background:rgba(242,183,5,0.08);
+  }
+  .oc-served-tag{font-size:12px; color:var(--cream-dim); margin-top:6px;}
+  .oc-actions{display:flex; gap:10px; margin-top:12px;}
+  .oc-btn{
+    flex:1; padding:11px; border-radius:8px; border:none;
+    font-weight:600; font-size:13.5px; cursor:pointer; font-family:'Work Sans', sans-serif;
+  }
+  .oc-validate{background:var(--gold); color:#241a03;}
+  .oc-cancel{background:none; border:1px solid var(--ember); color:var(--ember);}
+  .oc-pdf{background:var(--bg-raised); color:var(--cream); border:1px solid var(--gold) !important;}
+  .hidden{display:none !important;}
+</style>
+</head>
+<body>
+
+<div id="login-screen">
+  <h1>K <span>STAY</span></h1>
+  <h2 style="font-size:16px; color:var(--cream-dim); font-family:'Work Sans',sans-serif; font-weight:500;">Caisse — Accès réservé</h2>
+  <input id="login-pin" type="password" inputmode="numeric" maxlength="8" placeholder="Code d'accès caisse">
+  <button id="login-btn" type="button">Se connecter</button>
+  <div id="login-error"></div>
+</div>
+
+<div id="app" class="hidden">
+  <header>
+    <h1>K <span>STAY</span> — Caisse</h1>
+    <button id="logout-btn" type="button">Se déconnecter</button>
+  </header>
+
+  <main>
+    <div id="empty-attente" class="empty-state hidden">
+      <div class="big">✅</div>
+      Aucune commande en cours pour le moment.
+    </div>
+    <div id="list-attente"></div>
+  </main>
+</div>
+
+<!-- ======================================================================
+     FIREBASE — mêmes clés que sur le site de commande et l'app tablette.
+     ====================================================================== -->
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyAMbijp8xA3BLbaulDxZRzSh_jBNI8cqK8",
+    authDomain: "omba-p-lounge.firebaseapp.com",
+    projectId: "omba-p-lounge",
+    storageBucket: "omba-p-lounge.firebasestorage.app",
+    messagingSenderId: "469786469177",
+    appId: "1:469786469177:web:614e9c606f58ba79e6bee8"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+
+  // ======================================================================
+  // VERROU D'ACCÈS À DISTANCE — contrôlé depuis la console Firebase, sans
+  // avoir à republier de fichier. Document : system/access, champ "active"
+  // (true/false) et champ optionnel "message" (texte affiché si verrouillé).
+  // Le style imite une page technique standard de suspension de service
+  // (comme un hébergeur ou un SaaS), pas un message personnel.
+  // ======================================================================
+  function showAccessLock(message){
+    if(document.getElementById('access-lock-overlay')) return;
+    const overlay = document.createElement('div');
+    overlay.id = 'access-lock-overlay';
+    overlay.style.cssText = 'position:fixed;inset:0;background:#f4f4f4;color:#3c3c3c;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px;font-family:Arial,Helvetica,sans-serif;';
+    overlay.innerHTML =
+      '<div style="font-size:42px;margin-bottom:14px;color:#c0392b;">⚠️</div>' +
+      '<div style="font-size:20px;font-weight:700;margin-bottom:8px;color:#2b2b2b;">Erreur 402 — Service suspendu</div>' +
+      '<div style="color:#5a5a5a;font-size:14.5px;max-width:340px;line-height:1.6;margin-bottom:18px;">' +
+      (message || "L'accès à ce service a été suspendu suite à un problème de facturation sur l'abonnement associé. Le service sera automatiquement rétabli dès régularisation. Pour toute question, contactez votre prestataire technique.") +
+      '</div>' +
+      '<div style="font-size:11px;color:#9a9a9a;font-family:monospace;">Code d\'erreur : ORDR-402-SUBEXPIRED</div>';
+    document.body.appendChild(overlay);
+  }
+  function hideAccessLock(){
+    const el = document.getElementById('access-lock-overlay');
+    if(el) el.remove();
+  }
+  db.collection('system').doc('access').onSnapshot((snap) => {
+    const data = snap.exists ? snap.data() : { active: true };
+    if(data.active === false){
+      showAccessLock(data.message);
+    } else {
+      hideAccessLock();
+    }
+  }, (err) => console.warn('Verrou d\'accès : lecture impossible', err));
+</script>
+
+<script>
+  // ======================================================================
+  // CODE D'ACCÈS CAISSE — à changer ici si besoin.
+  // ======================================================================
+  const CAISSE_PIN = "0852";
+
+  // ---------- Son d'alerte via Web Audio API pour les nouvelles commandes ----------
+  let audioCtx = null;
+  function playBeep(){
+    try{
+      if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const now = audioCtx.currentTime;
+      [0, 0.18].forEach(delay => {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.value = 880;
+        gain.gain.setValueAtTime(0.0001, now + delay);
+        gain.gain.exponentialRampToValueAtTime(0.35, now + delay + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + delay + 0.16);
+        osc.connect(gain).connect(audioCtx.destination);
+        osc.start(now + delay);
+        osc.stop(now + delay + 0.18);
+      });
+    }catch(e){}
+  }
+  function playAlert(){
+    playBeep();
+    if(navigator.vibrate) navigator.vibrate([200,100,200]);
+  }
+
+  document.getElementById('login-btn').addEventListener('click', tryLogin);
+  document.getElementById('login-pin').addEventListener('keydown', (e) => { if(e.key==='Enter') tryLogin(); });
+
+  function tryLogin(){
+    const pin = document.getElementById('login-pin').value.trim();
+    if(pin !== CAISSE_PIN){
+      document.getElementById('login-error').textContent = 'Code incorrect.';
+      return;
+    }
+    sessionStorage.setItem('omjCaisseOk', '1');
+    startApp();
+  }
+  document.getElementById('logout-btn').addEventListener('click', () => {
+    sessionStorage.removeItem('omjCaisseOk');
+    location.reload();
+  });
+
+  if(sessionStorage.getItem('omjCaisseOk') === '1'){ startApp(); }
+
+  function startApp(){
+    document.getElementById('login-screen').classList.add('hidden');
+    document.getElementById('app').classList.remove('hidden');
+    logConnection('Caisse');
+    subscribeOrders();
+  }
+
+  // ---------- Journal des connexions (heures + PWA/Site web) ----------
+  function detectDevice(){
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+    return isStandalone ? 'PWA' : 'Site web';
+  }
+  function logConnection(role){
+    db.collection('connections').add({
+      role: role,
+      etablissement: 'kstay',
+      device: detectDevice(),
+      timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    }).catch(err => console.warn('Log connexion impossible :', err));
+  }
+
+  // ---------- Libellés ----------
+  const PAYMENT_LABELS = {
+    om: 'Orange Money', momo: 'MTN MoMo', cash: 'Espèces'
+  };
+  function fmtDateTime(ts){
+    if(!ts || !ts.toDate) return '';
+    return ts.toDate().toLocaleDateString('fr-FR') + ' ' + ts.toDate().toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'});
+  }
+
+  // ---------- Écoute en temps réel de toutes les commandes ----------
+  let allOrders = [];
+  let knownIds = new Set();
+  let firstLoad = true;
+  const removedByMeIds = new Set(); // pour ne pas s'auto-alerter sur ses propres suppressions
+
+  function subscribeOrders(){
+    db.collection('orders').onSnapshot((snap) => {
+      const docs = snap.docs
+        .map(d => ({id: d.id, ...d.data()}))
+        .filter(o => o.etablissement === 'kstay') // base Firebase partagée avec O'Mba'p Lounge
+        .sort((a,b) => (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0));
+
+      const newIds = new Set(docs.map(o => o.id));
+
+      if(!firstLoad){
+        docs.forEach(o => {
+          if(!knownIds.has(o.id)) playAlert();
+        });
+        // Detection des commandes disparues (annulees par le client lui-meme)
+        allOrders.forEach(o => {
+          if(!newIds.has(o.id)){
+            if(removedByMeIds.has(o.id)){
+              removedByMeIds.delete(o.id); // c'etait notre propre action, rien a signaler
+            } else {
+              playAlert();
+              alert('⚠️ Le client de la table n° ' + (o.table || '—') + ' a annulé sa commande (' + (o.orderRef || '') + ').');
+            }
+          }
+        });
+      }
+      knownIds = newIds;
+      firstLoad = false;
+
+      allOrders = docs;
+      renderAll();
+    }, (err) => console.error(err));
+  }
+
+  function renderAll(){
+    // Seules les commandes pas encore encaissées restent visibles ici —
+    // une fois encaissées, elles sont archivées puis retirées de cette liste.
+    const enCours = allOrders.filter(o => o.paymentStatus !== 'validee');
+    renderList('list-attente', 'empty-attente', enCours);
+  }
+
+  function renderList(listId, emptyId, orders){
+    const listEl = document.getElementById(listId);
+    document.getElementById(emptyId).classList.toggle('hidden', orders.length > 0);
+    listEl.innerHTML = '';
+
+    orders.forEach(o => {
+      const card = document.createElement('div');
+      card.className = 'order-card';
+
+      const itemsHtml = (o.items || []).map(it =>
+        `<div class="oc-item"><span><span class="qty">${it.qty}×</span> ${it.name}</span><span>${(it.price*it.qty).toLocaleString('fr-FR')} FCFA</span></div>`
+      ).join('');
+
+      const methodLabel = PAYMENT_LABELS[o.paymentMethod] || 'Non précisé';
+      const needsCheck = o.paymentMethod === 'om' || o.paymentMethod === 'momo';
+
+      card.innerHTML = `
+        <div class="oc-head">
+          <div><span class="oc-table">Table n° ${o.table || '—'}</span></div>
+          <div class="oc-meta">
+            <div class="oc-name">${o.customerName || 'Client'}</div>
+            <div>${fmtDateTime(o.createdAt)} · ${o.orderRef || ''}</div>
+          </div>
+        </div>
+        <div class="oc-items">${itemsHtml}</div>
+        <div class="oc-total"><span>Total</span><span>${(o.total||0).toLocaleString('fr-FR')} FCFA</span></div>
+        <div class="oc-payment">💳 Mode de paiement : <b>${methodLabel}</b>${needsCheck ? ' — <span style="color:var(--ember)">⚠️ à vérifier</span>' : ''}</div>
+        <div class="oc-actions">
+          <button class="oc-btn oc-validate" data-id="${o.id}">💰 Encaisser (fonds reçus)</button>
+          <button class="oc-btn oc-cancel" data-id="${o.id}">✕ Annuler</button>
+        </div>
+      `;
+      listEl.appendChild(card);
+    });
+
+    listEl.querySelectorAll('.oc-validate').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const order = allOrders.find(o => o.id === btn.dataset.id);
+        if(!order) return;
+        const sure = confirm('Confirmez-vous avoir bien reçu le paiement (' + (order.total||0).toLocaleString('fr-FR') + ' FCFA) ?\nLe ticket sera archivé puis retiré de cette liste.');
+        if(!sure) return;
+
+        btn.disabled = true;
+        btn.textContent = 'Encaissement…';
+
+        const archivedOrder = {
+          ...order,
+          paymentStatus: 'validee',
+          orderStatus: 'validee',
+          paymentValidatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+          archivedAt: firebase.firestore.FieldValue.serverTimestamp()
+        };
+        delete archivedOrder.id;
+
+        try{
+          // 1) Enregistrement permanent AVANT toute suppression (jamais perdu)
+          await db.collection('archive').doc(order.id).set(archivedOrder);
+          // 2) Facture PDF téléchargée immédiatement
+          generateInvoicePDF({...order, paymentStatus:'validee'});
+          // 3) Le ticket disparaît de la caisse une fois l'archive confirmée
+          removedByMeIds.add(order.id);
+          await db.collection('orders').doc(order.id).delete();
+        } catch(err){
+          console.error('Erreur encaissement :', err);
+          alert("Erreur : le ticket n'a pas pu être archivé/supprimé. Réessayez.");
+          btn.disabled = false;
+          btn.textContent = '💰 Encaisser (fonds reçus)';
+        }
+      });
+    });
+
+    listEl.querySelectorAll('.oc-cancel').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const order = allOrders.find(o => o.id === btn.dataset.id);
+        if(!order) return;
+        const reason = prompt("Annuler la commande de la table n° " + (order.table||'—') + " — motif (optionnel) :", '');
+        if(reason === null) return; // l'utilisateur a fait "Annuler" sur la boîte de dialogue elle-même
+
+        btn.disabled = true;
+        btn.textContent = 'Annulation…';
+
+        const archivedOrder = {
+          ...order,
+          orderStatus: 'annulee',
+          cancelReason: reason || null,
+          archivedAt: firebase.firestore.FieldValue.serverTimestamp()
+        };
+        delete archivedOrder.id;
+
+        try{
+          await db.collection('archive').doc(order.id).set(archivedOrder);
+          removedByMeIds.add(order.id);
+          await db.collection('orders').doc(order.id).delete();
+        } catch(err){
+          console.error('Erreur annulation :', err);
+          alert("Erreur : la commande n'a pas pu être annulée. Réessayez.");
+          btn.disabled = false;
+          btn.textContent = '✕ Annuler';
+        }
+      });
+    });
+  }
+
+  // ---------- Génération de la facture PDF soldée ----------
+  // Formatage des montants pour les PDF : la police standard des PDF ne sait
+  // pas afficher l'espace fine utilisée par le format français (elle
+  // s'affichait comme un "/"). On force donc ce format-ci : 4.000.00
+  function formatMontantPDF(n){
+    n = Math.round(n || 0);
+    return n.toLocaleString('en-US').replace(/,/g, '.') + '.00';
+  }
+
+  function generateInvoicePDF(o){
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ unit: 'mm', format: 'a5' });
+    const goldRGB = [194, 155, 15];
+    const navyRGB = [14, 27, 28];
+    let y = 18;
+
+    doc.setTextColor(...navyRGB);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(18);
+    doc.text("K STAY", 74, y, {align:'center'});
+    y += 7;
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'normal');
+    doc.text('Table n° ' + (o.table || '—'), 74, y, {align:'center'});
+    y += 9;
+
+    doc.setDrawColor(...goldRGB);
+    doc.setLineWidth(0.6);
+    doc.line(14, y, 134, y);
+    y += 8;
+
+    doc.setFontSize(10);
+    doc.text('N° commande : ' + (o.orderRef || '—'), 14, y); y += 6;
+    doc.text('Date : ' + fmtDateTime(o.createdAt), 14, y); y += 6;
+    doc.text('Client : ' + (o.customerName || '—'), 14, y); y += 6;
+    doc.text('Mode de paiement : ' + (PAYMENT_LABELS[o.paymentMethod] || '—'), 14, y); y += 10;
+
+    doc.setFont('helvetica', 'bold');
+    doc.text('Article', 14, y);
+    doc.text('Qté', 92, y);
+    doc.text('Total', 120, y);
+    doc.setFont('helvetica', 'normal');
+    y += 3;
+    doc.setDrawColor(200,200,200);
+    doc.line(14, y, 134, y);
+    y += 6;
+
+    (o.items || []).forEach(it => {
+      if(y > 190){ doc.addPage(); y = 20; }
+      const lineTotal = formatMontantPDF(it.price * it.qty) + ' FCFA';
+      doc.text(String(it.name).slice(0, 38), 14, y);
+      doc.text(String(it.qty), 94, y);
+      doc.text(lineTotal, 120, y, {align:'left'});
+      y += 6;
+    });
+
+    y += 4;
+    doc.setDrawColor(...goldRGB);
+    doc.line(14, y, 134, y);
+    y += 8;
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(13);
+    doc.text('TOTAL : ' + formatMontantPDF(o.total||0) + ' FCFA', 14, y);
+    y += 14;
+
+    doc.setFillColor(...goldRGB);
+    doc.roundedRect(14, y, 50, 12, 2, 2, 'F');
+    doc.setTextColor(255,255,255);
+    doc.setFontSize(12);
+    doc.text('✓ SOLDÉE', 39, y + 8, {align:'center'});
+
+    y += 26;
+    if(y > 185){ doc.addPage(); y = 24; }
+    doc.setTextColor(...navyRGB);
+    doc.setFont('helvetica', 'italic');
+    doc.setFontSize(11);
+    doc.text('Vivement de vous revoir très bientôt', 74, y, {align:'center'});
+    y += 6;
+    doc.setFont('helvetica', 'bold');
+    doc.text("K STAY", 74, y, {align:'center'});
+
+    doc.save('facture-' + (o.orderRef || o.id) + '.pdf');
+  }
+</script>
+
+<script>
+  // Enregistrement du service worker pour permettre l'installation en PWA
+  if('serviceWorker' in navigator){
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js').catch(err => console.warn('SW non enregistre :', err));
+    });
+  }
+</script>
+
+</body>
+</html>
