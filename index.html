@@ -71,40 +71,27 @@
     width: min(92vw, 400px);
     aspect-ratio: 100 / 150;
     max-height: 100%;
-    perspective: 2600px;
-    perspective-origin: 15% 50%;
-    z-index: 60; /* doit rester au-dessus des zones de navigation (z-index:50) sinon
-                    elles recouvrent les boutons "+" situés près des bords de page */
+    z-index: 60;
   }
 
   .page {
     position: absolute; inset: 0;
-    -webkit-transform-style: preserve-3d; transform-style: preserve-3d;
-    transform-origin: left center;
-    transition: transform 0.85s cubic-bezier(0.45, 0.05, 0.15, 1);
-    will-change: transform;
-    cursor: pointer;
+    display: none;
   }
-  .page.flipped { transform: rotateY(-178deg); pointer-events: none; }
+  .page.active { display: block; }
 
   .page-inner {
     position: relative; width: 100%; height: 100%;
-    -webkit-transform-style: preserve-3d; transform-style: preserve-3d;
     border-radius: 4px; overflow: hidden;
     box-shadow: 0 18px 40px rgba(0,0,0,0.55), 0 2px 8px rgba(0,0,0,0.4);
   }
-  .page-face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+  .page-face { position: absolute; inset: 0; }
   .page-inner::after {
     content: ""; position: absolute; inset: 0; pointer-events: none;
     background: linear-gradient(to right, rgba(0,0,0,0.32) 0%, transparent 3%, transparent 97%, rgba(0,0,0,0.2) 100%);
   }
 
-  .page-back {
-    transform: rotateY(180deg);
-    background: radial-gradient(circle at 50% 42%, rgba(201,162,75,0.14), transparent 60%), linear-gradient(160deg, #141210 0%, #0a0908 65%, #060605 100%);
-    border: 1px solid rgba(201,162,75,0.25);
-    display: flex; align-items: center; justify-content: center;
-  }
+  .page-back { display: none; } /* decor de dos de page, inutile sans effet 3D */
   .back-mark {
     display: flex; flex-direction: column; align-items: center; gap: 6px;
     border: 1px solid rgba(201,162,75,0.35); width: 110px; height: 110px; border-radius: 50%;
@@ -363,19 +350,29 @@
 
   /* ---------- NAV / CHROME ---------- */
 
-  .navzone { position: fixed; top: 0; bottom: 0; width: 18%; z-index: 50; display: flex; align-items: center; cursor: pointer; }
-  .navzone.left { left: 0; justify-content: flex-start; }
-  .navzone.right { right: 0; justify-content: flex-end; }
-  .navbtn {
-    width: 36px; height: 36px; margin: 0 8px; border-radius: 50%;
-    border: 1px solid rgba(201,162,75,0.4); background: rgba(10,9,8,0.55); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
-    display: flex; align-items: center; justify-content: center; color: var(--ks-gold-light);
-    opacity: 0.75; transition: opacity 0.25s ease, transform 0.25s ease; pointer-events: none;
+  .navzone {
+    position: fixed; bottom: 92px; z-index: 250;
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    cursor: pointer; background: none; border: none;
   }
-  .navbtn svg { width: 15px; height: 15px; }
+  .navzone.left { left: 12px; }
+  .navzone.right { right: 12px; }
+  .navbtn {
+    width: 52px; height: 52px; border-radius: 50%;
+    border: 1px solid rgba(201,162,75,0.5); background: rgba(10,9,8,0.72); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+    display: flex; align-items: center; justify-content: center; color: var(--ks-gold-light);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.45);
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+  .navbtn svg { width: 24px; height: 24px; }
+  .navlabel {
+    font-family: 'Cinzel', serif; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--ks-gold-dim); background: rgba(10,9,8,0.6); padding: 2px 8px; border-radius: 10px;
+  }
   .navzone:active .navbtn { transform: scale(0.9); }
   .navzone.disabled { pointer-events: none; }
-  .navzone.disabled .navbtn { opacity: 0.15; }
+  .navzone.disabled .navbtn { opacity: 0.2; }
+  .navzone.disabled .navlabel { opacity: 0.2; }
 
   .bottombar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 500; display: flex; flex-direction: column; align-items: center; gap: 9px; padding: 0 24px 16px; pointer-events: none; }
   .progress-track { width: min(70vw, 260px); height: 2px; background: rgba(201,162,75,0.18); border-radius: 2px; overflow: hidden; }
@@ -1869,12 +1866,14 @@
     </div>
   </div>
 
-  <div class="navzone left" id="navLeft" aria-label="Page précédente">
+  <button type="button" class="navzone left" id="navLeft" aria-label="Page précédente">
     <div class="navbtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></div>
-  </div>
-  <div class="navzone right" id="navRight" aria-label="Page suivante">
+    <span class="navlabel">Reculer</span>
+  </button>
+  <button type="button" class="navzone right" id="navRight" aria-label="Page suivante">
     <div class="navbtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></div>
-  </div>
+    <span class="navlabel">Avancer</span>
+  </button>
 
   <div class="bottombar">
     <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
@@ -1935,7 +1934,7 @@
 
   <div class="hint" id="hint">
     <div class="hint-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M13 5l7 7-7 7M20 12H4"></path></svg></div>
-    <div class="hint-text">Glissez pour feuilleter</div>
+    <div class="hint-text">Utilisez les flèches pour tourner les pages</div>
   </div>
 
 <script>
@@ -1957,8 +1956,6 @@
   }
 
   var N = 16;
-  var Z_BASE = 1000; // large offset : garantit que les pages "à venir" sont TOUJOURS
-                      // au-dessus des pages déjà tournées, quel que soit le nombre de pages.
   var book = document.getElementById('book');
   var pages = Array.prototype.slice.call(book.querySelectorAll('.page'));
   var current = 0;
@@ -1967,94 +1964,35 @@
   var progressFill = document.getElementById('progressFill');
   var pageNow = document.getElementById('pageNow');
   var hint = document.getElementById('hint');
-  var animating = false;
-
-  // Réinitialise l'empilement des pages sur une base fiable (indépendante des
-  // valeurs de z-index écrites en dur dans le HTML), pour éviter qu'une page déjà
-  // tournée ne finisse par recouvrir la page active et intercepte les clics sur "+".
-  pages.forEach(function(p, i) { p.style.zIndex = Z_BASE - i; });
 
   function updateUI() {
     pageNow.textContent = current + 1;
     progressFill.style.width = (((current + 1) / N) * 100) + '%';
     navLeft.classList.toggle('disabled', current === 0);
     navRight.classList.toggle('disabled', current === N - 1);
+    pages.forEach(function(p, i) { p.classList.toggle('active', i === current); });
   }
 
   function goNext() {
-    if (animating || current >= N - 1) return;
-    animating = true;
-    var p = pages[current];
-    p.style.zIndex = current; // toujours < Z_BASE - (N-1), donc jamais au-dessus d'une page active
-    p.classList.add('flipped');
+    if (current >= N - 1) return;
     current++;
     updateUI();
-    setTimeout(function() { animating = false; }, 500);
     hideHint();
   }
 
   function goPrev() {
-    if (animating || current <= 0) return;
-    animating = true;
+    if (current <= 0) return;
     current--;
-    var p = pages[current];
-    p.classList.remove('flipped');
-    p.style.zIndex = Z_BASE - current;
     updateUI();
-    setTimeout(function() { animating = false; }, 500);
     hideHint();
   }
 
   function hideHint() { if (hint) hint.classList.add('hidden'); }
 
+  // Navigation UNIQUEMENT par ces deux boutons (plus de glissement tactile ni de
+  // tap sur la page : plus simple, plus prévisible, et plus léger a l'affichage).
   navLeft.addEventListener('click', goPrev);
   navRight.addEventListener('click', goNext);
-
-  document.addEventListener('keydown', function(e) {
-    if (e.key === 'ArrowRight') goNext();
-    if (e.key === 'ArrowLeft') goPrev();
-  });
-
-  // Éléments interactifs qui ne doivent JAMAIS déclencher un tour de page
-  // (bouton "+", panier, boutons de paiement, modales, etc.)
-  function isInteractiveTarget(el) {
-    return !!(el && el.closest && el.closest('.add-btn, .cart-bar, .cart-drawer, #custom-modal-overlay, #my-order-overlay, button, a, input, select, textarea'));
-  }
-
-  var startX = null, startY = null, tracking = false;
-  book.addEventListener('touchstart', function(e) {
-    if (isInteractiveTarget(e.target)) { tracking = false; startX = null; return; }
-    startX = e.touches[0].clientX; startY = e.touches[0].clientY; tracking = true;
-  }, { passive: true });
-  book.addEventListener('touchend', function(e) {
-    if (!tracking || startX === null) return;
-    tracking = false;
-    var dx = e.changedTouches[0].clientX - startX;
-    var dy = e.changedTouches[0].clientY - startY;
-    if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) { if (dx < 0) goNext(); else goPrev(); }
-    startX = null; startY = null;
-  }, { passive: true });
-
-  var mDownX = null;
-  book.addEventListener('mousedown', function(e) {
-    if (isInteractiveTarget(e.target)) { mDownX = null; return; }
-    mDownX = e.clientX;
-  });
-  book.addEventListener('mouseup', function(e) {
-    if (mDownX === null) return;
-    var dx = e.clientX - mDownX;
-    if (Math.abs(dx) > 40) { if (dx < 0) goNext(); else goPrev(); }
-    mDownX = null;
-  });
-
-  pages.forEach(function(p) {
-    p.addEventListener('click', function(e) {
-      if (isInteractiveTarget(e.target)) return;
-      var rect = book.getBoundingClientRect();
-      var x = e.clientX - rect.left;
-      if (x > rect.width / 2) goNext(); else goPrev();
-    });
-  });
 
   setTimeout(hideHint, 3800);
   updateUI();
