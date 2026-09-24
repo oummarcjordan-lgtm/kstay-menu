@@ -180,7 +180,7 @@
   .group { flex-shrink: 0; }
   .group-title {
     font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600;
-    font-size: 13px; letter-spacing: 0.04em; color: var(--ks-gold);
+    font-size: 14.5px; letter-spacing: 0.04em; color: var(--ks-gold);
     padding-bottom: 4px; margin-bottom: 8px;
     border-bottom: 1px solid rgba(201,162,75,0.22);
   }
@@ -196,15 +196,15 @@
   .item-body { flex: 1; min-width: 0; }
   .item-row { display: flex; align-items: baseline; gap: 4px; }
   .item-name {
-    font-size: 15.5px; font-weight: 600; color: var(--ks-cream); line-height: 1.25;
+    font-size: 17.5px; font-weight: 600; color: var(--ks-cream); line-height: 1.28;
     white-space: normal;
   }
   .leader { flex: 1; min-width: 8px; border-bottom: 1.5px dotted rgba(201,162,75,0.55); transform: translateY(-4px); margin: 0 2px; }
   .item-price {
-    font-family: 'Cinzel', serif; font-size: 13.5px; font-weight: 600; color: var(--ks-gold-light); white-space: nowrap;
+    font-family: 'Cinzel', serif; font-size: 15.5px; font-weight: 600; color: var(--ks-gold-light); white-space: nowrap;
   }
-  .item-price em { font-style: normal; font-family: 'Cormorant Garamond', serif; font-size: 10px; color: var(--ks-gold-dim); margin-left: 1px; }
-  .item-sub { font-size: 12.5px; font-style: italic; color: var(--ks-cream-dim); margin-top: 1px; line-height: 1.3; }
+  .item-price em { font-style: normal; font-family: 'Cormorant Garamond', serif; font-size: 11.5px; color: var(--ks-gold-dim); margin-left: 1px; }
+  .item-sub { font-size: 14px; font-style: italic; color: var(--ks-cream-dim); margin-top: 1px; line-height: 1.35; }
   .badge {
     font-family: 'Cinzel', serif; font-size: 7.5px; letter-spacing: 0.08em; color: var(--ks-panel);
     background: var(--ks-gold-light); border-radius: 3px; padding: 2px 4px; margin-right: 5px;
@@ -1878,7 +1878,7 @@
 
   <div class="bottombar">
     <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
-    <div class="pagecount"><b id="pageNow">1</b> / 15</div>
+    <div class="pagecount"><b id="pageNow">1</b> / 16</div>
   </div>
 
   <div id="table-badge" class="hidden"></div>
@@ -2148,20 +2148,6 @@
     return customerName;
   }
 
-  let customerPhone = null;
-  async function getCustomerPhone(){
-    if(customerPhone) return customerPhone;
-    for(let attempt = 0; attempt < 3; attempt++){
-      const val = await showModal('Votre numéro', 'Numéro de téléphone (utilisé pour vous joindre en cas de souci avec la commande ou le paiement) :', '');
-      if(val === null){ customerPhone = 'Non renseigné'; return customerPhone; }
-      const digits = val.replace(/[^0-9]/g, '');
-      if(digits.length >= 8){ customerPhone = digits; return customerPhone; }
-      await showModal('Numéro invalide', 'Merci d\'entrer un numéro de téléphone valide (au moins 8 chiffres).', '', true);
-    }
-    customerPhone = 'Non renseigné';
-    return customerPhone;
-  }
-
   function cartTotal(){ return Object.values(cart).reduce((s,i)=> s + i.price*i.qty, 0); }
   function cartCount(){ return Object.values(cart).reduce((s,i)=> s + i.qty, 0); }
 
@@ -2250,7 +2236,6 @@
     if(orderSent || orderInFlight) return;
     orderInFlight = true;
     const name = await getCustomerName();
-    const phone = await getCustomerPhone();
     if(!orderCounter) orderCounter = 'CMD-' + Date.now().toString().slice(-6);
 
     const items = Object.entries(cart).map(([itemName, d]) => ({ name: itemName, qty: d.qty, price: d.price, unit: d.unit || null }));
@@ -2262,7 +2247,6 @@
         etablissement: 'kstay',
         table: tableNumber || null,
         customerName: name,
-        customerPhone: phone,
         items: items,
         total: total,
         statusNote: statusNote || null,
@@ -2363,7 +2347,6 @@
 
   async function payAndInvoice(method){
     await getCustomerName();
-    await getCustomerPhone();
     const telCode = method === 'om'
       ? '#150*46*' + PAYMENT_CODES.om + '*' + cartTotal() + '#'
       : '*126*4*' + PAYMENT_CODES.momo + '*' + cartTotal() + '#';
