@@ -79,7 +79,7 @@
 
   .page {
     position: absolute; inset: 0;
-    transform-style: preserve-3d;
+    -webkit-transform-style: preserve-3d; transform-style: preserve-3d;
     transform-origin: left center;
     transition: transform 0.85s cubic-bezier(0.45, 0.05, 0.15, 1);
     will-change: transform;
@@ -89,7 +89,7 @@
 
   .page-inner {
     position: relative; width: 100%; height: 100%;
-    transform-style: preserve-3d;
+    -webkit-transform-style: preserve-3d; transform-style: preserve-3d;
     border-radius: 4px; overflow: hidden;
     box-shadow: 0 18px 40px rgba(0,0,0,0.55), 0 2px 8px rgba(0,0,0,0.4);
   }
@@ -368,7 +368,7 @@
   .navzone.right { right: 0; justify-content: flex-end; }
   .navbtn {
     width: 36px; height: 36px; margin: 0 8px; border-radius: 50%;
-    border: 1px solid rgba(201,162,75,0.4); background: rgba(10,9,8,0.55); backdrop-filter: blur(6px);
+    border: 1px solid rgba(201,162,75,0.4); background: rgba(10,9,8,0.55); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
     display: flex; align-items: center; justify-content: center; color: var(--ks-gold-light);
     opacity: 0.75; transition: opacity 0.25s ease, transform 0.25s ease; pointer-events: none;
   }
@@ -1866,6 +1866,22 @@
 
 <script>
 (function() {
+  // Compatibilite navigateurs anciens : si "aspect-ratio" n'est pas supporte,
+  // le livre n'a plus aucune hauteur (page blanche). On recalcule alors sa
+  // hauteur nous-memes a partir de sa largeur (ratio 100/150).
+  var supportsAspectRatio = !!(window.CSS && CSS.supports && CSS.supports('aspect-ratio', '1 / 1'));
+  if (!supportsAspectRatio) {
+    var bookEl = document.getElementById('book');
+    var fixBookHeight = function () {
+      if (!bookEl) return;
+      var w = bookEl.offsetWidth || bookEl.getBoundingClientRect().width;
+      if (w > 0) bookEl.style.height = Math.round(w * 1.5) + 'px';
+    };
+    fixBookHeight();
+    window.addEventListener('resize', fixBookHeight);
+    window.addEventListener('orientationchange', fixBookHeight);
+  }
+
   var N = 15;
   var Z_BASE = 1000; // large offset : garantit que les pages "à venir" sont TOUJOURS
                       // au-dessus des pages déjà tournées, quel que soit le nombre de pages.
@@ -2058,6 +2074,20 @@
     return customerName;
   }
 
+  let customerPhone = null;
+  async function getCustomerPhone(){
+    if(customerPhone) return customerPhone;
+    for(let attempt = 0; attempt < 3; attempt++){
+      const val = await showModal('Votre numéro', 'Numéro de téléphone (utilisé pour vous joindre en cas de souci avec la commande ou le paiement) :', '');
+      if(val === null){ customerPhone = 'Non renseigné'; return customerPhone; }
+      const digits = val.replace(/[^0-9]/g, '');
+      if(digits.length >= 8){ customerPhone = digits; return customerPhone; }
+      await showModal('Numéro invalide', 'Merci d\'entrer un numéro de téléphone valide (au moins 8 chiffres).', '', true);
+    }
+    customerPhone = 'Non renseigné';
+    return customerPhone;
+  }
+
   function cartTotal(){ return Object.values(cart).reduce((s,i)=> s + i.price*i.qty, 0); }
   function cartCount(){ return Object.values(cart).reduce((s,i)=> s + i.qty, 0); }
 
@@ -2126,6 +2156,7 @@
     if(orderSent || orderInFlight) return;
     orderInFlight = true;
     const name = await getCustomerName();
+    const phone = await getCustomerPhone();
     if(!orderCounter) orderCounter = 'CMD-' + Date.now().toString().slice(-6);
 
     const items = Object.entries(cart).map(([itemName, d]) => ({ name: itemName, qty: d.qty, price: d.price }));
@@ -2137,6 +2168,7 @@
         etablissement: 'kstay',
         table: tableNumber || null,
         customerName: name,
+        customerPhone: phone,
         items: items,
         total: total,
         statusNote: statusNote || null,
@@ -2235,6 +2267,7 @@
 
   async function payAndInvoice(method){
     await getCustomerName();
+    await getCustomerPhone();
     const telCode = method === 'om'
       ? '#150*46*' + PAYMENT_CODES.om + '*' + cartTotal() + '#'
       : '*126*4*' + PAYMENT_CODES.momo + '*' + cartTotal() + '#';
