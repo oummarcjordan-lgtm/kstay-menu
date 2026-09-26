@@ -225,6 +225,33 @@
   document.getElementById('login-btn').addEventListener('click', tryLogin);
   document.getElementById('login-pin').addEventListener('keydown', (e) => { if(e.key==='Enter') tryLogin(); });
 
+  // ---------- Présence en direct (vue par le patron/développeur sur le tableau de bord) ----------
+  const PRESENCE_DOC_ID = 'kstay-caisse';
+  let presenceInterval = null;
+  function heartbeat(status){
+    const data = {
+      role: 'Caisse',
+      etablissement: 'kstay',
+      device: detectDevice(),
+      status: status,
+      lastActive: firebase.firestore.FieldValue.serverTimestamp()
+    };
+    if(status === 'online' && !presenceInterval) data.loginAt = firebase.firestore.FieldValue.serverTimestamp();
+    if(status === 'offline') data.loggedOutAt = firebase.firestore.FieldValue.serverTimestamp();
+    return db.collection('presence').doc(PRESENCE_DOC_ID).set(data, {merge:true}).catch(()=>{});
+  }
+  function startPresence(){
+    heartbeat('online');
+    presenceInterval = setInterval(() => heartbeat('online'), 30000);
+    document.addEventListener('visibilitychange', () => {
+      if(document.visibilityState === 'visible') heartbeat('online');
+    });
+    // Meilleur effort si l'appli est fermee sans clic sur "Se deconnecter" (non garanti,
+    // mais aide a marquer hors ligne plus vite ; sinon le statut expire de lui-meme
+    // au bout de 90s sans battement, ce qui reste la detection fiable).
+    window.addEventListener('pagehide', () => { heartbeat('offline'); });
+  }
+
   function tryLogin(){
     const pin = document.getElementById('login-pin').value.trim();
     if(pin !== CAISSE_PIN){
@@ -234,7 +261,9 @@
     sessionStorage.setItem('omjCaisseOk', '1');
     startApp();
   }
-  document.getElementById('logout-btn').addEventListener('click', () => {
+  document.getElementById('logout-btn').addEventListener('click', async () => {
+    if(presenceInterval){ clearInterval(presenceInterval); presenceInterval = null; }
+    try{ await Promise.race([heartbeat('offline'), new Promise(r => setTimeout(r, 1200))]); }catch(e){}
     sessionStorage.removeItem('omjCaisseOk');
     location.reload();
   });
@@ -245,6 +274,7 @@
     document.getElementById('login-screen').classList.add('hidden');
     document.getElementById('app').classList.remove('hidden');
     logConnection('Caisse');
+    startPresence();
     subscribeOrders();
   }
 
@@ -337,7 +367,7 @@
         <div class="oc-head">
           <div><span class="oc-table">Table n° ${o.table || '—'}</span></div>
           <div class="oc-meta">
-            <div class="oc-name">${o.customerName || 'Client'}</div>
+            <div class="oc-name">${o.customerName || 'Client'} · 📞 ${o.customerPhone || '—'}</div>
             <div>${fmtDateTime(o.createdAt)} · ${o.orderRef || ''}</div>
           </div>
         </div>
@@ -455,6 +485,7 @@
     doc.text('N° commande : ' + (o.orderRef || '—'), 14, y); y += 6;
     doc.text('Date : ' + fmtDateTime(o.createdAt), 14, y); y += 6;
     doc.text('Client : ' + (o.customerName || '—'), 14, y); y += 6;
+    doc.text('Téléphone : ' + (o.customerPhone || 'Non renseigné'), 14, y); y += 6;
     doc.text('Mode de paiement : ' + (PAYMENT_LABELS[o.paymentMethod] || '—'), 14, y); y += 10;
 
     doc.setFont('helvetica', 'bold');
