@@ -32,22 +32,22 @@
   }
   h1,h2{font-family:'Fraunces', serif; margin:0;}
 
-  #login-screen{
+  #login-screen, #name-screen{
     position:fixed; inset:0; background:var(--bg);
     display:flex; flex-direction:column; align-items:center; justify-content:center;
     gap:16px; z-index:200; text-align:center; padding:30px;
   }
-  #login-screen input{
+  #login-screen input, #name-screen input{
     width:100%; max-width:280px; padding:13px 14px; border-radius:8px;
     border:1px solid var(--line); background:var(--bg-raised); color:var(--cream);
     font-size:15px; letter-spacing:0.3em; text-align:center;
   }
-  #login-screen button{
+  #login-screen button, #name-screen button{
     background:var(--gold); color:#241a03; border:none; padding:14px 30px;
     border-radius:30px; font-size:15px; font-weight:700; cursor:pointer;
     width:100%; max-width:280px; font-family:'Work Sans', sans-serif;
   }
-  #login-error{color:var(--ember); font-size:13px; min-height:18px;}
+  #login-error, #name-error{color:var(--ember); font-size:13px; min-height:18px;}
 
   header{
     padding:18px 20px 14px; border-bottom:1px solid var(--line);
@@ -124,10 +124,21 @@
   <div id="login-error"></div>
 </div>
 
+<div id="name-screen" class="hidden">
+  <h1>K <span>STAY</span></h1>
+  <h2 style="font-size:16px; color:var(--cream-dim); font-family:'Work Sans',sans-serif; font-weight:500;">Qui êtes-vous ?</h2>
+  <input id="cashier-name-input" type="text" style="letter-spacing:normal;" maxlength="60" placeholder="Nom et prénom" autocomplete="off">
+  <button id="name-continue-btn" type="button">Continuer</button>
+  <div id="name-error"></div>
+</div>
+
 <div id="app" class="hidden">
   <header>
     <h1>K <span>STAY</span> — Caisse</h1>
-    <button id="logout-btn" type="button">Se déconnecter</button>
+    <div style="text-align:right;">
+      <div id="cashier-name-val" style="font-size:12px; color:var(--gold); margin-bottom:4px;"></div>
+      <button id="logout-btn" type="button">Se déconnecter</button>
+    </div>
   </header>
 
   <main>
@@ -224,6 +235,8 @@
 
   document.getElementById('login-btn').addEventListener('click', tryLogin);
   document.getElementById('login-pin').addEventListener('keydown', (e) => { if(e.key==='Enter') tryLogin(); });
+  document.getElementById('name-continue-btn').addEventListener('click', confirmCashierName);
+  document.getElementById('cashier-name-input').addEventListener('keydown', (e) => { if(e.key==='Enter') confirmCashierName(); });
 
   // ---------- Présence en direct (vue par le patron/développeur sur le tableau de bord) ----------
   const PRESENCE_DOC_ID = 'kstay-caisse';
@@ -231,6 +244,7 @@
   function heartbeat(status){
     const data = {
       role: 'Caisse',
+      cashierName: sessionStorage.getItem('omjCashierName') || null,
       etablissement: 'kstay',
       device: detectDevice(),
       status: status,
@@ -259,20 +273,44 @@
       return;
     }
     sessionStorage.setItem('omjCaisseOk', '1');
+    showNameScreen();
+  }
+
+  function showNameScreen(){
+    document.getElementById('login-screen').classList.add('hidden');
+    document.getElementById('name-screen').classList.remove('hidden');
+    document.getElementById('cashier-name-input').focus();
+  }
+
+  function confirmCashierName(){
+    const name = document.getElementById('cashier-name-input').value.trim();
+    if(!name){
+      document.getElementById('name-error').textContent = 'Merci d\'indiquer votre nom et prénom.';
+      return;
+    }
+    sessionStorage.setItem('omjCashierName', name);
+    document.getElementById('name-screen').classList.add('hidden');
     startApp();
   }
+
   document.getElementById('logout-btn').addEventListener('click', async () => {
     if(presenceInterval){ clearInterval(presenceInterval); presenceInterval = null; }
     try{ await Promise.race([heartbeat('offline'), new Promise(r => setTimeout(r, 1200))]); }catch(e){}
     sessionStorage.removeItem('omjCaisseOk');
+    sessionStorage.removeItem('omjCashierName');
     location.reload();
   });
 
-  if(sessionStorage.getItem('omjCaisseOk') === '1'){ startApp(); }
+  if(sessionStorage.getItem('omjCaisseOk') === '1'){
+    if(sessionStorage.getItem('omjCashierName')) startApp();
+    else showNameScreen();
+  }
 
   function startApp(){
     document.getElementById('login-screen').classList.add('hidden');
+    document.getElementById('name-screen').classList.add('hidden');
     document.getElementById('app').classList.remove('hidden');
+    document.getElementById('cashier-name-val').textContent = sessionStorage.getItem('omjCashierName') || '';
     logConnection('Caisse');
     startPresence();
     subscribeOrders();
@@ -286,6 +324,7 @@
   function logConnection(role){
     db.collection('connections').add({
       role: role,
+      cashierName: sessionStorage.getItem('omjCashierName') || null,
       etablissement: 'kstay',
       device: detectDevice(),
       timestamp: firebase.firestore.FieldValue.serverTimestamp()
@@ -396,6 +435,7 @@
           ...order,
           paymentStatus: 'validee',
           orderStatus: 'validee',
+          validatedBy: sessionStorage.getItem('omjCashierName') || 'Caisse',
           paymentValidatedAt: firebase.firestore.FieldValue.serverTimestamp(),
           archivedAt: firebase.firestore.FieldValue.serverTimestamp()
         };
@@ -405,7 +445,7 @@
           // 1) Enregistrement permanent AVANT toute suppression (jamais perdu)
           await db.collection('archive').doc(order.id).set(archivedOrder);
           // 2) Facture PDF téléchargée immédiatement
-          generateInvoicePDF({...order, paymentStatus:'validee'});
+          generateInvoicePDF({...order, paymentStatus:'validee', validatedBy: archivedOrder.validatedBy});
           // 3) Le ticket disparaît de la caisse une fois l'archive confirmée
           removedByMeIds.add(order.id);
           await db.collection('orders').doc(order.id).delete();
@@ -486,6 +526,7 @@
     doc.text('Date : ' + fmtDateTime(o.createdAt), 14, y); y += 6;
     doc.text('Client : ' + (o.customerName || '—'), 14, y); y += 6;
     doc.text('Téléphone : ' + (o.customerPhone || 'Non renseigné'), 14, y); y += 6;
+    doc.text('Caissière : ' + (o.validatedBy || '—'), 14, y); y += 6;
     doc.text('Mode de paiement : ' + (PAYMENT_LABELS[o.paymentMethod] || '—'), 14, y); y += 10;
 
     doc.setFont('helvetica', 'bold');
