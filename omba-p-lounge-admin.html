@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>OMJ — Tableau de bord</title>
+<link rel="manifest" href="manifest-admin.json">
+<meta name="theme-color" content="#0e1b1c">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="OMB Bord">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root{
+    --bg: #0e1b1c; --bg-raised: #142627; --bg-card: #1a2f30;
+    --gold: #f2b705; --ember: #e2572b; --green: #3ba55c;
+    --cream: #f4ede1; --cream-dim: #cfc6b8; --line: rgba(244,237,225,0.14);
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--bg); color:var(--cream); font-family:'Work Sans', sans-serif; min-height:100vh; padding-bottom:40px;}
+  h1,h2{font-family:'Fraunces', serif; margin:0;}
+
+  #login-screen{
+    position:fixed; inset:0; background:var(--bg); display:flex; flex-direction:column;
+    align-items:center; justify-content:center; gap:16px; z-index:200; text-align:center; padding:30px;
+  }
+  #login-screen input{
+    width:100%; max-width:280px; padding:13px 14px; border-radius:8px; border:1px solid var(--line);
+    background:var(--bg-raised); color:var(--cream); font-size:15px; letter-spacing:0.3em; text-align:center;
+  }
+  #login-screen button{
+    background:var(--gold); color:#241a03; border:none; padding:14px 30px; border-radius:30px;
+    font-size:15px; font-weight:700; cursor:pointer; width:100%; max-width:280px; font-family:'Work Sans', sans-serif;
+  }
+  #login-error{color:var(--ember); font-size:13px; min-height:18px;}
+
+  #etab-select-screen{
+    position:fixed; inset:0; background:var(--bg); display:flex; flex-direction:column;
+    align-items:center; justify-content:center; gap:18px; z-index:200; text-align:center; padding:30px;
+  }
+  #etab-select-screen h2{ font-size:15px; color:var(--cream-dim); font-family:'Work Sans',sans-serif; font-weight:500; margin-bottom:6px; }
+  .etab-choice-btn{
+    width:100%; max-width:320px; padding:20px 22px; border-radius:16px; border:1px solid var(--line);
+    background:var(--bg-card); color:var(--cream); font-family:'Fraunces', serif; font-size:22px; font-weight:700;
+    cursor:pointer; text-align:left; display:flex; align-items:center; justify-content:space-between; gap:10px;
+  }
+  .etab-choice-btn small{ display:block; font-family:'Work Sans',sans-serif; font-size:12px; font-weight:500; color:var(--cream-dim); margin-top:4px; }
+  .etab-choice-btn.ombap{ border-color: rgba(242,183,5,0.4); }
+  .etab-choice-btn.kstay{ border-color: rgba(201,162,75,0.4); }
+  .etab-choice-btn.kdreams{ border-color: rgba(212,175,55,0.5); }
+  .etab-choice-btn:active{ transform: scale(0.98); }
+  #etab-both-link{ background:none; border:none; color:var(--cream-dim); font-size:13px; text-decoration:underline; cursor:pointer; margin-top:6px; font-family:'Work Sans',sans-serif; }
+  #switch-etab-btn{
+    background:none; border:1px solid var(--line); color:var(--cream-dim); padding:6px 12px; border-radius:20px;
+    font-size:11px; cursor:pointer; font-family:'Work Sans',sans-serif; margin-top:6px;
+  }
+
+  header{
+    padding:18px 20px 14px; border-bottom:1px solid var(--line); position:sticky; top:0; z-index:20;
+    background:var(--bg); display:flex; align-items:center; justify-content:space-between; gap:12px;
+  }
+  header h1{font-size:19px;}
+  header h1 span{color:var(--gold);}
+  #logout-btn{
+    background:none; border:1px solid var(--line); color:var(--cream-dim);
+    font-size:11px; padding:5px 10px; border-radius:20px; cursor:pointer;
+  }
+
+  .stats-row{
+    display:flex; gap:10px; padding:14px 14px 4px; max-width:680px; margin:0 auto; flex-wrap:wrap;
+  }
+  .stat-card{
+    flex:1; min-width:130px; background:var(--bg-card); border:1px solid var(--line);
+    border-radius:10px; padding:12px 14px;
+  }
+  .stat-card .num{font-family:'Fraunces', serif; font-size:22px; color:var(--gold);}
+  .stat-card .lbl{font-size:11px; color:var(--cream-dim); margin-top:2px;}
+  .stat-card.highlight{border-color:var(--gold); background:rgba(242,183,5,0.08);}
+  .stat-card.highlight .num{font-size:26px;}
+
+  .date-row{
+    display:flex; align-items:center; gap:10px; padding:14px 14px 4px; max-width:680px; margin:0 auto; flex-wrap:wrap;
+  }
+  .date-row label{font-size:13px; color:var(--cream-dim);}
+  .date-row input[type="date"]{
+    padding:8px 10px; border-radius:8px; border:1px solid var(--line);
+    background:var(--bg-raised); color:var(--cream); font-size:13px;
+  }
+  #today-btn{
+    padding:8px 12px; border-radius:8px; border:1px solid var(--line); background:none;
+    color:var(--cream-dim); font-size:12px; cursor:pointer;
+  }
+  #download-report-btn{
+    margin-left:auto; padding:10px 16px; border-radius:8px; border:none;
+    background:var(--gold); color:#241a03; font-weight:700; font-size:13px; cursor:pointer;
+  }
+
+  .panel-row{
+    display:flex; gap:10px; padding:8px 14px; max-width:680px; margin:0 auto; flex-wrap:wrap;
+  }
+  .panel{
+    flex:1; min-width:260px; background:var(--bg-card); border:1px solid var(--line);
+    border-radius:10px; padding:14px;
+  }
+  .panel h3{font-size:14px; color:var(--gold); margin-bottom:10px; font-family:'Work Sans', sans-serif; font-weight:700;}
+  .panel-row-line{
+    display:flex; justify-content:space-between; font-size:13px; padding:6px 0; border-bottom:1px dashed var(--line);
+  }
+  .panel-row-line:last-child{border-bottom:none;}
+  .panel-row-line .name{color:var(--cream);}
+  .panel-row-line .val{color:var(--cream-dim); text-align:right;}
+  .panel-empty{font-size:12px; color:var(--cream-dim); text-align:center; padding:10px 0;}
+  .presence-dot{display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:7px; vertical-align:middle;}
+  .presence-dot.online{background:#3ecf6a; box-shadow:0 0 6px #3ecf6a;}
+  .presence-dot.offline{background:#8a8a8a;}
+  .presence-row{display:flex; justify-content:space-between; align-items:center; padding:9px 0; border-bottom:1px solid var(--line);}
+  .presence-row:last-child{border-bottom:none;}
+  .presence-detail{font-size:11px; color:var(--cream-dim); margin-top:2px;}
+
+  .filters{
+    display:flex; gap:8px; padding:12px 14px; max-width:680px; margin:0 auto; flex-wrap:wrap;
+  }
+  .filters select{
+    padding:8px 10px; border-radius:8px; border:1px solid var(--line);
+    background:var(--bg-raised); color:var(--cream); font-size:13px;
+  }
+
+  main{max-width:680px; margin:0 auto; padding:6px 14px 30px;}
+  .empty-state{text-align:center; padding:60px 20px; color:var(--cream-dim);}
+  .empty-state .big{font-size:40px; margin-bottom:10px;}
+
+  .order-card{
+    background:var(--bg-card); border:1px solid var(--line); border-left:4px solid var(--green);
+    border-radius:10px; padding:16px; margin:14px 0;
+  }
+  .order-card.cancelled{border-left-color:var(--ember); opacity:0.75;}
+  .oc-payment.cancelled{background:rgba(226,87,43,0.1); color:var(--ember);}
+  .oc-head{display:flex; justify-content:space-between; align-items:flex-start; gap:10px; margin-bottom:6px;}
+  .oc-table{font-family:'Fraunces', serif; font-size:20px; color:var(--gold);}
+  .oc-loc{display:inline-block; font-size:11px; padding:2px 8px; border-radius:12px; border:1px solid var(--gold); color:var(--gold); margin-left:8px; vertical-align:middle;}
+  .oc-meta{text-align:right; font-size:12px; color:var(--cream-dim); line-height:1.5;}
+  .oc-name{font-weight:600; color:var(--cream);}
+  .oc-items{margin:10px 0; font-size:14px;}
+  .oc-item{display:flex; justify-content:space-between; gap:10px; padding:4px 0; border-bottom:1px dashed var(--line);}
+  .oc-item:last-child{border-bottom:none;}
+  .oc-item .qty{color:var(--gold); font-weight:600; min-width:34px;}
+  .oc-total{display:flex; justify-content:space-between; font-weight:700; font-size:15px; margin-top:10px; padding-top:10px; border-top:1px solid var(--line);}
+  .oc-payment{display:flex; align-items:center; gap:8px; margin-top:10px; font-size:13px; padding:8px 10px; border-radius:8px; background:rgba(59,165,92,0.08);}
+  .oc-actions{display:flex; gap:10px; margin-top:12px;}
+  .oc-btn{flex:1; padding:10px; border-radius:8px; border:1px solid var(--gold); background:none; color:var(--cream); font-weight:600; font-size:13px; cursor:pointer;}
+  .hidden{display:none !important;}
+  .avatar{width:34px;height:34px;border-radius:50%;border:2px solid var(--gold);background:var(--bg-card);color:var(--gold);font:700 15px 'Fraunces',serif;cursor:pointer;padding:0;overflow:hidden;vertical-align:middle;margin-right:6px;}
+  .avatar img{width:100%;height:100%;object-fit:cover;display:block;}
+  #profile-modal{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:150;display:flex;align-items:center;justify-content:center;padding:16px;}
+  .pm-card{background:var(--bg-raised);border:1px solid var(--line);border-radius:14px;padding:18px;width:100%;max-width:360px;max-height:90vh;overflow:auto;}
+  .pm-card h3{margin:0 0 10px;font-size:15px;color:var(--gold);font-family:'Work Sans',sans-serif;}
+  .pm-card input[type=password],.pm-card input[type=tel],.pm-card input[type=text]{width:100%;padding:10px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--cream);font-size:14px;margin-bottom:8px;}
+  .pm-btn{background:var(--gold);color:#241a03;border:none;padding:9px 14px;border-radius:20px;font-weight:700;font-size:13px;cursor:pointer;margin-bottom:8px;}
+  .pm-btn.alt{background:none;border:1px solid var(--line);color:var(--cream);}
+  .pm-sec{border-top:1px solid var(--line);padding-top:12px;margin-top:12px;}
+  #pm-status{font-size:12px;min-height:16px;color:var(--cream-dim);}
+</style>
+</head>
+<body>
+
+<div id="login-screen">
+  <h1>O'Mba'p, <span>K Stay</span> & K-Dreams</h1>
+  <h2 style="font-size:16px; color:var(--cream-dim); font-family:'Work Sans',sans-serif; font-weight:500;">Tableau de bord — Connexion</h2>
+  <input id="login-user" type="text" autocomplete="username" autocapitalize="none" placeholder="Nom d'utilisateur" style="letter-spacing:0">
+  <input id="login-pass" type="password" autocomplete="current-password" placeholder="Mot de passe" style="letter-spacing:0">
+  <button id="login-btn" type="button">Se connecter</button>
+  <button id="google-login-btn" type="button" style="background:none;border:1px solid var(--line);color:var(--cream)">Continuer avec Google</button>
+  <button id="sms-toggle-btn" type="button" style="background:none;border:none;color:var(--cream-dim);text-decoration:underline;font-size:13px;width:auto;padding:4px">Connexion par SMS</button>
+  <div id="sms-box" class="hidden" style="width:100%;max-width:280px;flex-direction:column;gap:8px">
+    <input id="sms-phone" type="tel" placeholder="+237 6XX XX XX XX" style="letter-spacing:0">
+    <button id="sms-send-btn" type="button">Recevoir le code</button>
+    <input id="sms-code" type="text" inputmode="numeric" maxlength="6" placeholder="Code reçu" class="hidden" style="letter-spacing:.2em">
+    <button id="sms-confirm-btn" type="button" class="hidden">Valider le code</button>
+  </div>
+  <div id="login-error"></div>
+</div>
+
+<div id="etab-select-screen" class="hidden">
+  <h1 style="font-size:22px;">Quel établissement ?</h1>
+  <h2>Choisissez le tableau de bord à consulter</h2>
+  <button type="button" class="etab-choice-btn ombap" data-etab="ombap">
+    O'Mba'p Lounge <small>Rooftop · Restaurant · Grill · Pizzeria</small>
+  </button>
+  <button type="button" class="etab-choice-btn kstay" data-etab="kstay">
+    K Stay <small>Meublés · Lounge · Restaurant</small>
+  </button>
+  <button type="button" class="etab-choice-btn kdreams" data-etab="kdreams">
+    K-Dreams <small>Restaurant · Rooftop · Jeux · Cigare · Boîte de nuit · Hébergement</small>
+  </button>
+  <button type="button" id="etab-both-link">Voir tous les établissements ensemble</button>
+</div>
+
+<div id="app" class="hidden">
+  <header>
+    <h1 id="app-title">O'Mba'p, <span>K Stay</span> & K-Dreams — Tableau de bord</h1>
+    <div style="text-align:right;">
+      <div style="margin-bottom:4px;"><button id="avatar-btn" class="avatar" type="button" title="Mon profil"></button><span id="admin-name-val" style="font-size:12px; color:var(--gold);"></span></div>
+      <button id="switch-etab-btn" type="button">🔀 Changer d'établissement</button>
+      <button id="logout-btn" type="button">Se déconnecter</button>
+    </div>
+  </header>
+
+  <div class="date-row">
+    <label for="filter-date">Rapport du :</label>
+    <input type="date" id="filter-date">
+    <button id="today-btn" type="button">Aujourd'hui</button>
+    <button id="download-report-btn" type="button">📥 Télécharger le rapport du jour</button>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card highlight"><div class="num" id="stat-revenue">0</div><div class="lbl">Total encaissé ce jour (FCFA)</div></div>
+    <div class="stat-card"><div class="num" id="stat-validated">0</div><div class="lbl">Commandes validées</div></div>
+    <div class="stat-card"><div class="num" id="stat-cancelled">0</div><div class="lbl">Commandes annulées</div></div>
+    <div class="stat-card"><div class="num" id="stat-orders-count">0</div><div class="lbl">Total commandes du jour</div></div>
+  </div>
+
+  <div id="unpriced-note" class="hidden" style="color:#E0A526;font-size:12px;margin:0 0 12px;"></div>
+
+  <div class="panel-row">
+    <div class="panel">
+      <h3>Par mode de paiement</h3>
+      <div id="breakdown-payment"></div>
+    </div>
+    <div class="panel">
+      <h3>Par lieu</h3>
+      <div id="breakdown-location"></div>
+    </div>
+  </div>
+
+  <div class="panel-row">
+    <div class="panel">
+      <h3>Tables les plus commandées</h3>
+      <div id="top-tables"></div>
+    </div>
+    <div class="panel">
+      <h3>Menus les plus commandés</h3>
+      <div id="top-items"></div>
+    </div>
+  </div>
+
+  <div id="connections-panel" class="panel-row hidden">
+    <div class="panel">
+      <h3>🔑 Connexions comptes (caisse + admin) <small style="font-weight:400; color:var(--cream-dim); font-size:11px;">— jour et établissement sélectionnés ci-dessus</small></h3>
+      <div id="connections-log"><div class="panel-empty">Chargement…</div></div>
+    </div>
+    <div class="panel">
+      <h3>👀 Visites du menu (visiteurs) <small style="font-weight:400; color:var(--cream-dim); font-size:11px;">— jour et établissement sélectionnés ci-dessus</small></h3>
+      <div id="visits-log"><div class="panel-empty">Chargement…</div></div>
+    </div>
+  </div>
+
+  <div class="filters">
+    <select id="filter-etablissement" class="hidden"><!-- pilotée par l'écran de choix, plus par l'utilisateur -->
+      <option value="">Tous les établissements</option>
+      <option value="ombap">O'Mba'p Lounge</option>
+      <option value="kstay">K Stay</option>
+      <option value="kdreams">K-Dreams</option>
+    </select>
+    <select id="filter-location">
+      <option value="">Tous les lieux</option>
+      <option value="rooftop">Rooftop</option>
+      <option value="restaurant">Restaurant</option>
+    </select>
+    <select id="filter-method">
+      <option value="">Tous les paiements</option>
+      <option value="om">Orange Money</option>
+      <option value="momo">MTN MoMo</option>
+      <option value="terminal">Terminal</option>
+      <option value="cash">Espèces</option>
+    </select>
+    <select id="filter-status">
+      <option value="">Validées + annulées</option>
+      <option value="validee">Validées seulement</option>
+      <option value="annulee">Annulées seulement</option>
+    </select>
+  </div>
+
+  <div class="panel-row" id="presence-panel">
+    <div class="panel" style="grid-column: 1 / -1;">
+      <h3>🟢 Présence caissière (en direct)</h3>
+      <div id="presence-log"><div class="panel-empty">Chargement…</div></div>
+    </div>
+  </div>
+
+  <main>
+    <div id="empty-state" class="empty-state hidden">
+      <div class="big">🗂️</div>
+      Aucune commande pour cette date.
+    </div>
+    <div id="orders-list"></div>
+  </main>
+</div>
+
+<!-- ======================================================================
+     FIREBASE — mêmes clés que les autres pages du projet.
+     ====================================================================== -->
+<div id="profile-modal" class="hidden"><div class="pm-card">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><h3 style="margin:0">Mon profil</h3><button id="pm-close" class="pm-btn alt" type="button" style="margin:0">Fermer</button></div>
+  <div style="text-align:center"><button id="pm-photo" class="avatar" type="button" style="width:84px;height:84px;font-size:34px;margin:0 0 8px"></button><br>
+  <label class="pm-btn alt" style="display:inline-block">Changer la photo<input id="pm-file" type="file" accept="image/*" hidden></label></div>
+  <div class="pm-sec"><h3>Mot de passe</h3><input id="pm-newpass" type="password" autocomplete="new-password" placeholder="Nouveau mot de passe (6 caractères min.)"><button id="pm-passbtn" class="pm-btn" type="button">Changer</button></div>
+  <div class="pm-sec"><h3>Comptes liés</h3><div id="pm-links" style="font-size:13px;margin-bottom:8px"></div>
+    <button id="pm-google" class="pm-btn alt" type="button">Lier mon compte Gmail</button>
+    <input id="pm-phone" type="tel" placeholder="+237 6XX XX XX XX"><button id="pm-sendcode" class="pm-btn alt" type="button">Lier mon numéro (SMS)</button>
+    <input id="pm-code" type="text" inputmode="numeric" maxlength="6" placeholder="Code reçu" class="hidden"><button id="pm-confirm" class="pm-btn hidden" type="button">Valider le code</button></div>
+  <div id="pm-status"></div>
+</div></div>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyAMbijp8xA3BLbaulDxZRzSh_jBNI8cqK8",
+    authDomain: "omba-p-lounge.firebaseapp.com",
+    projectId: "omba-p-lounge",
+    storageBucket: "omba-p-lounge.firebasestorage.app",
+    messagingSenderId: "469786469177",
+    appId: "1:469786469177:web:614e9c606f58ba79e6bee8"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+
+  // ======================================================================
+  // VERROU D'ACCÈS À DISTANCE — contrôlé depuis la console Firebase, sans
+  // avoir à republier de fichier. Document : system/access, champ "active"
+  // (true/false) et champ optionnel "message" (texte affiché si verrouillé).
+  // ======================================================================
+  function showAccessLock(message){
+    if(document.getElementById('access-lock-overlay')) return;
+    const overlay = document.createElement('div');
+    overlay.id = 'access-lock-overlay';
+    overlay.style.cssText = 'position:fixed;inset:0;background:#f4f4f4;color:#3c3c3c;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px;font-family:Arial,Helvetica,sans-serif;';
+    overlay.innerHTML =
+      '<div style="font-size:42px;margin-bottom:14px;color:#c0392b;">⚠️</div>' +
+      '<div style="font-size:20px;font-weight:700;margin-bottom:8px;color:#2b2b2b;">Erreur 402 — Service suspendu</div>' +
+      '<div style="color:#5a5a5a;font-size:14.5px;max-width:340px;line-height:1.6;margin-bottom:18px;">' +
+      (message || "L'accès à ce service a été suspendu suite à un problème de facturation sur l'abonnement associé. Le service sera automatiquement rétabli dès régularisation. Pour toute question, contactez votre prestataire technique.") +
+      '</div>' +
+      '<div style="font-size:11px;color:#9a9a9a;font-family:monospace;">Code d\'erreur : ORDR-402-SUBEXPIRED</div>';
+    document.body.appendChild(overlay);
+  }
+  function hideAccessLock(){
+    const el = document.getElementById('access-lock-overlay');
+    if(el) el.remove();
+  }
+  db.collection('system').doc('access').onSnapshot((snap) => {
+    const data = snap.exists ? snap.data() : { active: true };
+    if(data.active === false){
+      showAccessLock(data.message);
+    } else {
+      hideAccessLock();
+    }
+  }, (err) => console.warn('Verrou d\'accès : lecture impossible', err));
+</script>
+
+<script>
+  // ======================================================================
+  // AUTHENTIFICATION — Firebase Auth. Comptes créés dans la console Firebase
+  // + un document admins/{uid} par compte (voir firestore.rules).
+  // ======================================================================
+  const auth = firebase.auth();
+  const MAIL_DOM = '@omj-admin.app';
+  let currentAdminName = null, currentUser = null, currentProfile = {};
+  const $ = (id) => document.getElementById(id);
+  const ERR = {'auth/invalid-credential':'Identifiants incorrects.','auth/wrong-password':'Identifiants incorrects.','auth/user-not-found':'Identifiants incorrects.','auth/too-many-requests':'Trop de tentatives, réessaie plus tard.','auth/invalid-phone-number':'Numéro invalide (format +237...).','auth/invalid-verification-code':'Code incorrect.','auth/requires-recent-login':'Déconnecte-toi puis reconnecte-toi, et réessaie.','auth/weak-password':'Mot de passe trop court (6 min.).','auth/credential-already-in-use':'Ce compte est déjà utilisé ailleurs.','auth/provider-already-linked':'Déjà lié.','auth/popup-closed-by-user':'Fenêtre fermée.'};
+  const msg = (e) => ERR[e.code] || ('Erreur : ' + (e.code || e.message));
+  const loginErr = (m) => { $('login-error').textContent = m || ''; };
+
+  function tryLogin(){
+    const u = $('login-user').value.trim().toLowerCase().replace(/\s+/g,''), p = $('login-pass').value;
+    if(!u || !p) return loginErr('Remplis les deux champs.');
+    loginErr(''); auth.signInWithEmailAndPassword(u + MAIL_DOM, p).catch(e => loginErr(msg(e)));
+  }
+  $('login-btn').addEventListener('click', tryLogin);
+  $('login-pass').addEventListener('keydown', (e) => { if(e.key==='Enter') tryLogin(); });
+  $('google-login-btn').addEventListener('click', () => auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).catch(e => loginErr(msg(e))));
+  $('sms-toggle-btn').addEventListener('click', () => { const b=$('sms-box'); b.classList.toggle('hidden'); b.style.display = b.classList.contains('hidden') ? '' : 'flex'; });
+  let smsConf = null, smsVerifier = null;
+  function sendSms(phoneId, sendBtnId, codeId, confirmId, linking, done){
+    const num = $(phoneId).value.replace(/\s+/g,'');
+    if(!smsVerifier) smsVerifier = new firebase.auth.RecaptchaVerifier(sendBtnId, {size:'invisible'});
+    const p = linking ? currentUser.linkWithPhoneNumber(num, smsVerifier) : auth.signInWithPhoneNumber(num, smsVerifier);
+    p.then(r => { smsConf = r; $(codeId).classList.remove('hidden'); $(confirmId).classList.remove('hidden'); done(''); })
+     .catch(e => { done(msg(e)); try{ smsVerifier.clear(); }catch(_){} smsVerifier = null; });
+  }
+  $('sms-send-btn').addEventListener('click', () => sendSms('sms-phone','sms-send-btn','sms-code','sms-confirm-btn',false,loginErr));
+  $('sms-confirm-btn').addEventListener('click', () => smsConf && smsConf.confirm($('sms-code').value.trim()).catch(e => loginErr(msg(e))));
+  document.getElementById('logout-btn').addEventListener('click', () => {
+    auth.signOut().then(() => location.reload());
+  });
+  document.getElementById('switch-etab-btn').addEventListener('click', () => {
+    document.getElementById('app').classList.add('hidden');
+    showEtabSelect();
+  });
+  document.querySelectorAll('.etab-choice-btn').forEach(btn => {
+    btn.addEventListener('click', () => chooseEtab(btn.dataset.etab));
+  });
+  document.getElementById('etab-both-link').addEventListener('click', () => chooseEtab(''));
+
+  // ---------- Session : seuls les comptes ayant un document admins/{uid} entrent ----------
+  let unsubProfile = null;
+  auth.onAuthStateChanged(async (user) => {
+    if(!user) return;
+    let snap = null;
+    try{ snap = await db.collection('admins').doc(user.uid).get(); }catch(e){ console.warn(e); }
+    if(!snap || !snap.exists){
+      if(user.metadata.creationTime === user.metadata.lastSignInTime) await user.delete().catch(()=>{});
+      await auth.signOut(); loginErr("Ce compte n'a pas accès au tableau de bord."); return;
+    }
+    currentUser = user; currentProfile = snap.data() || {};
+    const em = user.email || '';
+    const uname = em.endsWith(MAIL_DOM) ? em.split('@')[0] : (currentProfile.name || user.displayName || 'Admin');
+    currentAdminName = currentProfile.role === 'dev' ? 'Marc (Développeur)' : uname;
+    if(unsubProfile) unsubProfile();
+    unsubProfile = db.collection('admins').doc(user.uid).onSnapshot(s => { currentProfile = s.data() || currentProfile; updateAvatar(); });
+    updateAvatar(); showEtabSelect();
+  });
+
+  function updateAvatar(){
+    const photo = currentProfile.photo, ini = (currentAdminName || '?').charAt(0).toUpperCase();
+    ['avatar-btn','pm-photo'].forEach(id => { $(id).innerHTML = photo ? '<img alt="" src="'+photo+'">' : ini; });
+    $('admin-name-val').textContent = currentAdminName || '';
+  }
+
+  // ---------- Profil : photo, mot de passe, comptes liés ----------
+  const pmStatus = (m) => { $('pm-status').textContent = m || ''; };
+  function renderLinks(){
+    const ids = (currentUser.providerData || []).map(p => p.providerId);
+    $('pm-links').innerHTML = 'Gmail : ' + (ids.includes('google.com') ? '✅ lié' : 'non lié') + '<br>Téléphone : ' + (ids.includes('phone') ? '✅ lié' : 'non lié');
+  }
+  $('avatar-btn').addEventListener('click', () => { renderLinks(); pmStatus(''); $('profile-modal').classList.remove('hidden'); });
+  $('pm-close').addEventListener('click', () => $('profile-modal').classList.add('hidden'));
+  $('pm-file').addEventListener('change', (e) => {
+    const f = e.target.files[0]; if(!f) return;
+    const r = new FileReader();
+    r.onload = () => { const im = new Image(); im.onload = () => {
+      const c = document.createElement('canvas'); c.width = c.height = 200;
+      const m = Math.min(im.width, im.height);
+      c.getContext('2d').drawImage(im, (im.width-m)/2, (im.height-m)/2, m, m, 0, 0, 200, 200);
+      db.collection('admins').doc(currentUser.uid).set({photo: c.toDataURL('image/jpeg', 0.7)}, {merge:true})
+        .then(() => pmStatus('Photo mise à jour ✅')).catch(err => pmStatus(msg(err)));
+    }; im.src = r.result; };
+    r.readAsDataURL(f);
+  });
+  $('pm-passbtn').addEventListener('click', () => {
+    currentUser.updatePassword($('pm-newpass').value).then(() => { $('pm-newpass').value=''; pmStatus('Mot de passe changé ✅'); }).catch(e => pmStatus(msg(e)));
+  });
+  $('pm-google').addEventListener('click', () => currentUser.linkWithPopup(new firebase.auth.GoogleAuthProvider()).then(() => { renderLinks(); pmStatus('Gmail lié ✅'); }).catch(e => pmStatus(msg(e))));
+  $('pm-sendcode').addEventListener('click', () => sendSms('pm-phone','pm-sendcode','pm-code','pm-confirm',true, m => pmStatus(m || 'Code envoyé par SMS.')));
+  $('pm-confirm').addEventListener('click', () => smsConf && smsConf.confirm($('pm-code').value.trim()).then(() => { renderLinks(); pmStatus('Numéro lié ✅'); }).catch(e => pmStatus(msg(e))));
+
+  function showEtabSelect(){
+    document.getElementById('login-screen').classList.add('hidden');
+    document.getElementById('etab-select-screen').classList.remove('hidden');
+  }
+
+  const ETAB_TITLES = {
+    'ombap': "O'Mba'p Lounge — Tableau de bord",
+    'kstay': "K Stay — Tableau de bord",
+    'kdreams': "K-Dreams — Tableau de bord",
+    '': "O'Mba'p, <span>K Stay</span> & K-Dreams — Tableau de bord"
+  };
+
+  function chooseEtab(etab){
+    document.getElementById('filter-etablissement').value = etab;
+    document.getElementById('app-title').innerHTML = ETAB_TITLES[etab];
+    // le filtre "lieu" dépend de l'établissement choisi (masqué pour K Stay et pour la vue globale)
+    const locSel = document.getElementById('filter-location');
+    locSel.value = '';
+    if(etab === 'ombap'){
+      locSel.innerHTML = '<option value="">Tous les lieux</option><option value="rooftop">Rooftop</option><option value="restaurant">Restaurant</option>';
+      locSel.style.display = '';
+    } else if(etab === 'kdreams'){
+      locSel.innerHTML = '<option value="">Tous les espaces</option>' + Object.entries(KD_LABELS).map(([k,v]) => '<option value="'+k+'">'+v+'</option>').join('');
+      locSel.style.display = '';
+    } else {
+      locSel.style.display = 'none';
+    }
+    document.getElementById('etab-select-screen').classList.add('hidden');
+    startApp();
+  }
+
+  function startApp(){
+    document.getElementById('app').classList.remove('hidden');
+    document.getElementById('admin-name-val').textContent = currentAdminName || '';
+    logConnection(currentAdminName);
+    subscribeArchive();
+    subscribePresence();
+    if(currentAdminName === 'Marc (Développeur)'){
+      document.getElementById('connections-panel').classList.remove('hidden');
+      subscribeConnectionsLog();
+      subscribeVisitsLog();
+    }
+  }
+
+  // ---------- Journal des connexions (heures + PWA/Site web), separe par etablissement et par jour ----------
+  function detectDevice(){
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+    return isStandalone ? 'PWA' : 'Site web';
+  }
+  function logConnection(role){
+    const etab = document.getElementById('filter-etablissement').value;
+    db.collection('connections').add({
+      role: role,
+      device: detectDevice(),
+      etablissement: etab || 'both',
+      timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    }).catch(err => console.warn('Log connexion impossible :', err));
+  }
+
+  let allConnections = [];
+  let allVisits = [];
+
+  function subscribeConnectionsLog(){
+    db.collection('connections').orderBy('timestamp', 'desc').limit(500)
+      .onSnapshot((snap) => {
+        allConnections = snap.docs.map(d => ({id:d.id, ...d.data()}));
+        renderConnectionsAndVisits();
+      }, err => console.warn('Lecture connexions impossible :', err));
+  }
+  function subscribeVisitsLog(){
+    db.collection('visits').orderBy('timestamp', 'desc').limit(500)
+      .onSnapshot((snap) => {
+        allVisits = snap.docs.map(d => ({id:d.id, ...d.data()}));
+        renderConnectionsAndVisits();
+      }, err => console.warn('Lecture visites impossible :', err));
+  }
+
+  function renderConnectionsAndVisits(){
+    const connEl = document.getElementById('connections-log');
+    const visitEl = document.getElementById('visits-log');
+    if(!connEl || !visitEl) return;
+    const dateStr = document.getElementById('filter-date').value || todayStr();
+    const etabFilter = document.getElementById('filter-etablissement').value;
+
+    let dayConn = allConnections.filter(c => tsDateKey(c.timestamp) === dateStr);
+    if(etabFilter) dayConn = dayConn.filter(c => (c.etablissement || 'ombap') === etabFilter);
+    if(dayConn.length === 0){
+      connEl.innerHTML = '<div class="panel-empty">Aucune connexion ce jour-là.</div>';
+    } else {
+      connEl.innerHTML = dayConn.map(c =>
+        '<div class="panel-row-line"><span class="name">' + (c.cashierName ? c.cashierName + ' · ' : '') + (c.role||'—') + ' · ' + (c.device||'—') + ' · ' + etabShortLabel(c) +
+        '</span><span class="val">' + fmtDateTime(c.timestamp) + '</span></div>'
+      ).join('');
+    }
+
+    let dayVisits = allVisits.filter(v => tsDateKey(v.timestamp) === dateStr);
+    if(etabFilter) dayVisits = dayVisits.filter(v => (v.etablissement || 'ombap') === etabFilter);
+    if(dayVisits.length === 0){
+      visitEl.innerHTML = '<div class="panel-empty">Aucune visite ce jour-là.</div>';
+    } else {
+      visitEl.innerHTML = dayVisits.map(v => {
+        const where = [whereLabel(v), v.table ? ('Table ' + v.table) : null].filter(Boolean).join(' · ');
+        return '<div class="panel-row-line"><span class="name">' + (where || 'Visiteur') + ' · ' + (v.device||'—') + ' · ' + etabShortLabel(v) +
+          '</span><span class="val">' + fmtDateTime(v.timestamp) + '</span></div>';
+      }).join('');
+    }
+  }
+
+  document.getElementById('filter-etablissement').addEventListener('change', renderAll);
+  document.getElementById('filter-location').addEventListener('change', renderAll);
+  document.getElementById('filter-method').addEventListener('change', renderAll);
+  document.getElementById('filter-status').addEventListener('change', renderAll);
+  document.getElementById('filter-date').addEventListener('change', renderAll);
+  document.getElementById('today-btn').addEventListener('click', () => {
+    document.getElementById('filter-date').value = todayStr();
+    renderAll();
+  });
+  document.getElementById('download-report-btn').addEventListener('click', downloadDailyReport);
+
+  const PAYMENT_LABELS = { om: 'Orange Money', momo: 'MTN MoMo', terminal: 'Terminal (carte)', cash: 'Espèces' };
+  const KD_LABELS = { restaurant:'Restaurant', rooftop:'Rooftop', salle_de_jeu:'Salle de jeu', espace_cigare:'Espace cigare', boite_de_nuit:'Boîte de nuit', hebergement:'Hébergement' };
+  function locLabel(loc){ return loc === 'restaurant' ? 'Restaurant' : 'Rooftop'; }
+  function etabLabel(o){
+    if(o.etablissement === 'kstay') return 'K Stay';
+    if(o.etablissement === 'kdreams') return 'K-Dreams — ' + (KD_LABELS[o.location] || o.location || '—');
+    return 'O\'Mba\'p — ' + locLabel(o.location);
+  }
+  function escH(v){ return String(v == null ? '' : v).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  function linePriceLabel(it){ return (it.price === null || it.price === undefined) ? 'à confirmer' : ((it.price*it.qty).toLocaleString('fr-FR') + ' FCFA'); }
+  function fmtDateTime(ts){
+    if(!ts || !ts.toDate) return '';
+    return ts.toDate().toLocaleDateString('fr-FR') + ' ' + ts.toDate().toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'});
+  }
+  function todayStr(){
+    const d = new Date();
+    const off = d.getTimezoneOffset();
+    return new Date(d.getTime() - off*60000).toISOString().slice(0,10);
+  }
+  function orderDateKey(o){
+    const ts = o.archivedAt || o.paymentValidatedAt || o.createdAt;
+    if(!ts || !ts.toDate) return null;
+    const d = ts.toDate();
+    const off = d.getTimezoneOffset();
+    return new Date(d.getTime() - off*60000).toISOString().slice(0,10);
+  }
+  function orderOutcome(o){
+    return o.orderStatus || (o.paymentStatus === 'validee' ? 'validee' : 'inconnu');
+  }
+  function tsDateKey(ts){
+    if(!ts || !ts.toDate) return null;
+    const d = ts.toDate();
+    const off = d.getTimezoneOffset();
+    return new Date(d.getTime() - off*60000).toISOString().slice(0,10);
+  }
+  function etabShortLabel(x){
+    return x.etablissement === 'kstay' ? 'K Stay' : x.etablissement === 'kdreams' ? 'K-Dreams' : "O'Mba'p";
+  }
+  function whereLabel(x){
+    if(x.etablissement === 'kdreams') return x.location ? (KD_LABELS[x.location] || x.location) : null;
+    return x.location ? locLabel(x.location) : null;
+  }
+
+  // ---------- Présence en direct de la caissière (en ligne / hors ligne) ----------
+  let presenceData = {};
+  let presenceSubscribed = false;
+  const ONLINE_THRESHOLD_MS = 90000; // pas de battement depuis 90s = considérée hors ligne
+
+  function subscribePresence(){
+    if(presenceSubscribed) return;
+    presenceSubscribed = true;
+    db.collection('presence').onSnapshot((snap) => {
+      presenceData = {};
+      snap.docs.forEach(d => { presenceData[d.id] = d.data(); });
+      renderPresence();
+    }, err => console.warn('Lecture présence impossible :', err));
+    setInterval(renderPresence, 15000); // réévalue "en ligne" même sans nouvelle donnée reçue
+  }
+
+  function renderPresence(){
+    const el = document.getElementById('presence-log');
+    if(!el) return;
+    const etabFilter = document.getElementById('filter-etablissement').value;
+    const docs = Object.entries(presenceData).filter(([id, p]) => !etabFilter || p.etablissement === etabFilter);
+    if(docs.length === 0){
+      el.innerHTML = '<div class="panel-empty">Aucune caissière enregistrée pour le moment.</div>';
+      return;
+    }
+    const now = Date.now();
+    el.innerHTML = docs.map(([id, p]) => {
+      const lastMs = (p.lastActive && p.lastActive.toMillis) ? p.lastActive.toMillis() : 0;
+      const isOnline = p.status === 'online' && (now - lastMs) < ONLINE_THRESHOLD_MS;
+      const sinceLabel = isOnline
+        ? ('Connectée depuis ' + fmtDateTime(p.loginAt))
+        : (p.loggedOutAt ? ('Déconnectée à ' + fmtDateTime(p.loggedOutAt)) : (lastMs ? ('Dernière activité : ' + fmtDateTime(p.lastActive)) : 'Jamais connectée'));
+      return '<div class="presence-row">' +
+        '<div><span class="presence-dot ' + (isOnline ? 'online' : 'offline') + '"></span><b>' + (p.cashierName || p.role || 'Caisse') + ' · ' + etabShortLabel(p) + '</b>' +
+        '<div class="presence-detail">' + (isOnline ? 'En ligne — ' : '') + sinceLabel + '</div></div>' +
+        '<div style="text-align:right; font-size:12px; color:var(--cream-dim);">' + (p.device || '—') + '</div>' +
+        '</div>';
+    }).join('');
+  }
+
+  document.getElementById('filter-date').value = todayStr();
+
+  let allArchived = [];
+  let archMain = [];
+  let archKD = [];
+  let archiveSubscribed = false;
+
+  // Convertit un document K-Dreams (kdreams_archive) vers le format commun du tableau de bord
+  function normKD(d){
+    const ts = (ms) => (typeof ms === 'number') ? firebase.firestore.Timestamp.fromMillis(ms) : null;
+    const closed = ts(d.closedMs) || d.closedAt || null;
+    return {
+      id: 'kd_' + d.id,
+      etablissement: 'kdreams',
+      location: d.espace,
+      table: d.table,
+      items: (d.items || []).map(i => ({ name: i.nom, qty: i.q, price: (i.prix === null || i.prix === undefined) ? null : i.prix })),
+      total: d.total || 0,
+      paymentMethod: ({ mtn:'momo', orange:'om', terminal:'terminal', especes:'cash' })[d.payMode] || d.payMode,
+      orderStatus: d.orderStatus,
+      archivedAt: closed,
+      createdAt: ts(d.createdMs) || d.createdAt || closed,
+      cancelReason: d.motif || '',
+      hasUnpriced: !!d.hasUnpriced,
+      customerName: d.customerName || '',
+      customerPhone: d.customerPhone || ''
+    };
+  }
+  function mergeArchive(){
+    allArchived = archMain.concat(archKD).sort((a,b) =>
+      (b.archivedAt?.toMillis?.() || b.paymentValidatedAt?.toMillis?.() || b.createdAt?.toMillis?.() || 0) -
+      (a.archivedAt?.toMillis?.() || a.paymentValidatedAt?.toMillis?.() || a.createdAt?.toMillis?.() || 0));
+    renderAll();
+  }
+  function subscribeArchive(){
+    if(archiveSubscribed) { renderAll(); return; }
+    archiveSubscribed = true;
+    db.collection('archive').onSnapshot((snap) => {
+      archMain = snap.docs.map(d => ({id: d.id, ...d.data()}));
+      mergeArchive();
+    }, (err) => console.error(err));
+    db.collection('kdreams_archive').onSnapshot((snap) => {
+      archKD = snap.docs.map(d => normKD({id: d.id, ...d.data()}));
+      mergeArchive();
+    }, (err) => console.error('K-Dreams archive :', err));
+  }
+
+  function computeDayStats(dateStr, etabFilter){
+    let dayOrders = allArchived.filter(o => orderDateKey(o) === dateStr);
+    if(etabFilter) dayOrders = dayOrders.filter(o => (o.etablissement || 'ombap') === etabFilter);
+    const validated = dayOrders.filter(o => orderOutcome(o) === 'validee');
+    const cancelled = dayOrders.filter(o => orderOutcome(o) === 'annulee');
+    const revenue = validated.reduce((s,o) => s + (o.total||0), 0);
+
+    const byMethod = {};
+    const byLocation = {};
+    const byTable = {};
+    const byItem = {};
+    validated.forEach(o => {
+      const m = o.paymentMethod || 'inconnu';
+      byMethod[m] = byMethod[m] || {count:0, total:0};
+      byMethod[m].count++; byMethod[m].total += (o.total||0);
+
+      const l = etabLabel(o);
+      byLocation[l] = byLocation[l] || {count:0, total:0};
+      byLocation[l].count++; byLocation[l].total += (o.total||0);
+
+      const t = 'Table ' + (o.table || '—') + ' (' + etabLabel(o) + ')';
+      byTable[t] = byTable[t] || {count:0, total:0};
+      byTable[t].count++; byTable[t].total += (o.total||0);
+
+      (o.items||[]).forEach(it => {
+        byItem[it.name] = byItem[it.name] || {qty:0, total:0};
+        byItem[it.name].qty += (it.qty||0);
+        byItem[it.name].total += (it.qty||0)*(it.price||0);
+      });
+    });
+
+    const topTables = Object.entries(byTable).sort((a,b)=>b[1].total-a[1].total).slice(0,8);
+    const topItems = Object.entries(byItem).sort((a,b)=>b[1].qty-a[1].qty).slice(0,10);
+
+    return { dayOrders, validated, cancelled, revenue, byMethod, byLocation, topTables, topItems };
+  }
+
+  function renderAll(){
+    const dateStr = document.getElementById('filter-date').value || todayStr();
+    const etabFilter = document.getElementById('filter-etablissement').value;
+    const locFilter = document.getElementById('filter-location').value;
+    const methodFilter = document.getElementById('filter-method').value;
+    const statusFilter = document.getElementById('filter-status').value;
+
+    const stats = computeDayStats(dateStr, etabFilter);
+    renderConnectionsAndVisits();
+    renderPresence();
+
+    // ---------- Cartes resume ----------
+    document.getElementById('stat-revenue').textContent = stats.revenue.toLocaleString('fr-FR');
+    document.getElementById('stat-validated').textContent = stats.validated.length;
+    document.getElementById('stat-cancelled').textContent = stats.cancelled.length;
+    document.getElementById('stat-orders-count').textContent = stats.dayOrders.length;
+
+    const noteEl = document.getElementById('unpriced-note');
+    const nUnp = stats.validated.filter(o => o.hasUnpriced).length;
+    noteEl.classList.toggle('hidden', nUnp === 0);
+    if(nUnp) noteEl.textContent = nUnp + ' commande(s) K-Dreams validée(s) contenaient des articles sans prix : le total réel est supérieur au total affiché.';
+
+    // ---------- Panneau paiement ----------
+    const payEl = document.getElementById('breakdown-payment');
+    const methodEntries = Object.entries(stats.byMethod);
+    payEl.innerHTML = methodEntries.length ? methodEntries.map(([m, v]) =>
+      `<div class="panel-row-line"><span class="name">${PAYMENT_LABELS[m]||m}</span><span class="val">${v.count} · ${v.total.toLocaleString('fr-FR')} FCFA</span></div>`
+    ).join('') : '<div class="panel-empty">Aucune donnée pour ce jour.</div>';
+
+    // ---------- Panneau lieu ----------
+    const locEl = document.getElementById('breakdown-location');
+    const locEntries = Object.entries(stats.byLocation);
+    locEl.innerHTML = locEntries.length ? locEntries.map(([l, v]) =>
+      `<div class="panel-row-line"><span class="name">${l}</span><span class="val">${v.count} · ${v.total.toLocaleString('fr-FR')} FCFA</span></div>`
+    ).join('') : '<div class="panel-empty">Aucune donnée pour ce jour.</div>';
+
+    // ---------- Top tables ----------
+    const tablesEl = document.getElementById('top-tables');
+    tablesEl.innerHTML = stats.topTables.length ? stats.topTables.map(([t, v]) =>
+      `<div class="panel-row-line"><span class="name">${t}</span><span class="val">${v.count} cmd · ${v.total.toLocaleString('fr-FR')} FCFA</span></div>`
+    ).join('') : '<div class="panel-empty">Aucune donnée pour ce jour.</div>';
+
+    // ---------- Top items ----------
+    const itemsEl = document.getElementById('top-items');
+    itemsEl.innerHTML = stats.topItems.length ? stats.topItems.map(([n, v]) =>
+      `<div class="panel-row-line"><span class="name">${n}</span><span class="val">${v.qty}×</span></div>`
+    ).join('') : '<div class="panel-empty">Aucune donnée pour ce jour.</div>';
+
+    // ---------- Liste detaillee (filtree) ----------
+    let list = stats.dayOrders;
+    if(locFilter) list = list.filter(o => o.location === locFilter);
+    if(methodFilter) list = list.filter(o => o.paymentMethod === methodFilter);
+    if(statusFilter) list = list.filter(o => orderOutcome(o) === statusFilter);
+
+    const listEl = document.getElementById('orders-list');
+    document.getElementById('empty-state').classList.toggle('hidden', list.length > 0);
+    listEl.innerHTML = '';
+
+    list.forEach(o => {
+      const card = document.createElement('div');
+      const outcome = orderOutcome(o);
+      card.className = 'order-card' + (outcome === 'annulee' ? ' cancelled' : '');
+      const itemsHtml = (o.items || []).map(it =>
+        `<div class="oc-item"><span><span class="qty">${it.qty}×</span> ${it.name}</span><span>${linePriceLabel(it)}</span></div>`
+      ).join('');
+      const methodLabel = PAYMENT_LABELS[o.paymentMethod] || 'Non précisé';
+      const statusLine = outcome === 'annulee'
+        ? `<div class="oc-payment cancelled">✕ Annulée${o.cancelReason ? ' — ' + escH(o.cancelReason) : ''}</div>`
+        : `<div class="oc-payment">✓ Encaissé — <b>${methodLabel}</b></div>`;
+
+      card.innerHTML = `
+        <div class="oc-head">
+          <div><span class="oc-table">Table n° ${o.table || '—'}</span><span class="oc-loc">${etabLabel(o)}</span></div>
+          <div class="oc-meta">
+            <div class="oc-name">${escH(o.customerName || 'Client')} · 📞 ${escH(o.customerPhone || '—')}</div>
+            <div>${fmtDateTime(o.archivedAt || o.paymentValidatedAt || o.createdAt)} · ${o.orderRef || ''}</div>
+          </div>
+        </div>
+        <div class="oc-items">${itemsHtml}</div>
+        <div class="oc-total"><span>Total</span><span>${(o.total||0).toLocaleString('fr-FR')} FCFA</span></div>
+        ${statusLine}
+        ${outcome !== 'annulee' ? `<div class="oc-actions"><button class="oc-btn" data-id="${o.id}">📥 Télécharger la facture PDF</button></div>` : ''}
+      `;
+      listEl.appendChild(card);
+    });
+
+    listEl.querySelectorAll('.oc-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const order = allArchived.find(o => o.id === btn.dataset.id);
+        if(order) generateInvoicePDF(order);
+      });
+    });
+  }
+
+  // Formatage des montants pour les PDF : la police standard des PDF ne sait
+  // pas afficher l'espace fine utilisée par le format français (elle
+  // s'affichait comme un "/"). On force donc ce format-ci : 4.000.00
+  function formatMontantPDF(n){
+    n = Math.round(n || 0);
+    return n.toLocaleString('en-US').replace(/,/g, '.') + '.00';
+  }
+
+  // ---------- Rapport journalier PDF (pour le patron, simple a telecharger) ----------
+  function downloadDailyReport(){
+    const dateStr = document.getElementById('filter-date').value || todayStr();
+    const etabFilter = document.getElementById('filter-etablissement').value;
+    const etabTitle = etabFilter === 'kstay' ? 'K Stay' : etabFilter === 'ombap' ? "O'Mba'p Lounge" : etabFilter === 'kdreams' ? 'K-Dreams' : "O'Mba'p, K Stay & K-Dreams";
+    const stats = computeDayStats(dateStr, etabFilter);
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+    const goldRGB = [194, 155, 15];
+    const navyRGB = [14, 27, 28];
+    let y = 20;
+
+    doc.setTextColor(...navyRGB);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(20);
+    doc.text(etabTitle + " — Rapport journalier", 105, y, {align:'center'});
+    y += 8;
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'normal');
+    const dObj = new Date(dateStr + 'T12:00:00');
+    doc.text(dObj.toLocaleDateString('fr-FR', {weekday:'long', year:'numeric', month:'long', day:'numeric'}), 105, y, {align:'center'});
+    y += 10;
+
+    doc.setDrawColor(...goldRGB);
+    doc.setLineWidth(0.6);
+    doc.line(20, y, 190, y);
+    y += 10;
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(14);
+    doc.text('TOTAL ENCAISSÉ : ' + formatMontantPDF(stats.revenue) + ' FCFA', 20, y);
+    y += 8;
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(11);
+    doc.text('Commandes validées : ' + stats.validated.length + '   |   Commandes annulées : ' + stats.cancelled.length + '   |   Total du jour : ' + stats.dayOrders.length, 20, y);
+    y += 12;
+
+    function sectionTitle(title){
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(12);
+      doc.setTextColor(...navyRGB);
+      doc.text(title, 20, y);
+      y += 3;
+      doc.setDrawColor(200,200,200);
+      doc.line(20, y, 190, y);
+      y += 6;
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(10.5);
+    }
+
+    sectionTitle('Répartition par mode de paiement');
+    const methodEntries = Object.entries(stats.byMethod);
+    if(!methodEntries.length){ doc.text('Aucune donnée.', 20, y); y += 6; }
+    methodEntries.forEach(([m,v]) => {
+      doc.text((PAYMENT_LABELS[m]||m) + ' — ' + v.count + ' commande(s)', 20, y);
+      doc.text(formatMontantPDF(v.total) + ' FCFA', 190, y, {align:'right'});
+      y += 6;
+    });
+    y += 4;
+
+    sectionTitle('Répartition par lieu');
+    const locEntries = Object.entries(stats.byLocation);
+    if(!locEntries.length){ doc.text('Aucune donnée.', 20, y); y += 6; }
+    locEntries.forEach(([l,v]) => {
+      doc.text(l + ' — ' + v.count + ' commande(s)', 20, y);
+      doc.text(formatMontantPDF(v.total) + ' FCFA', 190, y, {align:'right'});
+      y += 6;
+    });
+    y += 4;
+
+    sectionTitle('Tables les plus commandées');
+    if(!stats.topTables.length){ doc.text('Aucune donnée.', 20, y); y += 6; }
+    stats.topTables.forEach(([t,v]) => {
+      if(y > 270){ doc.addPage(); y = 20; }
+      doc.text(t + ' — ' + v.count + ' commande(s)', 20, y);
+      doc.text(formatMontantPDF(v.total) + ' FCFA', 190, y, {align:'right'});
+      y += 6;
+    });
+    y += 4;
+
+    sectionTitle('Menus les plus commandés');
+    if(!stats.topItems.length){ doc.text('Aucune donnée.', 20, y); y += 6; }
+    stats.topItems.forEach(([n,v]) => {
+      if(y > 270){ doc.addPage(); y = 20; }
+      doc.text(String(n).slice(0,55), 20, y);
+      doc.text(v.qty + '×', 190, y, {align:'right'});
+      y += 6;
+    });
+
+    doc.save('rapport-' + (etabFilter || 'tous') + '-' + dateStr + '.pdf');
+  }
+
+  // ---------- Génération de la facture PDF (identique à l'interface caisse) ----------
+  function generateInvoicePDF(o){
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ unit: 'mm', format: 'a5' });
+    const goldRGB = [194, 155, 15];
+    const navyRGB = [14, 27, 28];
+    let y = 18;
+
+    doc.setTextColor(...navyRGB);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(18);
+    doc.text(o.etablissement === 'kstay' ? "K STAY" : o.etablissement === 'kdreams' ? "K-DREAMS" : "O'Mba'p Lounge", 74, y, {align:'center'});
+    y += 7;
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'normal');
+    doc.text((o.etablissement === 'kstay' ? '' : o.etablissement === 'kdreams' ? ((KD_LABELS[o.location] || '') + ' — ') : (locLabel(o.location) + ' — ')) + 'Table n° ' + (o.table || '—'), 74, y, {align:'center'});
+    y += 9;
+
+    doc.setDrawColor(...goldRGB);
+    doc.setLineWidth(0.6);
+    doc.line(14, y, 134, y);
+    y += 8;
+
+    doc.setFontSize(10);
+    doc.text('N° commande : ' + (o.orderRef || '—'), 14, y); y += 6;
+    doc.text('Date : ' + fmtDateTime(o.paymentValidatedAt || o.createdAt), 14, y); y += 6;
+    doc.text('Client : ' + (o.customerName || '—'), 14, y); y += 6;
+    doc.text('Téléphone : ' + (o.customerPhone || 'Non renseigné'), 14, y); y += 6;
+    doc.text('Caissière : ' + (o.validatedBy || '—'), 14, y); y += 6;
+    doc.text('Mode de paiement : ' + (PAYMENT_LABELS[o.paymentMethod] || '—'), 14, y); y += 10;
+
+    doc.setFont('helvetica', 'bold');
+    doc.text('Article', 14, y);
+    doc.text('Qté', 92, y);
+    doc.text('Total', 120, y);
+    doc.setFont('helvetica', 'normal');
+    y += 3;
+    doc.setDrawColor(200,200,200);
+    doc.line(14, y, 134, y);
+    y += 6;
+
+    (o.items || []).forEach(it => {
+      if(y > 190){ doc.addPage(); y = 20; }
+      const lineTotal = (it.price === null || it.price === undefined) ? 'a confirmer' : (formatMontantPDF(it.price * it.qty) + ' FCFA');
+      doc.text(String(it.name).slice(0, 38), 14, y);
+      doc.text(String(it.qty), 94, y);
+      doc.text(lineTotal, 120, y, {align:'left'});
+      y += 6;
+    });
+
+    y += 4;
+    doc.setDrawColor(...goldRGB);
+    doc.line(14, y, 134, y);
+    y += 8;
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(13);
+    doc.text('TOTAL : ' + formatMontantPDF(o.total||0) + ' FCFA', 14, y);
+    y += 14;
+
+    doc.setFillColor(...goldRGB);
+    doc.roundedRect(14, y, 50, 12, 2, 2, 'F');
+    doc.setTextColor(255,255,255);
+    doc.setFontSize(12);
+    doc.text('✓ SOLDÉE', 39, y + 8, {align:'center'});
+
+    y += 26;
+    if(y > 185){ doc.addPage(); y = 24; }
+    doc.setTextColor(...navyRGB);
+    doc.setFont('helvetica', 'italic');
+    doc.setFontSize(11);
+    doc.text('Vivement de vous revoir très bientôt', 74, y, {align:'center'});
+    y += 6;
+    doc.setFont('helvetica', 'bold');
+    doc.text(o.etablissement === 'kstay' ? "K STAY" : o.etablissement === 'kdreams' ? "K-DREAMS" : "O'Mba'p", 74, y, {align:'center'});
+
+    doc.save('facture-' + (o.orderRef || o.id) + '.pdf');
+  }
+</script>
+
+<script>
+  // Enregistrement du service worker pour permettre l'installation en PWA
+  if('serviceWorker' in navigator){
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js').catch(err => console.warn('SW non enregistre :', err));
+    });
+  }
+</script>
+
+</body>
+</html>
