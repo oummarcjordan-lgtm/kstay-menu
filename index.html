@@ -402,6 +402,56 @@
   .hint-text { font-family: 'Cormorant Garamond', serif; font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ks-gold-dim); }
 
   @media (min-width: 720px) { .book { width: min(46vh, 380px); } }
+
+  /* ======== LISIBILITÉ : contraste + taille de police (remarques utilisateur) ======== */
+  :root {
+    --ks-gold-text: #cfb06a;   /* doré lisible pour le texte (contraste ≈ 9:1) ; --ks-gold-dim reste pour les filets */
+    --ks-cream-dim: #e0d5bb;   /* crème secondaire plus clair (≈ 12:1) */
+  }
+  /* Textes qui étaient en doré terne (#8f7640, contraste 4,3:1) */
+  .mini-brand, .page-script, .item-price em, .footnote-text, .cover-caption, .cover-tagline,
+  .navlabel, .pagecount, .hint-text, .back-mark-sub { color: var(--ks-gold-text); }
+  .leafrule { color: var(--ks-gold-dim); }
+
+  /* Noms, prix, descriptions : plus gros et plus épais (Cormorant est très fin) */
+  .item-name   { font-size: 19px; font-weight: 600; line-height: 1.25; }
+  .item-sub    { font-size: 16px; font-weight: 600; font-style: italic; color: #e8dec6; line-height: 1.38; }
+  .item-price  { font-size: 16.5px; }
+  .item-price em { font-size: 13px; font-weight: 600; }
+  .group-title { font-size: 16.5px; font-weight: 600; color: var(--ks-gold-light); }
+  .page-script { font-size: 18px; font-weight: 600; }
+  .mini-brand  { font-size: 10.5px; }
+  .badge       { font-size: 9px; padding: 2px 5px; }
+  .footnote-text { font-size: 13.5px; font-weight: 600; }
+
+  /* Page d'aperçu des boissons (la couverture garde ses tailles d'origine, seule la couleur change) */
+  .drink-cat-name { font-size: 16px; }
+  .drink-cat-sub  { font-size: 14.5px; font-weight: 600; }
+  .cover-page { overflow-y: auto; }
+
+  /* Navigation */
+  .navlabel  { font-size: 11px; background: rgba(10,9,8,0.8); }
+  .pagecount { font-size: 13px; }
+  .hint-text { font-size: 13.5px; }
+
+  /* Panier, paiement, fenêtres */
+  .cart-line .cl-name { font-size: 16px; }
+  .cart-line .cl-price, .cart-bar-info { font-size: 14px; }
+  .cart-drawer-head h3, .modal-box h3 { font-size: 16px; }
+  .modal-box p { font-size: 16px; }
+  .modal-box input { font-size: 16px; }
+  .modal-actions button, .cart-action { font-size: 12.5px; }
+  .my-order-item-row { font-size: 15px; }
+  #my-order-status, #ussd-fallback { font-size: 14px; }
+
+  /* Rien ne doit être coupé : toute page peut défiler si le texte dépasse */
+  .page-body { overflow-y: auto; padding-right: 2px; }
+  .page-body::-webkit-scrollbar { width: 3px; }
+  .page-body::-webkit-scrollbar-thumb { background: var(--ks-gold-dim); border-radius: 3px; }
+
+  /* Fond photo un peu plus sombre derrière le texte */
+  .menu-page.bg-lounge { background-image: linear-gradient(160deg, rgba(18,16,14,0.92) 0%, rgba(8,7,6,0.96) 78%), url('kstay-bg-menu.jpg'); }
+  .menu-page.bg-room   { background-image: linear-gradient(160deg, rgba(18,16,14,0.88) 0%, rgba(8,7,6,0.94) 78%), url('kstay-bg-hebergement.jpg'); }
 </style>
 </head>
 <body>
