@@ -322,7 +322,50 @@
   #my-order-float.hidden { display: none; }
   .my-order-item-row { display: flex; justify-content: space-between; font-size: 13px; padding: 4px 0; }
   #my-order-status { font-size: 12.5px; color: var(--ks-cream-dim); margin: 10px 0; font-style: italic; }
+
+  /* ===== Suivi des commandes ===== */
+  #my-order-list { max-height: 55vh; overflow-y: auto; text-align: left; margin-bottom: 14px; }
+  .mo-card { border: 1px solid var(--ks-line); border-radius: 10px; padding: 10px 12px; margin-bottom: 10px; background: var(--ks-panel-2); }
+  .mo-head { display: flex; justify-content: space-between; font-size: 12px; color: var(--ks-cream-dim); }
+  .mo-state { font-size: 13.5px; font-weight: 700; margin: 8px 0 2px; }
+  .mo-state.wait { color: var(--ks-gold-light); }
+  .mo-state.ok { color: #6fcf97; }
+  .mo-state.ko { color: #eb7b7b; }
+  .mo-reason { font-size: 12px; color: var(--ks-cream-dim); font-style: italic; }
+  .mo-cancel { margin-top: 8px; padding: 7px 12px; border-radius: 8px; background: none; border: 1px solid #a32d2d; color: #eb7b7b; font-size: 12px; cursor: pointer; }
+  .mo-empty { text-align: center; font-size: 13px; color: var(--ks-cream-dim); padding: 10px 0; }
   .cover-contact { display: none; }
+
+  /* ===== Bouton A+ : texte agrandi (sans zoom, sans toucher à la mise en page des pages) ===== */
+  #text-size-btn {
+    position: fixed; top: 12px; right: 12px; z-index: 520;
+    width: 42px; height: 42px; border-radius: 50%;
+    border: 1px solid rgba(201,162,75,0.6); background: rgba(10,9,8,0.8);
+    color: var(--ks-gold-light); font-family: 'Cinzel', serif; font-size: 13px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center; cursor: pointer; touch-action: auto;
+  }
+  body.big-text #text-size-btn { background: var(--ks-gold); color: var(--ks-black); }
+  #my-order-float { top: 62px; }
+  body.big-text .page-body { overflow-y: auto; padding-right: 2px; }
+  body.big-text .page-body::-webkit-scrollbar { width: 3px; }
+  body.big-text .page-body::-webkit-scrollbar-thumb { background: var(--ks-gold-dim); border-radius: 3px; }
+  body.big-text .item-name { font-size: 23px; }
+  body.big-text .item-sub { font-size: 19px; }
+  body.big-text .item-price { font-size: 20px; }
+  body.big-text .item-price em { font-size: 15px; }
+  body.big-text .group-title { font-size: 20px; }
+  body.big-text .footnote-text { font-size: 16px; }
+  body.big-text .drink-cat-name { font-size: 19px; }
+  body.big-text .drink-cat-sub { font-size: 17px; }
+  body.big-text .cart-line .cl-name { font-size: 19px; }
+  body.big-text .cart-line .cl-price, body.big-text .cart-bar-info { font-size: 16px; }
+  body.big-text .cart-bar-label { font-size: 14px; }
+  body.big-text .mo-state, body.big-text .my-order-item-row { font-size: 16px; }
+
+  /* Flèches Reculer / Avancer : remontées quand la bannière « Commandez ici » est visible */
+  body.has-cart .navzone { bottom: 84px; }
+  /* Bouton « Mes commandes » en haut à droite pour ne plus masquer la flèche Avancer */
+  #my-order-float { top: 12px; bottom: auto; right: 12px; }
 
   .cover-menu-word {
     font-family: 'Cinzel', serif; font-weight: 700; font-size: clamp(38px, 13vw, 56px);
@@ -1990,15 +2033,13 @@
     <div id="ussd-fallback" class="hidden">Si l'appel ne se lance pas automatiquement, composez : <span id="ussd-code"></span></div>
   </div>
 
-  <button id="my-order-float" class="hidden" onclick="showMyOrderPanel()">🧾 Voir ma commande</button>
+  <button id="text-size-btn" type="button" aria-label="Agrandir le texte">A+</button>
+  <button id="my-order-float" class="hidden" onclick="showMyOrderPanel()">🧾 Mes commandes</button>
   <div id="my-order-overlay" class="hidden">
     <div class="modal-box">
-      <h3>Ma commande</h3>
-      <div id="my-order-items"></div>
-      <div class="cart-total-row"><span>Total</span><span id="my-order-total">0 FCFA</span></div>
-      <div id="my-order-status"></div>
+      <h3>Mes commandes</h3>
+      <div id="my-order-list"></div>
       <div class="modal-actions">
-        <button id="my-order-cancel-btn" type="button">Annuler la commande</button>
         <button id="my-order-close-btn" type="button">Fermer</button>
       </div>
     </div>
@@ -2247,6 +2288,7 @@
     const cartBar = document.getElementById('cart-bar');
     const isEmpty = count === 0;
     cartBar.classList.toggle('hidden', isEmpty);
+    document.body.classList.toggle('has-cart', !isEmpty);
     if(isEmpty) document.getElementById('cart-drawer').classList.add('hidden');
   }
 
@@ -2260,17 +2302,106 @@
   });
 
   // ---------- Envoi de la commande à la caisse K Stay (Firestore) ----------
-  let orderSent = false, orderInFlight = false;
-  let lastOrderId = null, lastOrderSummary = null;
+  let orderInFlight = false;
+
+  // ---------- Suivi des commandes du client (plusieurs en même temps) ----------
+  const MYKEY = 'ks_my_orders_v1', MYTTL = 12*3600*1000;
+  let myOrders = []; const myUnsubs = {}; const myState = {};
+  function loadMy(){ try{ myOrders = JSON.parse(localStorage.getItem(MYKEY) || '[]').filter(o => Date.now() - o.ms < MYTTL); }catch(e){ myOrders = []; } }
+  function saveMy(){ try{ localStorage.setItem(MYKEY, JSON.stringify(myOrders)); }catch(e){} }
+  function fmtF(n){ return (n||0).toLocaleString('fr-FR') + ' FCFA'; }
+
+  function watchOrder(id){
+    if(myUnsubs[id]) return;
+    myUnsubs[id] = db.collection('orders').doc(id).onSnapshot(async (snap) => {
+      if(snap.exists){ myState[id] = { s: 'attente' }; }
+      else if(myState[id] && myState[id].s === 'annulee_client'){ /* déjà connu */ }
+      else {
+        try{
+          const a = await db.collection('archive').doc(id).get();
+          if(a.exists){
+            const d = a.data();
+            myState[id] = d.orderStatus === 'annulee' ? { s: 'annulee', motif: d.cancelReason || '' } : { s: 'validee' };
+          } else { myState[id] = { s: 'traitee' }; }
+        }catch(e){ myState[id] = { s: 'traitee' }; }
+        if(myUnsubs[id]){ myUnsubs[id](); delete myUnsubs[id]; }
+      }
+      renderMyOrders();
+    }, () => {});
+  }
+
+  function refreshMyFloat(){
+    document.getElementById('my-order-float').classList.toggle('hidden', myOrders.length === 0);
+  }
+
+  function renderMyOrders(){
+    refreshMyFloat();
+    const box = document.getElementById('my-order-list');
+    box.innerHTML = '';
+    if(!myOrders.length){ box.innerHTML = '<div class="mo-empty">Aucune commande pour le moment</div>'; return; }
+    myOrders.forEach(o => {
+      const st = myState[o.id] || { s: 'attente' };
+      const card = document.createElement('div'); card.className = 'mo-card';
+      const head = document.createElement('div'); head.className = 'mo-head';
+      const l = document.createElement('span');
+      l.textContent = (o.table ? 'Table ' + o.table + ' · ' : '') + new Date(o.ms).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+      const r = document.createElement('span'); r.textContent = fmtF(o.total);
+      head.appendChild(l); head.appendChild(r);
+      card.appendChild(head);
+      o.items.forEach(it => {
+        const row = document.createElement('div'); row.className = 'my-order-item-row';
+        const n = document.createElement('span'); n.textContent = it.qty + '× ' + it.name;
+        const p = document.createElement('span'); p.textContent = fmtF(it.price * it.qty);
+        row.appendChild(n); row.appendChild(p); card.appendChild(row);
+      });
+      const state = document.createElement('div'); state.className = 'mo-state';
+      if(st.s === 'attente'){ state.classList.add('wait'); state.textContent = '⏳ En attente de la caisse'; }
+      else if(st.s === 'validee'){ state.classList.add('ok'); state.textContent = '✅ Servie et payée'; }
+      else if(st.s === 'annulee'){ state.classList.add('ko'); state.textContent = '❌ Annulée par la caisse'; }
+      else if(st.s === 'annulee_client'){ state.classList.add('ko'); state.textContent = '❌ Annulée par vous'; }
+      else { state.textContent = 'Traitée par la caisse'; }
+      card.appendChild(state);
+      if(st.s === 'annulee' && st.motif){ const m = document.createElement('div'); m.className = 'mo-reason'; m.textContent = 'Motif : ' + st.motif; card.appendChild(m); }
+      if(st.s === 'attente'){
+        const c = document.createElement('button'); c.type = 'button'; c.className = 'mo-cancel'; c.textContent = 'Annuler cette commande';
+        c.onclick = () => cancelMyOrder(o.id); card.appendChild(c);
+      }
+      box.appendChild(card);
+    });
+  }
+
+  async function cancelMyOrder(id){
+    if(!confirm('Voulez-vous vraiment annuler cette commande ?')) return;
+    try{
+      const snap = await db.collection('orders').doc(id).get();
+      if(!snap.exists){ renderMyOrders(); alert('Cette commande a déjà été prise en charge, elle ne peut plus être annulée.'); return; }
+      myState[id] = { s: 'annulee_client' };
+      await db.collection('orders').doc(id).delete();
+      renderMyOrders();
+    } catch(err){
+      console.error('Erreur annulation :', err);
+      delete myState[id];
+      alert("Erreur : impossible d'annuler la commande pour le moment.");
+    }
+  }
+
+  function showMyOrderPanel(){
+    renderMyOrders();
+    document.getElementById('my-order-overlay').classList.remove('hidden');
+  }
+  document.getElementById('my-order-close-btn').addEventListener('click', () => {
+    document.getElementById('my-order-overlay').classList.add('hidden');
+  });
 
   async function sendOrder(statusNote, paymentMethod){
-    if(orderSent || orderInFlight) return;
+    if(orderInFlight) return;
     orderInFlight = true;
     const name = await getCustomerName();
-    if(!orderCounter) orderCounter = 'CMD-' + Date.now().toString().slice(-6);
+    orderCounter = 'CMD-' + Date.now().toString().slice(-6);
 
     const items = Object.entries(cart).map(([itemName, d]) => ({ name: itemName, qty: d.qty, price: d.price, unit: d.unit || null }));
     const total = cartTotal();
+    if(!items.length){ orderInFlight = false; return; }
 
     try{
       const docRef = await db.collection('orders').add({
@@ -2285,17 +2416,17 @@
         paymentStatus: 'en_attente',
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       });
-      orderSent = true;
-      lastOrderId = docRef.id;
-      lastOrderSummary = { items, total, table: tableNumber || null };
+      myOrders.unshift({ id: docRef.id, ms: Date.now(), table: tableNumber || null, items: items, total: total });
+      saveMy(); watchOrder(docRef.id); refreshMyFloat();
+      orderCounter = null;
 
       Object.keys(cart).forEach(k => delete cart[k]);
       renderCart();
       document.getElementById('cart-drawer').classList.add('hidden');
       document.getElementById('cart-bar').classList.add('hidden');
-      document.getElementById('my-order-float').classList.remove('hidden');
+      document.body.classList.remove('has-cart');
 
-      await showModal('Commande envoyée', 'Votre commande a été transmise à la caisse. Merci !', '', true);
+      await showModal('Commande envoyée', 'Votre commande a été transmise à la caisse. Suivez-la dans « Mes commandes ».', '', true);
     } catch(err){
       console.error('Erreur envoi commande :', err);
       await showModal('Problème de connexion', "La commande n'a pas pu être transmise. Vérifiez votre connexion et réessayez.", '', true);
@@ -2304,39 +2435,7 @@
     }
   }
 
-  function showMyOrderPanel(){
-    if(!lastOrderId || !lastOrderSummary) return;
-    const itemsEl = document.getElementById('my-order-items');
-    itemsEl.innerHTML = lastOrderSummary.items.map(it =>
-      `<div class="my-order-item-row"><span>${it.qty}× ${it.name}</span><span>${(it.price*it.qty).toLocaleString('fr-FR')} FCFA</span></div>`
-    ).join('');
-    document.getElementById('my-order-total').textContent = lastOrderSummary.total.toLocaleString('fr-FR') + ' FCFA';
-    document.getElementById('my-order-status').textContent = 'Commande envoyée — en attente de prise en charge.';
-    document.getElementById('my-order-overlay').classList.remove('hidden');
-  }
-  document.getElementById('my-order-close-btn').addEventListener('click', () => {
-    document.getElementById('my-order-overlay').classList.add('hidden');
-  });
-  document.getElementById('my-order-cancel-btn').addEventListener('click', async () => {
-    if(!lastOrderId) return;
-    const sure = confirm('Voulez-vous vraiment annuler votre commande ?');
-    if(!sure) return;
-    try{
-      const snap = await db.collection('orders').doc(lastOrderId).get();
-      if(!snap.exists){
-        document.getElementById('my-order-status').textContent = 'Cette commande a déjà été prise en charge, elle ne peut plus être annulée.';
-        return;
-      }
-      await db.collection('orders').doc(lastOrderId).delete();
-      document.getElementById('my-order-overlay').classList.add('hidden');
-      document.getElementById('my-order-float').classList.add('hidden');
-      lastOrderId = null; lastOrderSummary = null; orderSent = false;
-      await showModal('Commande annulée', 'Votre commande a bien été annulée.', '', true);
-    } catch(err){
-      console.error('Erreur annulation :', err);
-      alert("Erreur : impossible d'annuler la commande pour le moment.");
-    }
-  });
+  loadMy(); myOrders.forEach(o => watchOrder(o.id)); refreshMyFloat();
 
   // ---------- Injection des boutons "+" sur chaque article du menu ----------
   function initAddButtons(){
@@ -2395,6 +2494,26 @@
   document.getElementById('pay-cash-btn').addEventListener('click', () => {
     sendOrder('Mode de paiement choisi : Espèces — à encaisser sur place', 'cash');
   });
+</script>
+
+<script>
+  // Bouton A+ : agrandit seulement la taille des textes (le zoom reste bloqué)
+  (function(){
+    var btn = document.getElementById('text-size-btn');
+    var KEY = 'ks_big_text';
+    function apply(on){
+      document.body.classList.toggle('big-text', on);
+      btn.textContent = on ? 'A\u2212' : 'A+';
+      btn.setAttribute('aria-label', on ? 'Réduire le texte' : 'Agrandir le texte');
+    }
+    var on = false;
+    try{ on = localStorage.getItem(KEY) === '1'; }catch(e){}
+    apply(on);
+    btn.addEventListener('click', function(){
+      on = !on; apply(on);
+      try{ localStorage.setItem(KEY, on ? '1' : '0'); }catch(e){}
+    });
+  })();
 </script>
 
 </body>
