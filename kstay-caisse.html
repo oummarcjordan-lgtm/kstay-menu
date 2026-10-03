@@ -281,14 +281,17 @@
     window.addEventListener('pagehide', () => { heartbeat('offline'); });
   }
 
-  function tryLogin(){
+  async function tryLogin(){
     const pin = document.getElementById('login-pin').value.trim();
-    if(pin !== CAISSE_PIN){
-      document.getElementById('login-error').textContent = 'Code incorrect.';
-      return;
+    if(pin === CAISSE_PIN){
+      sessionStorage.setItem('omjCaisseOk', '1'); sessionStorage.setItem('omjVerified', '0');
+      showNameScreen(); return;
     }
-    sessionStorage.setItem('omjCaisseOk', '1');
-    showNameScreen();
+    let p = null; try{ p = await OMJ.verifyCode(pin); }catch(e){}
+    if(!p){ document.getElementById('login-error').textContent = 'Code incorrect.'; return; }
+    sessionStorage.setItem('omjCaisseOk', '1'); sessionStorage.setItem('omjVerified', '1'); sessionStorage.setItem('omjCashierName', p.name);
+    document.getElementById('login-screen').classList.add('hidden');
+    startApp();
   }
 
   function showNameScreen(){
@@ -459,6 +462,7 @@
         try{
           // 1) Enregistrement permanent AVANT toute suppression (jamais perdu)
           await db.collection('archive').doc(order.id).set(archivedOrder);
+          OMJ.audit('validation', order);
           // 2) Facture PDF téléchargée immédiatement
           generateInvoicePDF({...order, paymentStatus:'validee', validatedBy: archivedOrder.validatedBy});
           // 3) Le ticket disparaît de la caisse une fois l'archive confirmée
@@ -487,12 +491,14 @@
           ...order,
           orderStatus: 'annulee',
           cancelReason: reason || null,
+          cancelledBy: sessionStorage.getItem('omjCashierName') || 'Caisse',
           archivedAt: firebase.firestore.FieldValue.serverTimestamp()
         };
         delete archivedOrder.id;
 
         try{
           await db.collection('archive').doc(order.id).set(archivedOrder);
+          OMJ.audit('annulation', order, reason);
           removedByMeIds.add(order.id);
           await db.collection('orders').doc(order.id).delete();
         } catch(err){
@@ -658,6 +664,45 @@
   setInterval(evaluate, 20000);
   setInterval(function(){ if(scheduleOn()) syncClock(); }, 120000);
   document.addEventListener('visibilitychange', function(){ if(!document.hidden && scheduleOn()) syncClock(); });
+})();
+</script>
+<script>
+/* ===== IDENTITÉ CAISSIÈRE + JOURNAL D'AUDIT (collections caissieres et audit) ===== */
+window.OMJ = (function(){
+  var ID = "kstay", ETAB = ID.indexOf('kd_') === 0 ? 'kdreams' : ID, SALT = 'omj-caisse-v1';
+  function sha(s){
+    return crypto.subtle.digest('SHA-256', new TextEncoder().encode(SALT + ':' + s)).then(function(b){
+      return Array.from(new Uint8Array(b)).map(function(x){ return x.toString(16).padStart(2, '0'); }).join('');
+    });
+  }
+  function who(){
+    try{
+      if(typeof NKEY !== 'undefined') return { name: localStorage.getItem(NKEY) || 'Caisse', verified: localStorage.getItem(SKEY + '_verified') === '1' };
+    }catch(e){}
+    return { name: sessionStorage.getItem('omjCashierName') || 'Caisse', verified: sessionStorage.getItem('omjVerified') === '1' };
+  }
+  function verifyCode(code){
+    return sha(code).then(function(h){
+      return db.collection('caissieres').where('hash', '==', h).where('actif', '==', true).limit(1).get();
+    }).then(function(q){
+      if(q.empty) return null;
+      var d = q.docs[0].data();
+      if(d.etab !== 'all' && d.etab !== ETAB) return null;
+      return { name: d.name };
+    });
+  }
+  function audit(type, o, motif){
+    try{
+      var w = who();
+      db.collection('audit').add({
+        type: type, caisse: ID, etab: ETAB, cashier: w.name, verified: w.verified,
+        orderId: String(o.id || ''), table: String(o.table || ''), total: Number(o.total) || 0,
+        motif: motif ? String(motif).slice(0, 200) : '',
+        ts: firebase.firestore.FieldValue.serverTimestamp(), tsMs: Date.now()
+      }).catch(function(e){ console.warn('audit', e); });
+    }catch(e){}
+  }
+  return { verifyCode: verifyCode, audit: audit, sha: sha };
 })();
 </script>
 </body>
