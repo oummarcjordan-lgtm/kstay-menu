@@ -687,7 +687,8 @@ window.OMJ = (function(){
     }).then(function(q){
       if(q.empty) return null;
       var d = q.docs[0].data();
-      if(d.etab !== 'all' && d.etab !== ETAB) return null;
+      var c = d.caisse || (d.etab === 'all' ? 'all' : d.etab === 'kdreams' ? 'etab:kdreams' : d.etab);
+      if(c !== 'all' && c !== ID && c !== 'etab:' + ETAB) return null;
       return { name: d.name };
     });
   }
