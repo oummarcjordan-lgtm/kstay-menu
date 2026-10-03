@@ -601,5 +601,28 @@
   }
 </script>
 
+<script>
+/* ===== DISPONIBILITÉ DE LA CAISSE — document Firestore system/caisses, champ etat.kstay (false = fermée) ===== */
+(function(){
+  var CAISSE_ID = "kstay";
+  function showClosed(msg){
+    if(document.getElementById('caisse-closed-overlay')) return;
+    var o = document.createElement('div');
+    o.id = 'caisse-closed-overlay';
+    o.style.cssText = 'position:fixed;inset:0;background:#111;color:#f4ede1;z-index:99998;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px;font-family:Arial,Helvetica,sans-serif;';
+    o.innerHTML = '<div style="font-size:48px;margin-bottom:14px;">🔒</div>' +
+      '<div style="font-size:22px;font-weight:700;margin-bottom:10px;">Caisse fermée</div>' +
+      '<div style="font-size:15px;max-width:320px;line-height:1.6;color:#cfc6b8;"></div>';
+    o.lastChild.textContent = msg || "Cette caisse est actuellement fermée. Contactez la direction.";
+    document.body.appendChild(o);
+  }
+  function hideClosed(){ var o = document.getElementById('caisse-closed-overlay'); if(o) o.remove(); }
+  db.collection('system').doc('caisses').onSnapshot(function(s){
+    var d = s.exists ? s.data() : {};
+    var etat = d.etat || {};
+    if(etat[CAISSE_ID] === false) showClosed(d.message); else hideClosed();
+  }, function(e){ console.warn('Disponibilité caisse : lecture impossible', e); });
+})();
+</script>
 </body>
 </html>
