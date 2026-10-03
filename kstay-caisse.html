@@ -112,6 +112,21 @@
   .oc-cancel{background:none; border:1px solid var(--ember); color:var(--ember);}
   .oc-pdf{background:var(--bg-raised); color:var(--cream); border:1px solid var(--gold) !important;}
   .hidden{display:none !important;}
+
+  /* ===== Image d'arrière-plan ===== */
+  html{background:var(--bg);}
+  :root{ --fond:url("images/fond-kstay.jpg"); }
+  body::before{
+    content:""; position:fixed; inset:0; z-index:-1;
+    background:linear-gradient(rgba(14,27,28,0.78),rgba(14,27,28,0.90)), var(--fond) center/cover no-repeat;
+  }
+  #login-screen, #name-screen{
+    background:linear-gradient(rgba(14,27,28,0.70),rgba(14,27,28,0.88)), var(--fond) center/cover no-repeat;
+  }
+  header, .tabs{
+    background:rgba(14,27,28,0.88);
+    -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px);
+  }
 </style>
 </head>
 <body>
