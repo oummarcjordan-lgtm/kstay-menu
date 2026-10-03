@@ -602,26 +602,62 @@
 </script>
 
 <script>
-/* ===== DISPONIBILITÉ DE LA CAISSE — document Firestore system/caisses, champ etat.kstay (false = fermée) ===== */
+/* ===== DISPONIBILITÉ DE LA CAISSE — system/caisses : etat.kstay (false = fermée) + horaires.kstay {actif, ouv, fer}.
+   Heure du Cameroun (UTC+1) calculée à partir de l'horloge du SERVEUR Firestore, pas de celle du téléphone. ===== */
 (function(){
   var CAISSE_ID = "kstay";
+  var cfg = {}, srvBase = null, perfBase = 0;
   function showClosed(msg){
-    if(document.getElementById('caisse-closed-overlay')) return;
-    var o = document.createElement('div');
-    o.id = 'caisse-closed-overlay';
-    o.style.cssText = 'position:fixed;inset:0;background:#111;color:#f4ede1;z-index:99998;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px;font-family:Arial,Helvetica,sans-serif;';
-    o.innerHTML = '<div style="font-size:48px;margin-bottom:14px;">🔒</div>' +
-      '<div style="font-size:22px;font-weight:700;margin-bottom:10px;">Caisse fermée</div>' +
-      '<div style="font-size:15px;max-width:320px;line-height:1.6;color:#cfc6b8;"></div>';
-    o.lastChild.textContent = msg || "Cette caisse est actuellement fermée. Contactez la direction.";
-    document.body.appendChild(o);
+    var o = document.getElementById('caisse-closed-overlay');
+    if(!o){
+      o = document.createElement('div');
+      o.id = 'caisse-closed-overlay';
+      o.style.cssText = 'position:fixed;inset:0;background:#111;color:#f4ede1;z-index:99998;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px;font-family:Arial,Helvetica,sans-serif;';
+      o.innerHTML = '<div style="font-size:48px;margin-bottom:14px;">🔒</div>' +
+        '<div style="font-size:22px;font-weight:700;margin-bottom:10px;">Caisse fermée</div>' +
+        '<div style="font-size:15px;max-width:320px;line-height:1.6;color:#cfc6b8;"></div>';
+      document.body.appendChild(o);
+    }
+    o.lastChild.textContent = msg;
   }
   function hideClosed(){ var o = document.getElementById('caisse-closed-overlay'); if(o) o.remove(); }
+  function toMin(s){ var p = String(s || '').split(':'); return (+p[0]) * 60 + (+p[1]); }
+  function camMinutes(){
+    if(srvBase === null) return null;
+    var d = new Date(srvBase + (performance.now() - perfBase) + 3600000);
+    return d.getUTCHours() * 60 + d.getUTCMinutes();
+  }
+  function evaluate(){
+    var etat = cfg.etat || {}, h = (cfg.horaires || {})[CAISSE_ID];
+    if(etat[CAISSE_ID] === false){ showClosed(cfg.message || "Cette caisse est actuellement fermée. Contactez la direction."); return; }
+    if(h && h.actif){
+      var now = camMinutes(), o = toMin(h.ouv), f = toMin(h.fer);
+      if(now !== null && !isNaN(o) && !isNaN(f)){
+        var ouvert = o <= f ? (now >= o && now < f) : (now >= o || now < f);
+        if(!ouvert){ showClosed('Caisse fermée. Réouverture à ' + String(h.ouv).replace(':', 'h') + '.'); return; }
+      }
+    }
+    hideClosed();
+  }
+  function syncClock(){
+    var ref = db.collection('horloge').doc(CAISSE_ID);
+    ref.set({ t: firebase.firestore.FieldValue.serverTimestamp() })
+      .then(function(){ return ref.get({ source: 'server' }); })
+      .then(function(s){
+        var t = s.data() && s.data().t;
+        if(t){ srvBase = t.toMillis(); perfBase = performance.now(); evaluate(); }
+      })
+      .catch(function(e){ console.warn('Horloge serveur indisponible', e); });
+  }
+  function scheduleOn(){ var h = (cfg.horaires || {})[CAISSE_ID]; return !!(h && h.actif); }
   db.collection('system').doc('caisses').onSnapshot(function(s){
-    var d = s.exists ? s.data() : {};
-    var etat = d.etat || {};
-    if(etat[CAISSE_ID] === false) showClosed(d.message); else hideClosed();
+    cfg = s.exists ? s.data() : {};
+    if(scheduleOn() && srvBase === null) syncClock();
+    evaluate();
   }, function(e){ console.warn('Disponibilité caisse : lecture impossible', e); });
+  setInterval(evaluate, 20000);
+  setInterval(function(){ if(scheduleOn()) syncClock(); }, 120000);
+  document.addEventListener('visibilitychange', function(){ if(!document.hidden && scheduleOn()) syncClock(); });
 })();
 </script>
 </body>
